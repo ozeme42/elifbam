@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍩 Ötre (Kelimeler) - Bölüm Bölüm Öğren ve Çalış</title>
+    <script src="confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #db2777;
+            --primary-hover: #be185d;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --p1-color: #ef4444;
+            --p2-color: #3b82f6;
+            --bg-gradient: linear-gradient(135deg, #fce7f3 0%, #f0fdf4 100%);
+            --card-shadow: 0 10px 30px rgba(30, 58, 138, 0.08);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            text-align: center;
+            margin: 0;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        h1 {
+            color: #1e3a8a;
+            margin-bottom: 5px;
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .subtitle {
+            color: #475569;
+            font-size: 1.05rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        #game-container {
+            background-color: white;
+            padding: 30px 25px;
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            max-width: 820px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+            transition: max-width 0.4s ease;
+        }
+
+        #game-container.two-players-layout, 
+        #game-container.learn-layout {
+            max-width: 1100px;
+        }
+
+        .home-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 2px solid #cbd5e1;
+            padding: 10px 18px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #334155;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .home-btn:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+            transform: translateY(-2px);
+        }
+
+        #start-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .section-selection-box {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .section-pill-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .section-pill {
+            background: white;
+            border: 2px solid #cbd5e1;
+            color: #334155;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-pill:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+            transform: translateY(-2px);
+        }
+
+        .section-pill.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: white;
+            border-color: var(--primary-hover);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .selection-summary-bar {
+            background: #eff6ff;
+            border: 2px dashed #93c5fd;
+            border-radius: 16px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .summary-info {
+            text-align: left;
+            flex: 1;
+            min-width: 240px;
+        }
+
+        .summary-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .summary-letters-text {
+            font-size: 0.95rem;
+            color: #1e3a8a;
+            font-weight: 600;
+        }
+
+        .btn-toggle-custom {
+            background: white;
+            border: 2px solid #93c5fd;
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-toggle-custom:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        #custom-picker-panel {
+            background: white;
+            border: 2px solid #bfdbfe;
+            border-radius: 18px;
+            padding: 16px;
+            margin-top: 15px;
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .picker-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .picker-btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-small:hover { background: #e2e8f0; }
+
+        .picker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+            gap: 10px;
+            direction: rtl;
+            max-height: 380px;
+            overflow-y: auto;
+            padding: 4px;
+        }
+
+        .letter-picker-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 8px 4px 6px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        .letter-picker-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+            border-color: #93c5fd;
+        }
+
+        .letter-picker-card.selected {
+            border-color: var(--primary);
+            background: #eff6ff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+
+        .letter-picker-card.unselected {
+            opacity: 0.45;
+            background: #f8fafc;
+        }
+
+        .letter-picker-card img {
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        .letter-picker-name {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-top: 4px;
+            direction: ltr;
+        }
+
+        .check-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .letter-picker-card.selected .check-badge {
+            background: var(--primary);
+            color: white;
+        }
+
+        .letter-picker-card.unselected .check-badge {
+            background: #cbd5e1;
+            color: white;
+        }
+
+        .action-buttons-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .btn-modern {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.3);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 380px;
+            justify-content: center;
+        }
+
+        .btn-modern.btn-two {
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            box-shadow: 0 4px 15px rgba(190, 24, 93, 0.3);
+        }
+
+        .btn-modern.btn-learn {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        #play-sound-btn {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
+            margin-bottom: 20px;
+            width: auto;
+        }
+
+        #arena {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .player-side {
+            flex: 1;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px dashed #cbd5e1;
+            transition: opacity 0.3s ease;
+        }
+        .player-side.p1-side { border-color: #fca5a5; }
+        .player-side.p2-side { border-color: #93c5fd; }
+        
+        .player-side.locked {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        
+        .player-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .p1-title { color: #ef4444; }
+        .p2-title { color: #3b82f6; }
+
+        #score-board {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 15px;
+        }
+
+        #options-grid, .duel-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .learn-topbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+        }
+
+        .learn-nav-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .learn-nav-pill {
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .learn-nav-pill:hover { background: #f1f5f9; }
+
+        .learn-nav-pill.active {
+            background: #10b981;
+            color: white;
+            border-color: #059669;
+        }
+
+        .learn-action-btns {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-learn-tool {
+            background: white;
+            border: 2px solid #cbd5e1;
+            color: #1e3a8a;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-learn-tool:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .btn-learn-tool.active-autoplay {
+            background: #ef4444;
+            color: white;
+            border-color: #dc2626;
+        }
+
+        #learn-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+            direction: rtl;
+        }
+
+        .learn-card {
+            border: 3px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 16px 12px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            position: relative;
+        }
+
+        .learn-card img {
+            max-width: 95px;
+            max-height: 95px;
+            pointer-events: none;
+            transition: transform 0.2s;
+        }
+
+        .learn-card-name {
+            margin-top: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #1e3a8a;
+            direction: ltr;
+        }
+
+        .learn-card-sound-icon {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            direction: ltr;
+        }
+
+        .learn-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+            border-color: #93c5fd;
+        }
+
+        .learn-card.reading {
+            background-color: #e0f2fe !important;
+            border-color: #0284c7 !important;
+            transform: scale(1.06);
+            box-shadow: 0 8px 25px rgba(2, 132, 199, 0.3) !important;
+            animation: pulseCard 0.8s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseCard {
+            from { box-shadow: 0 0 10px rgba(2, 132, 199, 0.3); }
+            to { box-shadow: 0 0 25px rgba(2, 132, 199, 0.7); }
+        }
+
+        .option-card {
+            border: 4px solid #f1f5f9;
+            border-radius: 20px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            position: relative;
+            min-height: 120px;
+        }
+
+        .option-style-0 { border-color: #ff7675 !important; }
+        .option-style-1 { border-color: #74b9ff !important; }
+        .option-style-2 { border-color: #55efc4 !important; }
+        .option-style-3 { border-color: #ffeaa7 !important; }
+
+        .option-card img {
+            max-width: 95px;
+            max-height: 95px;
+            pointer-events: none;
+            transition: transform 0.2s;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+        }
+
+        .option-card.correct {
+            border-color: #10b981 !important;
+            background-color: #ecfdf5 !important;
+            animation: pulse 0.5s ease;
+        }
+
+        .option-card.wrong {
+            border-color: #ef4444 !important;
+            background-color: #fef2f2 !important;
+            animation: shake 0.4s ease;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            min-height: 35px;
+            transition: all 0.3s;
+        }
+
+        .game-status-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        #active-section-tag {
+            color: #1e3a8a;
+            font-size: 15px;
+            font-weight: 700;
+            background: #dbeafe;
+            padding: 6px 16px;
+            border-radius: 20px;
+        }
+
+        #progress {
+            color: #64748b;
+            font-size: 15px;
+            font-weight: 700;
+            background: #f1f5f9;
+            padding: 6px 16px;
+            border-radius: 20px;
+        }
+
+        .trophy-container {
+            margin: 20px 0;
+            animation: bounce 1s infinite alternate;
+        }
+
+        .end-game-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            z-index: 999;
+            top: -20px;
+            border-radius: 3px;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall { to { transform: translateY(105vh) rotate(720deg); } }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+
+        @media (max-width: 600px) {
+            #game-container { padding: 20px 15px; }
+            h1 { font-size: 1.8rem; }
+            .btn-modern { font-size: 16px; padding: 14px 25px; }
+            .picker-grid { grid-template-columns: repeat(4, 1fr); }
+            #learn-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    
+        .loop-control-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .loop-toggle-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #334155;
+            cursor: pointer;
+            user-select: none;
+            border: 2px solid #cbd5e1;
+            transition: all 0.2s;
+        }
+
+        .loop-toggle-label:hover { background: #e2e8f0; }
+
+        .loop-toggle-label input {
+            width: 18px;
+            height: 18px;
+            accent-color: #10b981;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <button class="home-btn" onclick="goToHome()" title="Ana Ekrana / Menüye Dön">🏠 Menü</button>
+
+    <div id="game-container">
+        <h1 id="main-title">🍩 Ötre (Kelimeler)</h1>
+        <p class="subtitle" id="game-desc">Ötreli kelimeleri bölüm bölüm öğren, seçtiğin kelimelerle çalış veya yarış!</p>
+        
+        <div id="start-screen">
+            <div class="section-selection-box">
+                <div class="section-title">
+                    <span>📚</span> <span>Çalışmak İstediğin Bölümü Seç:</span>
+                </div>
+                
+                <div class="section-pill-container" id="section-pills"></div>
+
+                <div class="selection-summary-bar">
+                    <div class="summary-info">
+                        <div class="summary-badge" id="summary-badge-text">1. Bölüm Seçili</div>
+                        <div class="summary-letters-text" id="summary-letters-text">Öğeler yükleniyor...</div>
+                    </div>
+                    <button class="btn-toggle-custom" onclick="toggleCustomPicker()">
+                        <span id="custom-toggle-icon">✏️</span> <span id="custom-toggle-label">Kendin Seç</span>
+                    </button>
+                </div>
+
+                <div id="custom-picker-panel">
+                    <div class="picker-toolbar">
+                        <span style="font-size: 0.9rem; font-weight: bold; color: #1e3a8a;">
+                            İstediğin öğelerin üzerine tıklayarak seç veya kaldır:
+                        </span>
+                        <div class="picker-btn-group">
+                            <button class="btn-small" onclick="selectAllLetters()">✅ Tümünü Seç</button>
+                            <button class="btn-small" onclick="clearAllLetters()">❌ Temizle</button>
+                            <button class="btn-small" onclick="selectSection(1)">⭐ Sadece 1. Bölüm</button>
+                        </div>
+                    </div>
+                    
+                    <div class="picker-grid" id="letter-picker-grid"></div>
+                </div>
+                            <div class="loop-control-box">
+                    <label class="loop-toggle-label">
+                        <input type="checkbox" id="continuous-loop-toggle" checked onchange="isContinuousLoop = this.checked;">
+                        <span>🔁 Sürekli Tekrar Döngüsü (Aralıksız Çalış)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="action-buttons-group">
+                <button class="btn-modern btn-learn" onclick="startLearnMode()">
+                    <span>📖</span> <span>Seçili Kelimeleri Öğren</span>
+                </button>
+                <button class="btn-modern" onclick="selectMode(1)">
+                    <span>👤</span> <span>Tek Kişilik Çalışma / Oyna</span>
+                </button>
+                <button class="btn-modern btn-two" onclick="selectMode(2)">
+                    <span>👥</span> <span>İki Kişilik Yarışma</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="learn-area" style="display: none;">
+            <div class="learn-topbar">
+                <div class="learn-nav-pills" id="learn-section-pills"></div>
+                <div class="learn-action-btns">
+                    <button class="btn-learn-tool" id="btn-auto-play" onclick="toggleAutoPlay()">
+                        <span>🔊</span> <span id="btn-auto-play-text">Sırayla Oku (Otomatik)</span>
+                    </button>
+                    <button class="btn-learn-tool" style="background:var(--primary); color:white; border-color:var(--primary-hover);" onclick="startQuizFromLearn()">
+                        <span>🎮</span> <span>Bu Örneklerle Oyna</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="learn-grid"></div>
+        </div>
+
+        <div id="game-area" style="display: none;">
+            <div id="score-board" style="display: none;">
+                <span style="color: #ef4444;">1. Oyuncu: <span id="p1-score">0</span></span>
+                <span style="color: #3b82f6;">2. Oyuncu: <span id="p2-score">0</span></span>
+            </div>
+
+            <div style="display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
+                <button id="play-sound-btn" class="btn-modern" style="width:auto; margin:0;" onclick="playSound()">🔊 Sesi Tekrar Dinle</button>
+                <label class="loop-toggle-label" style="background:white;">
+                    <input type="checkbox" id="game-loop-toggle" checked onchange="isContinuousLoop = this.checked; if(document.getElementById('continuous-loop-toggle')) document.getElementById('continuous-loop-toggle').checked = this.checked;">
+                    <span>🔁 Sürekli Döngü</span>
+                </label>
+            </div>
+            
+            <div id="arena">
+                <div class="player-side p1-side" id="p1-area" style="display: none;">
+                    <div class="player-title p1-title">1. Oyuncu</div>
+                    <div id="options-grid-p1" class="duel-grid"></div>
+                </div>
+
+                <div id="options-grid" style="width:100%;"></div>
+
+                <div class="player-side p2-side" id="p2-area" style="display: none;">
+                    <div class="player-title p2-title">2. Oyuncu</div>
+                    <div id="options-grid-p2" class="duel-grid"></div>
+                </div>
+            </div>
+
+            <div id="message"></div>
+            <div class="game-status-bar">
+                <div id="active-section-tag">1. Bölüm</div>
+                <div id="progress">Kelime: 1 / 4</div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="audio-player"></audio>
+
+    <script>
+        const moduleConfig = {
+            folder: "otre",
+            imgExt: "png",
+            audExt: "mp3",
+            itemLabel: "Kelime"
+        };
+
+        const itemsData = [{"id": "otre1", "display_num": 1, "name": "1. Kelime", "section": 1}, {"id": "otre2", "display_num": 2, "name": "2. Kelime", "section": 1}, {"id": "otre3", "display_num": 3, "name": "3. Kelime", "section": 1}, {"id": "otre4", "display_num": 4, "name": "4. Kelime", "section": 1}, {"id": "otre5", "display_num": 5, "name": "5. Kelime", "section": 1}, {"id": "otre6", "display_num": 6, "name": "6. Kelime", "section": 2}, {"id": "otre7", "display_num": 7, "name": "7. Kelime", "section": 2}, {"id": "otre8", "display_num": 8, "name": "8. Kelime", "section": 2}, {"id": "otre9", "display_num": 9, "name": "9. Kelime", "section": 2}, {"id": "otre10", "display_num": 10, "name": "10. Kelime", "section": 2}, {"id": "otre11", "display_num": 11, "name": "11. Kelime", "section": 3}, {"id": "otre12", "display_num": 12, "name": "12. Kelime", "section": 3}, {"id": "otre13", "display_num": 13, "name": "13. Kelime", "section": 3}, {"id": "otre14", "display_num": 14, "name": "14. Kelime", "section": 3}, {"id": "otre15", "display_num": 15, "name": "15. Kelime", "section": 3}, {"id": "otre16", "display_num": 16, "name": "16. Kelime", "section": 4}, {"id": "otre17", "display_num": 17, "name": "17. Kelime", "section": 4}, {"id": "otre18", "display_num": 18, "name": "18. Kelime", "section": 4}, {"id": "otre19", "display_num": 19, "name": "19. Kelime", "section": 4}, {"id": "otre20", "display_num": 20, "name": "20. Kelime", "section": 4}, {"id": "otre21", "display_num": 21, "name": "21. Kelime", "section": 5}, {"id": "otre22", "display_num": 22, "name": "22. Kelime", "section": 5}, {"id": "otre23", "display_num": 23, "name": "23. Kelime", "section": 5}, {"id": "otre24", "display_num": 24, "name": "24. Kelime", "section": 5}, {"id": "otre25", "display_num": 25, "name": "25. Kelime", "section": 5}, {"id": "otre26", "display_num": 26, "name": "26. Kelime", "section": 6}, {"id": "otre27", "display_num": 27, "name": "27. Kelime", "section": 6}, {"id": "otre28", "display_num": 28, "name": "28. Kelime", "section": 6}, {"id": "otre29", "display_num": 29, "name": "29. Kelime", "section": 6}, {"id": "otre30", "display_num": 30, "name": "30. Kelime", "section": 6}];
+        const allItemIds = itemsData.map(l => l.id);
+        const sections = [{"id": 1, "name": "1. Bölüm", "label": "1 - 5", "letters": ["otre1", "otre2", "otre3", "otre4", "otre5"]}, {"id": 2, "name": "2. Bölüm", "label": "6 - 10", "letters": ["otre6", "otre7", "otre8", "otre9", "otre10"]}, {"id": 3, "name": "3. Bölüm", "label": "11 - 15", "letters": ["otre11", "otre12", "otre13", "otre14", "otre15"]}, {"id": 4, "name": "4. Bölüm", "label": "16 - 20", "letters": ["otre16", "otre17", "otre18", "otre19", "otre20"]}, {"id": 5, "name": "5. Bölüm", "label": "21 - 25", "letters": ["otre21", "otre22", "otre23", "otre24", "otre25"]}, {"id": 6, "name": "6. Bölüm", "label": "26 - 30", "letters": ["otre26", "otre27", "otre28", "otre29", "otre30"]}];
+
+        let selectedItemIds = new Set(["otre1", "otre2", "otre3", "otre4", "otre5"]);
+        let currentSectionId = 1;
+        let isContinuousLoop = true;
+
+        let activeLetters = [];
+        let remainingLetters = [];
+        let currentCorrectLetter = '';
+        let isWaitingForNextRound = false;
+        let gameActive = false;
+        let confettiInterval = null;
+        let gameMode = 1; 
+        let scores = { player1: 0, player2: 0 };
+
+        let isAutoPlaying = false;
+        let autoPlayTimeout = null;
+
+        const audioPlayer = document.getElementById('audio-player');
+        const optionsGrid = document.getElementById('options-grid');
+        const messageDiv = document.getElementById('message');
+        const progressDiv = document.getElementById('progress');
+        const activeSectionTag = document.getElementById('active-section-tag');
+
+        window.addEventListener('DOMContentLoaded', () => {
+            buildSectionPills();
+            buildLetterPickerGrid();
+            updateSelectionSummary();
+        });
+
+        function buildSectionPills() {
+            const container = document.getElementById('section-pills');
+            container.innerHTML = '';
+
+            const allBtn = document.createElement('button');
+            allBtn.className = 'section-pill' + (currentSectionId === 'all' ? ' active' : '');
+            allBtn.innerHTML = `⭐ Tümü (${allItemIds.length})`;
+            allBtn.onclick = () => selectSection('all');
+            container.appendChild(allBtn);
+
+            sections.forEach(sec => {
+                const btn = document.createElement('button');
+                btn.className = 'section-pill' + (currentSectionId === sec.id ? ' active' : '');
+                btn.id = `sec-pill-${sec.id}`;
+                btn.innerHTML = `${sec.name} <small style="opacity:0.8;">(${sec.label})</small>`;
+                btn.onclick = () => selectSection(sec.id);
+                container.appendChild(btn);
+            });
+        }
+
+        function buildLetterPickerGrid() {
+            const grid = document.getElementById('letter-picker-grid');
+            grid.innerHTML = '';
+
+            itemsData.forEach(item => {
+                const isSelected = selectedItemIds.has(item.id);
+                const card = document.createElement('div');
+                card.className = `letter-picker-card ${isSelected ? 'selected' : 'unselected'}`;
+                card.id = `picker-letter-${item.id}`;
+                card.onclick = () => toggleLetter(item.id);
+
+                card.innerHTML = `
+                    <div class="check-badge">${isSelected ? '✓' : ''}</div>
+                    <img src="${moduleConfig.folder}/${item.id}.${moduleConfig.imgExt}" alt="${item.name}">
+                    <div class="letter-picker-name">${item.name}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectSection(secId) {
+            currentSectionId = secId;
+
+            if (secId === 'all') {
+                selectedItemIds = new Set(allItemIds);
+            } else {
+                const found = sections.find(s => s.id === secId);
+                if (found) {
+                    selectedItemIds = new Set(found.letters);
+                }
+            }
+
+            refreshPickerCards();
+            refreshPillsUI();
+            updateSelectionSummary();
+        }
+
+        function toggleLetter(id) {
+            if (selectedItemIds.has(id)) {
+                selectedItemIds.delete(id);
+            } else {
+                selectedItemIds.add(id);
+            }
+
+            checkCurrentSectionMatch();
+            refreshPickerCards();
+            refreshPillsUI();
+            updateSelectionSummary();
+        }
+
+        function selectAllLetters() {
+            selectedItemIds = new Set(allItemIds);
+            currentSectionId = 'all';
+            refreshPickerCards();
+            refreshPillsUI();
+            updateSelectionSummary();
+        }
+
+        function clearAllLetters() {
+            selectedItemIds.clear();
+            currentSectionId = null;
+            refreshPickerCards();
+            refreshPillsUI();
+            updateSelectionSummary();
+        }
+
+        function checkCurrentSectionMatch() {
+            if (selectedItemIds.size === allItemIds.length) {
+                currentSectionId = 'all';
+                return;
+            }
+
+            const activeArray = Array.from(selectedItemIds);
+            for (const sec of sections) {
+                if (sec.letters.length === activeArray.length && sec.letters.every(l => selectedItemIds.has(l))) {
+                    currentSectionId = sec.id;
+                    return;
+                }
+            }
+            currentSectionId = null;
+        }
+
+        function refreshPickerCards() {
+            itemsData.forEach(item => {
+                const card = document.getElementById(`picker-letter-${item.id}`);
+                if (!card) return;
+                const isSelected = selectedItemIds.has(item.id);
+                card.className = `letter-picker-card ${isSelected ? 'selected' : 'unselected'}`;
+                const badge = card.querySelector('.check-badge');
+                if (badge) badge.textContent = isSelected ? '✓' : '';
+            });
+        }
+
+        function refreshPillsUI() {
+            document.querySelectorAll('#section-pills .section-pill').forEach(pill => {
+                pill.classList.remove('active');
+            });
+
+            if (currentSectionId === 'all') {
+                const allPill = document.querySelector('#section-pills .section-pill:first-child');
+                if (allPill) allPill.classList.add('active');
+            } else if (currentSectionId !== null) {
+                const pill = document.getElementById(`sec-pill-${currentSectionId}`);
+                if (pill) pill.classList.add('active');
+            }
+        }
+
+        function updateSelectionSummary() {
+            const badgeEl = document.getElementById('summary-badge-text');
+            const lettersTextEl = document.getElementById('summary-letters-text');
+            const count = selectedItemIds.size;
+
+            if (currentSectionId === 'all') {
+                badgeEl.textContent = 'Tümü Seçili';
+                lettersTextEl.textContent = `Toplam ${count} ${moduleConfig.itemLabel} ile çalışılacak.`;
+            } else if (currentSectionId !== null) {
+                const sec = sections.find(s => s.id === currentSectionId);
+                badgeEl.textContent = `${sec.name} Seçili (${count} ${moduleConfig.itemLabel})`;
+                const names = sec.letters.map(id => {
+                    const it = itemsData.find(l => l.id === id);
+                    return it ? it.name : id;
+                }).join(', ');
+                lettersTextEl.textContent = `İçerik: ${names}`;
+            } else {
+                badgeEl.textContent = `Özel Seçim (${count} ${moduleConfig.itemLabel})`;
+                if (count === 0) {
+                    lettersTextEl.textContent = 'Henüz seçim yapılmadı! Lütfen en az 1 öğe seçin.';
+                } else {
+                    const names = Array.from(selectedItemIds).map(id => {
+                        const it = itemsData.find(l => l.id === id);
+                        return it ? it.name : id;
+                    }).join(', ');
+                    lettersTextEl.textContent = `Seçilenler: ${names}`;
+                }
+            }
+        }
+
+        function toggleCustomPicker() {
+            const panel = document.getElementById('custom-picker-panel');
+            const icon = document.getElementById('custom-toggle-icon');
+            const label = document.getElementById('custom-toggle-label');
+
+            if (panel.style.display === 'block') {
+                panel.style.display = 'none';
+                icon.textContent = '✏️';
+                label.textContent = 'Kendin Seç';
+            } else {
+                panel.style.display = 'block';
+                icon.textContent = '▲';
+                label.textContent = 'Paneli Kapat';
+                panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function validateSelection(minRequired = 1) {
+            if (selectedItemIds.size < minRequired) {
+                alert(`Lütfen bu mod için en az ${minRequired} ${moduleConfig.itemLabel} seçin!`);
+                if (selectedItemIds.size === 0) {
+                    selectSection(1);
+                }
+                return false;
+            }
+            return true;
+        }
+
+        function startLearnMode() {
+            if (!validateSelection(1)) return;
+
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('game-area').style.display = 'none';
+            document.getElementById('learn-area').style.display = 'block';
+            document.getElementById('game-container').classList.add('learn-layout');
+            
+            document.getElementById('main-title').textContent = "📖 ${moduleConfig.itemLabel}leri Öğren";
+            document.getElementById('game-desc').textContent = "Örneklerin üzerine tıklayarak seslerini dinle. İstersen otomatik sırayla dinleyebilirsin!";
+            
+            buildLearnNavPills();
+            renderLearnCards();
+        }
+
+        function buildLearnNavPills() {
+            const container = document.getElementById('learn-section-pills');
+            container.innerHTML = '';
+
+            const allPill = document.createElement('button');
+            allPill.className = 'learn-nav-pill' + (currentSectionId === 'all' ? ' active' : '');
+            allPill.textContent = 'Tümü';
+            allPill.onclick = () => { selectSection('all'); startLearnMode(); };
+            container.appendChild(allPill);
+
+            sections.forEach(sec => {
+                const pill = document.createElement('button');
+                pill.className = 'learn-nav-pill' + (currentSectionId === sec.id ? ' active' : '');
+                pill.textContent = sec.name;
+                pill.onclick = () => { selectSection(sec.id); startLearnMode(); };
+                container.appendChild(pill);
+            });
+
+            if (currentSectionId === null) {
+                const customPill = document.createElement('button');
+                customPill.className = 'learn-nav-pill active';
+                customPill.textContent = `Özel (${selectedItemIds.size})`;
+                container.appendChild(customPill);
+            }
+        }
+
+        function renderLearnCards() {
+            stopAutoPlay();
+            const learnGrid = document.getElementById('learn-grid');
+            learnGrid.innerHTML = '';
+
+            const itemsToDisplay = itemsData.filter(it => selectedItemIds.has(it.id));
+
+            itemsToDisplay.forEach((item) => {
+                const card = document.createElement('div');
+                card.className = 'learn-card';
+                card.id = `learn-card-${item.id}`;
+                
+                const img = document.createElement('img');
+                img.src = `${moduleConfig.folder}/${item.id}.${moduleConfig.imgExt}`;
+                img.alt = item.name;
+                
+                const nameEl = document.createElement('div');
+                nameEl.className = 'learn-card-name';
+                nameEl.textContent = item.name;
+
+                const soundIcon = document.createElement('div');
+                soundIcon.className = 'learn-card-sound-icon';
+                soundIcon.innerHTML = '<span>🔊</span> <span>Dinle</span>';
+
+                card.appendChild(img);
+                card.appendChild(nameEl);
+                card.appendChild(soundIcon);
+                
+                card.onclick = () => {
+                    stopAutoPlay();
+                    playSingleLearnLetter(item.id, card);
+                };
+                
+                learnGrid.appendChild(card);
+            });
+        }
+
+        function playSingleLearnLetter(id, cardEl) {
+            audioPlayer.pause();
+            document.querySelectorAll('#learn-grid .learn-card').forEach(c => c.classList.remove('reading'));
+            
+            cardEl.classList.add('reading');
+            audioPlayer.src = `${moduleConfig.folder}/${id}.${moduleConfig.audExt}`;
+            audioPlayer.play().catch(e => console.log("Ses oynatılamadı:", e));
+            
+            audioPlayer.onended = () => {
+                cardEl.classList.remove('reading');
+            };
+        }
+
+        function toggleAutoPlay() {
+            if (isAutoPlaying) {
+                stopAutoPlay();
+            } else {
+                startAutoPlay();
+            }
+        }
+
+        function startAutoPlay() {
+            isAutoPlaying = true;
+            const btn = document.getElementById('btn-auto-play');
+            btn.classList.add('active-autoplay');
+            document.getElementById('btn-auto-play-text').textContent = "⏹️ Otomatik Çalmayı Durdur";
+
+            const itemsToPlay = itemsData.filter(it => selectedItemIds.has(it.id));
+            let index = 0;
+
+            function playNext() {
+                if (!isAutoPlaying || index >= itemsToPlay.length) {
+                    stopAutoPlay();
+                    return;
+                }
+
+                const item = itemsToPlay[index];
+                const cardEl = document.getElementById(`learn-card-${item.id}`);
+                if (cardEl) {
+                    document.querySelectorAll('#learn-grid .learn-card').forEach(c => c.classList.remove('reading'));
+                    cardEl.classList.add('reading');
+                    cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                    audioPlayer.src = `${moduleConfig.folder}/${item.id}.${moduleConfig.audExt}`;
+                    audioPlayer.play().catch(e => console.log("Ses hatası:", e));
+                    
+                    audioPlayer.onended = () => {
+                        cardEl.classList.remove('reading');
+                        index++;
+                        if (isAutoPlaying) {
+                            autoPlayTimeout = setTimeout(playNext, 600);
+                        }
+                    };
+                } else {
+                    index++;
+                    playNext();
+                }
+            }
+
+            playNext();
+        }
+
+        function stopAutoPlay() {
+            isAutoPlaying = false;
+            if (autoPlayTimeout) clearTimeout(autoPlayTimeout);
+            const btn = document.getElementById('btn-auto-play');
+            if (btn) {
+                btn.classList.remove('active-autoplay');
+                document.getElementById('btn-auto-play-text').textContent = "🔊 Sırayla Oku (Otomatik)";
+            }
+            document.querySelectorAll('#learn-grid .learn-card').forEach(c => c.classList.remove('reading'));
+        }
+
+        function startQuizFromLearn() {
+            stopAutoPlay();
+            selectMode(1);
+        }
+
+        function selectMode(mode) {
+            if (!validateSelection(2)) return;
+
+            gameMode = mode;
+            stopAutoPlay();
+
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('game-area').style.display = 'block';
+            document.getElementById('learn-area').style.display = 'none';
+            document.getElementById('main-title').textContent = "🎯 Doğru ${moduleConfig.itemLabel}i Bul";
+            
+            if (gameMode === 2) {
+                document.getElementById('game-container').classList.add('two-players-layout');
+                document.getElementById('score-board').style.display = 'flex';
+                document.getElementById('p1-area').style.display = 'block';
+                document.getElementById('p2-area').style.display = 'block';
+                optionsGrid.style.display = 'none';
+                document.getElementById('game-desc').textContent = "Yanlış yapan kilitlenir! Doğru örneği ilk bulan puanı kapar!";
+            } else {
+                document.getElementById('game-container').classList.remove('two-players-layout');
+                document.getElementById('score-board').style.display = 'none';
+                document.getElementById('p1-area').style.display = 'none';
+                document.getElementById('p2-area').style.display = 'none';
+                optionsGrid.style.display = 'grid';
+                document.getElementById('game-desc').textContent = "Sesi dinle ve doğru seçeneği bul. Yanlış yaparsan tekrar deneyebilirsin!";
+            }
+            
+            if (currentSectionId === 'all') {
+                activeSectionTag.textContent = "⭐ Tümü";
+            } else if (currentSectionId !== null) {
+                const sec = sections.find(s => s.id === currentSectionId);
+                activeSectionTag.textContent = `📌 ${sec.name}`;
+            } else {
+                activeSectionTag.textContent = `✏️ Özel Seçim (${selectedItemIds.size} ${moduleConfig.itemLabel})`;
+            }
+
+            gameActive = true;
+            initGame();
+        }
+
+        function initGame() {
+            if (confettiInterval) clearInterval(confettiInterval);
+            scores = { player1: 0, player2: 0 };
+            document.getElementById('p1-score').textContent = "0";
+            document.getElementById('p2-score').textContent = "0";
+            
+            activeLetters = Array.from(selectedItemIds);
+            remainingLetters = shuffleArray([...activeLetters]);
+            nextRound();
+        }
+
+        function nextRound() {
+            if (remainingLetters.length === 0) {
+                if (isContinuousLoop) {
+                    messageDiv.textContent = "🎉 Harika! Tur tamamlandı, döngü devam ediyor...";
+                    messageDiv.style.color = "#10b981";
+                    burstConfetti(30);
+                    setTimeout(() => {
+                        remainingLetters = shuffleArray([...activeLetters]);
+                        nextRound();
+                    }, 1300);
+                    return;
+                } else {
+                    endGame();
+                    return;
+                }
+            }
+
+            isWaitingForNextRound = false;
+            messageDiv.textContent = '';
+            messageDiv.style.color = '#333';
+            
+            document.getElementById('p1-area').classList.remove('locked');
+            document.getElementById('p2-area').classList.remove('locked');
+            
+            currentCorrectLetter = remainingLetters[0];
+            audioPlayer.src = `${moduleConfig.folder}/${currentCorrectLetter}.${moduleConfig.audExt}`;
+            
+            audioPlayer.oncanplaythrough = () => {
+                if (!isWaitingForNextRound && gameActive) {
+                    playSound();
+                    audioPlayer.oncanplaythrough = null;
+                }
+            };
+            audioPlayer.load();
+
+            updateProgress();
+            generateOptions();
+        }
+
+        function generateOptions() {
+            let baseOptions = [currentCorrectLetter];
+            let otherActiveLetters = activeLetters.filter(l => l !== currentCorrectLetter);
+            
+            if (otherActiveLetters.length >= 3) {
+                let chosenWrongs = shuffleArray(otherActiveLetters).slice(0, 3);
+                baseOptions = baseOptions.concat(chosenWrongs);
+            } else {
+                baseOptions = baseOptions.concat(otherActiveLetters);
+                let fillers = allItemIds.filter(l => !baseOptions.includes(l));
+                let needed = 4 - baseOptions.length;
+                let chosenFillers = shuffleArray(fillers).slice(0, needed);
+                baseOptions = baseOptions.concat(chosenFillers);
+            }
+
+            if (gameMode === 1) {
+                optionsGrid.innerHTML = '';
+                let distributedOptions = shuffleArray([...baseOptions]);
+                distributedOptions.forEach((id, index) => {
+                    const card = createCard(id, index, (cardEl) => checkAnswer(cardEl, id, 0));
+                    optionsGrid.appendChild(card);
+                });
+            } else {
+                const p1Grid = document.getElementById('options-grid-p1');
+                const p2Grid = document.getElementById('options-grid-p2');
+                p1Grid.innerHTML = '';
+                p2Grid.innerHTML = '';
+
+                let p1Options = shuffleArray([...baseOptions]);
+                let p2Options = shuffleArray([...baseOptions]);
+
+                p1Options.forEach((id, index) => {
+                    const card = createCard(id, index, (cardEl) => checkAnswer(cardEl, id, 1));
+                    p1Grid.appendChild(card);
+                });
+
+                p2Options.forEach((id, index) => {
+                    const card = createCard(id, index, (cardEl) => checkAnswer(cardEl, id, 2));
+                    p2Grid.appendChild(card);
+                });
+            }
+        }
+
+        function createCard(id, index, clickHandler) {
+            const card = document.createElement('div');
+            card.className = `option-card option-style-${index % 4}`;
+            card.onclick = () => clickHandler(card);
+            
+            const img = document.createElement('img');
+            img.src = `${moduleConfig.folder}/${id}.${moduleConfig.imgExt}`;
+            img.alt = "Seçenek";
+            
+            card.appendChild(img);
+            return card;
+        }
+
+        function checkAnswer(cardElement, selectedId, playerNum) {
+            if (isWaitingForNextRound) return;
+
+            if (selectedId === currentCorrectLetter) {
+                cardElement.classList.add('correct');
+                isWaitingForNextRound = true;
+                burstConfetti(35);
+
+                const correctInfo = itemsData.find(l => l.id === currentCorrectLetter);
+                const itemName = correctInfo ? correctInfo.name : "";
+
+                if (gameMode === 1) {
+                    messageDiv.textContent = `🎉 Harika! Doğru bildin: ${itemName}`;
+                    messageDiv.style.color = "#10b981";
+                } else {
+                    if (playerNum === 1) {
+                        scores.player1++;
+                        document.getElementById('p1-score').textContent = scores.player1;
+                        messageDiv.textContent = `🎉 1. Oyuncu Bildi: ${itemName}!`;
+                        messageDiv.style.color = "#ef4444";
+                    } else {
+                        scores.player2++;
+                        document.getElementById('p2-score').textContent = scores.player2;
+                        messageDiv.textContent = `🎉 2. Oyuncu Bildi: ${itemName}!`;
+                        messageDiv.style.color = "#3b82f6";
+                    }
+                }
+
+                remainingLetters.shift(); 
+                setTimeout(nextRound, 1400);
+            } else {
+                cardElement.classList.add('wrong');
+                setTimeout(() => cardElement.classList.remove('wrong'), 400);
+
+                if (gameMode === 1) {
+                    messageDiv.textContent = "❌ Yanlış, tekrar dene!";
+                    messageDiv.style.color = "#ef4444";
+                } else {
+                    const p1Side = document.getElementById('p1-area');
+                    const p2Side = document.getElementById('p2-area');
+
+                    if (playerNum === 1) {
+                        p1Side.classList.add('locked');
+                        messageDiv.textContent = "❌ 1. Oyuncu Yanlış Yaptı ve Kilitlendi!";
+                        messageDiv.style.color = "#ef4444";
+                    } else {
+                        p2Side.classList.add('locked');
+                        messageDiv.textContent = "❌ 2. Oyuncu Yanlış Yaptı ve Kilitlendi!";
+                        messageDiv.style.color = "#3b82f6";
+                    }
+
+                    if (p1Side.classList.contains('locked') && p2Side.classList.contains('locked')) {
+                        setTimeout(() => {
+                            p1Side.classList.remove('locked');
+                            p2Side.classList.remove('locked');
+                            messageDiv.textContent = "🔄 İki oyuncu da bilemedi! Kilitler açıldı, yarış devam ediyor.";
+                            messageDiv.style.color = "#1e3a8a";
+                        }, 700);
+                    }
+                }
+            }
+        }
+
+        function playSound() {
+            audioPlayer.play().catch(error => {
+                console.log("Ses çalma hatası:", error);
+            });
+        }
+
+        function updateProgress() {
+            const total = activeLetters.length;
+            const current = total - remainingLetters.length + 1;
+            progressDiv.textContent = `${moduleConfig.itemLabel}: ${current} / ${total}`;
+        }
+
+        function endGame() {
+            gameActive = false;
+            optionsGrid.innerHTML = '';
+            document.getElementById('options-grid-p1').innerHTML = '';
+            document.getElementById('options-grid-p2').innerHTML = '';
+            document.getElementById('p1-area').style.display = 'none';
+            document.getElementById('p2-area').style.display = 'none';
+            optionsGrid.style.display = 'block';
+            
+            document.getElementById('play-sound-btn').style.display = 'none';
+            
+            const trophyContainer = document.createElement('div');
+            trophyContainer.className = 'trophy-container';
+            trophyContainer.innerHTML = `
+                <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 9H4.5C3.67157 9 3 9.67157 3 10.5V11.5C3 12.3284 3.67157 13 4.5 13H6V9ZM6 9V14C6 15.6569 7.34315 17 9 17H15C16.6569 17 18 15.6569 18 14V9M18 9H19.5C20.3284 9 21 9.67157 21 10.5V11.5C21 12.3284 20.3284 13 19.5 13H18V9ZM9 17V21H15V17H9Z" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 2V7" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            `;
+            optionsGrid.appendChild(trophyContainer);
+
+            if (gameMode === 1) {
+                messageDiv.textContent = `🏆 TEBRİKLER! Seçilen tüm ${moduleConfig.itemLabel}leri başarıyla tamamladın.`;
+                messageDiv.style.color = "#10b981";
+            } else {
+                if (scores.player1 > scores.player2) {
+                    messageDiv.textContent = `🏆 OYUN BİTTİ! 1. Oyuncu (${scores.player1} Puan) Kazandı!`;
+                    messageDiv.style.color = "#ef4444";
+                } else if (scores.player2 > scores.player1) {
+                    messageDiv.textContent = `🏆 OYUN BİTTİ! 2. Oyuncu (${scores.player2} Puan) Kazandı!`;
+                    messageDiv.style.color = "#3b82f6";
+                } else {
+                    messageDiv.textContent = `🤝 Skorlar Eşit (${scores.player1} - ${scores.player2}). Dostluk Kazandı!`;
+                    messageDiv.style.color = "#1e3a8a";
+                }
+            }
+            
+            progressDiv.textContent = "";
+            burstConfetti(60);
+            confettiInterval = setInterval(() => burstConfetti(20), 400);
+
+            const endActions = document.createElement('div');
+            endActions.className = 'end-game-actions';
+
+            const replayBtn = document.createElement('button');
+            replayBtn.className = 'btn-modern';
+            replayBtn.innerHTML = '🔄 Aynı Seçimle Tekrar Çalış';
+            replayBtn.onclick = () => initGame();
+            endActions.appendChild(replayBtn);
+
+            if (typeof currentSectionId === 'number' && currentSectionId < sections.length) {
+                const nextSecBtn = document.createElement('button');
+                nextSecBtn.className = 'btn-modern btn-learn';
+                nextSecBtn.innerHTML = `➡️ Sonraki Bölüme Geç (${currentSectionId + 1}. Bölüm)`;
+                nextSecBtn.onclick = () => {
+                    selectSection(currentSectionId + 1);
+                    selectMode(gameMode);
+                };
+                endActions.appendChild(nextSecBtn);
+            }
+
+            const learnBtn = document.createElement('button');
+            learnBtn.className = 'btn-modern';
+            learnBtn.style.background = '#64748b';
+            learnBtn.innerHTML = '📖 Bu Bölümü Öğrenme Modunda İncele';
+            learnBtn.onclick = () => startLearnMode();
+            endActions.appendChild(learnBtn);
+
+            const homeBtn = document.createElement('button');
+            homeBtn.className = 'btn-modern';
+            homeBtn.style.background = '#334155';
+            homeBtn.innerHTML = '🏠 Bölüm Seçimine / Menüye Dön';
+            homeBtn.onclick = () => goToHome();
+            endActions.appendChild(homeBtn);
+
+            optionsGrid.appendChild(endActions);
+        }
+
+        function goToHome() {
+            if (confettiInterval) clearInterval(confettiInterval);
+            stopAutoPlay();
+            audioPlayer.pause();
+            
+            document.getElementById('game-container').classList.remove('two-players-layout', 'learn-layout');
+            document.getElementById('start-screen').style.display = 'flex';
+            document.getElementById('game-area').style.display = 'none';
+            document.getElementById('learn-area').style.display = 'none';
+            document.getElementById('score-board').style.display = 'none';
+            document.getElementById('p1-area').style.display = 'none';
+            document.getElementById('p2-area').style.display = 'none';
+            optionsGrid.style.display = 'grid';
+            document.getElementById('play-sound-btn').style.display = 'inline-flex';
+            
+            document.getElementById('main-title').textContent = "🍩 Ötre (Kelimeler)";
+            document.getElementById('game-desc').textContent = "Ötreli kelimeleri bölüm bölüm öğren, seçtiğin kelimelerle çalış veya yarış!";
+            messageDiv.textContent = '';
+            progressDiv.textContent = '';
+            
+            const oldTrophy = document.querySelector('.trophy-container');
+            if (oldTrophy) oldTrophy.remove();
+            const oldEndActions = document.querySelector('.end-game-actions');
+            if (oldEndActions) oldEndActions.remove();
+
+            updateSelectionSummary();
+            gameActive = false;
+        }
+
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function burstConfetti(count) {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: count,
+                    spread: 60,
+                    origin: { y: 0.6 }
+                });
+                return;
+            }
+
+            const colors = ['#ff7675', '#74b9ff', '#55efc4', '#ffeaa7', '#a29bfe', '#fd79a8'];
+            for (let i = 0; i < count; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.transform = `scale(${Math.random() * 0.8 + 0.5})`;
+                c.style.animationDuration = Math.random() * 1.5 + 1.5 + 's';
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 3000);
+            }
+        }
+    </script>
+</body>
+<h2><font size="3"><a href="../index.html">ANA MENÜYE DÖN</a></font></h2>
+<h2><font size="3"><a href="https://www.dindersioyun.com/">dindersioyun.com</a></font></h2>
+</html>

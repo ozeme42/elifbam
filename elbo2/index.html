@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elifba Boyama & Test Oyunu - Bölüm Bölüm ve Seçmeli</title>
+    <script src="confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
+            background-color: #f0fdf4;
+            text-align: center;
+            margin: 0;
+            padding: 15px;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-box {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            margin-bottom: 15px;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        h1 { color: #00838f; margin: 5px 0 10px; font-size: 2rem; }
+        
+        .mode-toggle {
+            background: #00838f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            margin-bottom: 10px;
+            transition: all 0.2s;
+        }
+        .mode-toggle:hover {
+            background: #006064;
+            transform: translateY(-2px);
+        }
+
+        /* Bölüm Seçim Stilleri */
+        .section-box {
+            background: #e0f7fa;
+            border: 2px solid #80deea;
+            border-radius: 16px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+
+        .section-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .section-pill {
+            background: white;
+            border: 1px solid #80deea;
+            color: #00838f;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .section-pill:hover { background: #b2ebf2; }
+        .section-pill.active {
+            background: #00838f;
+            color: white;
+            border-color: #006064;
+        }
+
+        .summary-badge {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #006064;
+        }
+
+        .palette {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px auto 15px;
+            flex-wrap: wrap;
+            max-width: 500px;
+        }
+
+        .color-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+
+        .color-btn.active {
+            transform: scale(1.2);
+            border-color: #333;
+        }
+
+        .canvas-container {
+            width: 200px;
+            height: 200px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+            display: inline-block;
+            cursor: pointer;
+            margin: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 3px solid #e0f2fe;
+        }
+
+        .canvas-container:hover {
+            transform: scale(1.04);
+            border-color: #00838f;
+        }
+
+        .colorable-text {
+            cursor: pointer;
+            transition: fill 0.3s;
+        }
+
+        .controls {
+            margin-top: 15px;
+        }
+
+        .main-btn {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            margin: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: 0.2s;
+        }
+
+        .main-btn:hover {
+            background-color: #f57c00;
+            transform: translateY(-2px);
+        }
+
+        #feedback {
+            font-size: 22px;
+            font-weight: bold;
+            height: 32px;
+            margin: 8px 0;
+        }
+
+        .hidden { display: none !important; }
+
+        .game-area {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 440px;
+            margin: 0 auto;
+        }
+    
+        .loop-toggle-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fff;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #00838f;
+            cursor: pointer;
+            border: 1px solid #80deea;
+            margin-top: 8px;
+        }
+        .loop-toggle-label input { accent-color: #00838f; }
+        
+    </style>
+</head>
+<body>
+
+    <div class="header-box">
+        <h1 id="gameTitle">Elifba Boyama 🎨</h1>
+        <button class="mode-toggle" onclick="toggleMode()">Mod Değiştir: Test Moduna Geç</button>
+        <p id="instruction" style="color: #555; margin-bottom: 8px;">Bir renk seç ve harfi boya!</p>
+
+        <!-- Bölüm Seçimi -->
+        <div class="section-box">
+            <div class="section-pills" id="section-pills"></div>
+            <div class="summary-badge" id="summary-badge">1. Bölüm Seçili (4 Harf)</div>
+            <div>
+                <label class="loop-toggle-label">
+                    <input type="checkbox" id="elbo-loop-toggle" checked>
+                    <span>🔁 Sürekli Test Döngüsü</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="palette" id="palette"></div>
+
+    <div id="feedback"></div>
+
+    <!-- BOYAMA / ÖĞRENME MODU -->
+    <div id="learningMode">
+        <div class="canvas-container" onclick="handlePaint(this, 0)">
+            <svg viewBox="0 0 200 200">
+                <text id="singleLetter" x="50%" y="60%" text-anchor="middle" dominant-baseline="middle" 
+                      font-size="140" font-weight="bold" font-family="Arial" 
+                      stroke="#333" stroke-width="4" fill="#fff" class="colorable-text">أ</text>
+            </svg>
+        </div>
+        <div class="controls">
+            <button class="main-btn" onclick="prevLetter()">⬅️ Önceki</button>
+            <button class="main-btn" style="background:#4caf50;" onclick="playCurrentLearningSound()">🔊 Sesi Dinle</button>
+            <button class="main-btn" onclick="nextLetter()">Sonraki ➡️</button>
+        </div>
+    </div>
+
+    <!-- TEST MODU ALANI -->
+    <div id="testMode" class="hidden">
+        <div class="test-controls" style="margin-bottom: 15px;">
+            <button class="main-btn" style="background:#4caf50;" onclick="playTargetSound()">🔊 Sesi Tekrar Dinle</button>
+        </div>
+        <div class="game-area" id="testGrid"></div>
+    </div>
+
+    <script>
+        const colors = ['#FF3B30', '#FF9500', '#FFCC00', '#4CD964', '#5AC8FA', '#007AFF', '#5856D6', '#FF2D55', '#000000', '#FFFFFF'];
+        const elifba = ['أ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي'];
+        const letterNames = [
+            'Elif', 'Be', 'Te', 'Peltek Se', 'Cim', 'Ha', 'Hı', 'Dal',
+            'Peltek Zel', 'Ra', 'Ze', 'Sin', 'Şın', 'Sad', 'Dad', 'Tı',
+            'Peltek Zı', 'Ayn', 'Gayn', 'Fe', 'Kaf', 'Kef', 'Lam', 'Mim',
+            'Nun', 'He', 'Vav', 'Ye'
+        ];
+
+        const sections = [
+            { id: 1, name: '1. Bölüm', label: 'Elif - Se', items: [0, 1, 2, 3] },
+            { id: 2, name: '2. Bölüm', label: 'Cim - Dal', items: [4, 5, 6, 7] },
+            { id: 3, name: '3. Bölüm', label: 'Zel - Sin', items: [8, 9, 10, 11] },
+            { id: 4, name: '4. Bölüm', label: 'Şın - Tı', items: [12, 13, 14, 15] },
+            { id: 5, name: '5. Bölüm', label: 'Zı - Fe', items: [16, 17, 18, 19] },
+            { id: 6, name: '6. Bölüm', label: 'Kaf - Mim', items: [20, 21, 22, 23] },
+            { id: 7, name: '7. Bölüm', label: 'Nun - Ye', items: [24, 25, 26, 27] }
+        ];
+
+        let selectedIndices = [0, 1, 2, 3];
+        let currentSectionId = 1;
+
+        let currentColor = colors[0];
+        let subIndex = 0; // seçili harfler içinde gezinme indisi
+        let isTestMode = false;
+        let targetIndex = 0;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initPalette();
+            buildSectionPills();
+            updateLearningLetter();
+        });
+
+        function initPalette() {
+            const paletteEl = document.getElementById('palette');
+            paletteEl.innerHTML = '';
+            colors.forEach(color => {
+                const btn = document.createElement('div');
+                btn.className = 'color-btn' + (color === currentColor ? ' active' : '');
+                btn.style.backgroundColor = color;
+                btn.onclick = () => {
+                    currentColor = color;
+                    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                };
+                paletteEl.appendChild(btn);
+            });
+        }
+
+        function buildSectionPills() {
+            const container = document.getElementById('section-pills');
+            container.innerHTML = '';
+
+            const allBtn = document.createElement('button');
+            allBtn.className = 'section-pill' + (currentSectionId === 'all' ? ' active' : '');
+            allBtn.textContent = '⭐ Tümü (28)';
+            allBtn.onclick = () => selectSection('all');
+            container.appendChild(allBtn);
+
+            sections.forEach(sec => {
+                const btn = document.createElement('button');
+                btn.className = 'section-pill' + (currentSectionId === sec.id ? ' active' : '');
+                btn.id = `elbo-sec-${sec.id}`;
+                btn.textContent = sec.name;
+                btn.onclick = () => selectSection(sec.id);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectSection(secId) {
+            currentSectionId = secId;
+            if (secId === 'all') {
+                selectedIndices = elifba.map((_, i) => i);
+            } else {
+                const sec = sections.find(s => s.id === secId);
+                if (sec) selectedIndices = [...sec.items];
+            }
+
+            subIndex = 0;
+            document.querySelectorAll('#section-pills .section-pill').forEach(p => p.classList.remove('active'));
+            if (secId === 'all') {
+                document.querySelector('#section-pills .section-pill:first-child').classList.add('active');
+                document.getElementById('summary-badge').textContent = 'Tüm Harfler Seçili (28 Harf)';
+            } else {
+                const p = document.getElementById(`elbo-sec-${secId}`);
+                if (p) p.classList.add('active');
+                const s = sections.find(x => x.id === secId);
+                document.getElementById('summary-badge').textContent = `${s.name} Seçili (${selectedIndices.length} Harf)`;
+            }
+
+            if (isTestMode) {
+                startNewTest();
+            } else {
+                updateLearningLetter();
+            }
+        }
+
+        // SES ÇALMA (harfler klasöründeki MP3 dosyalarını kullanır)
+        function playLetterSound(index) {
+            const audio = new Audio(`../harfler/harfler/${index + 1}.mp3`);
+            audio.play().catch(e => console.log("Ses dosyası bulunamadı:", index + 1));
+        }
+
+        function playCurrentLearningSound() {
+            playLetterSound(selectedIndices[subIndex]);
+        }
+
+        function toggleMode() {
+            isTestMode = !isTestMode;
+            document.getElementById('learningMode').classList.toggle('hidden');
+            document.getElementById('testMode').classList.toggle('hidden');
+            document.getElementById('feedback').textContent = "";
+            
+            if (isTestMode) {
+                document.getElementById('gameTitle').textContent = "Elifba Test Modu 🧠";
+                document.getElementById('instruction').textContent = "Sesi dinle ve doğru harfi boya!";
+                startNewTest();
+            } else {
+                document.getElementById('gameTitle').textContent = "Elifba Boyama 🎨";
+                document.getElementById('instruction').textContent = "Bir renk seç ve harfi boya!";
+                updateLearningLetter();
+            }
+        }
+
+        function updateLearningLetter() {
+            const letterIdx = selectedIndices[subIndex];
+            const el = document.getElementById('singleLetter');
+            el.textContent = elifba[letterIdx];
+            el.setAttribute('fill', '#fff');
+            playLetterSound(letterIdx);
+        }
+
+        function nextLetter() { 
+            subIndex = (subIndex + 1) % selectedIndices.length; 
+            updateLearningLetter(); 
+        }
+
+        function prevLetter() { 
+            subIndex = (subIndex - 1 + selectedIndices.length) % selectedIndices.length; 
+            updateLearningLetter(); 
+        }
+
+        function startNewTest() {
+            const randPos = Math.floor(Math.random() * selectedIndices.length);
+            targetIndex = selectedIndices[randPos];
+
+            let options = [targetIndex];
+            let otherActive = selectedIndices.filter(i => i !== targetIndex);
+            
+            if (otherActive.length >= 3) {
+                let shuffled = otherActive.sort(() => Math.random() - 0.5);
+                options = options.concat(shuffled.slice(0, 3));
+            } else {
+                options = options.concat(otherActive);
+                let allIndices = elifba.map((_, i) => i).filter(i => !options.includes(i));
+                allIndices.sort(() => Math.random() - 0.5);
+                options = options.concat(allIndices.slice(0, 4 - options.length));
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('testGrid');
+            grid.innerHTML = "";
+            
+            options.forEach(idx => {
+                const container = document.createElement('div');
+                container.className = "canvas-container";
+                container.innerHTML = `
+                    <svg viewBox="0 0 200 200">
+                        <text x="50%" y="60%" text-anchor="middle" dominant-baseline="middle" 
+                              font-size="120" font-weight="bold" font-family="Arial" 
+                              stroke="#333" stroke-width="4" fill="#fff" class="colorable-text">${elifba[idx]}</text>
+                    </svg>
+                `;
+                container.onclick = () => checkAnswer(idx, container);
+                grid.appendChild(container);
+            });
+
+            setTimeout(playTargetSound, 400);
+        }
+
+        function playTargetSound() { playLetterSound(targetIndex); }
+
+        function checkAnswer(selectedIdx, element) {
+            const textEl = element.querySelector('text');
+            textEl.setAttribute('fill', currentColor);
+
+            if(selectedIdx === targetIndex) {
+                document.getElementById('feedback').textContent = "Tebrikler! Doğru 🎉";
+                document.getElementById('feedback').style.color = "green";
+                if(typeof confetti === 'function') confetti({ particleCount: 40, spread: 60 });
+                playLetterSound(selectedIdx);
+                setTimeout(() => {
+                    document.getElementById('feedback').textContent = "";
+                    startNewTest();
+                }, 1400);
+            } else {
+                document.getElementById('feedback').textContent = "Tekrar Dene! ❌";
+                document.getElementById('feedback').style.color = "red";
+                setTimeout(() => document.getElementById('feedback').textContent = "", 900);
+            }
+        }
+
+        function handlePaint(el) {
+            if(!isTestMode) {
+                const text = el.querySelector('text');
+                text.setAttribute('fill', currentColor);
+                playLetterSound(selectedIndices[subIndex]);
+            }
+        }
+    </script>
+</body>
+<h2><font size="3"><a href="../index.html">ANA MENÜYE DÖN</a></font></h2>
+<h2><font size="3"><a href="https://www.dindersioyun.com/">dindersioyun.com</a></font></h2>
+</html>
