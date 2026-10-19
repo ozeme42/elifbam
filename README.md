@@ -9,7 +9,7 @@ Kuran-ı Kerim harflerini ve tecvid temellerini sesli, görsel ve interaktif ola
 - **📚 Kademeli & Bölüm Bölüm Çalışma:** Harfleri ve kuralları adım adım, belirli harf grupları halinde sindirerek öğrenme imkanı.
 - **🎯 Özel Harf/Kelime Seçimi:** İstediğiniz harfleri (örneğin sadece *Elif, Be, Te, Se*) seçerek yalnızca bu harfler üzerinde özel çalışma yapabilme.
 - **🔁 Sürekli Tekrar Döngüsü:** Oyun ve alıştırma modlarında sorular bittiğinde durmadan, sürekli tekrar eden bir döngüde kesintisiz pratik yapabilme.
-- **🔥 Üst Üste Doğrularla Hedef Tamamlama (Kombo & Seri):** Oyunlarda 5, 10, 15, 20 gibi hedefler belirleyerek hata yapmadan üst üste doğru cevap serisi yakalama, alev ve yıldız sayaçları, her doğruda yükselen müzik tonları, kupa, konfeti ve başarı rozetleriyle zenginleştirilmiş eğlenceli hedef tamamlama sistemi (1 ve 2 oyunculu modlarda).
+- **🔥 Üst Üste Doğrularla Otomatik Hedef Yükseltme (Kombo & Seri):** Hedef tamamlandığında (5, 10, 15, 20...) oyunu hiç bölmeden ve hiçbir butona basmaya gerek kalmadan hedefin otomatik olarak bir üst kademeye yükselmesi, anlık tebrik bildirimi, alev ve yıldız sayaçları, her doğruda yükselen müzik tonları, kupa, konfeti ve başarı rozetleriyle kesintisiz, akıcı oyun deneyimi (1 ve 2 oyunculu modlarda).
 - **✨ Üç Hareke Bir Arada (Yeni Modül):** Harflerin Üstün, Esre ve Ötre hallerini aynı kart üzerinde yan yana görebilme, tek tek ve ardışık (*Be - Bi - Bü*) dinleyebilme.
 - **🔊 Sesli Telaffuzlar:** Her harf, hareke ve kelime için gerçek ses kayıtları.
 - **🎮 İnteraktif Test & Oyun Modları:** Sesli dinleme, kart eşleştirme ve çoktan seçmeli interaktif alıştırmalar.
