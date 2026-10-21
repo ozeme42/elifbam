@@ -823,7 +823,7 @@
 
     <header>
         <h1>🗺️ Büyük Elifba Macerası</h1>
-        <p class="subtitle">10 Aşamalı Büyük Yolculuk &bull; Harfleri, Harekeleri ve Kelimeleri Keşfet!</p>
+        <p class="subtitle">19 Aşamalı Büyük Yolculuk &bull; Harfleri, Harekeleri ve Kelimeleri Keşfet!</p>
     </header>
 
     <div class="adventure-container">
@@ -837,7 +837,7 @@
                 </div>
 
                 <div class="stage-nodes-grid" id="stage-nodes-container">
-                    <!-- JavaScript ile 10 Aşama Kartı Yüklenecek -->
+                    <!-- JavaScript ile 19 Aşama Kartı Yüklenecek -->
                 </div>
 
                 <div class="bottom-action-bar">
@@ -1037,163 +1037,282 @@
             25: 'Ne', 26: 'Ve', 27: 'He', 28: 'Ye'
         };
 
-        // --- 10 AŞAMALI BÜYÜK YOLCULUK VERİLERİ ---
+        
+        // TÜM MÜFREDATI KAPSAYAN 19 AŞAMALI BÜYÜK YOLCULUK
         const adventureStages = [
             {
                 id: 1,
                 title: "1. Bölüm: Elif - Se",
                 desc: "Elif, Be, Te ve Peltek Se harfleri",
-                type: "letters",
                 badgeId: "badge_1",
                 badgeName: "🌱 Filizlenen Tohum",
                 items: [
-                    { id: '1', name: 'Elif' },
-                    { id: '2', name: 'Be' },
-                    { id: '3', name: 'Te' },
-                    { id: '4', name: 'Peltek Se' }
+                    { id: '1', name: 'Elif', imgSrc: '../harfler/harfler/1.png', audSrc: '../harfler/harfler/1.mp3' },
+                    { id: '2', name: 'Be', imgSrc: '../harfler/harfler/2.png', audSrc: '../harfler/harfler/2.mp3' },
+                    { id: '3', name: 'Te', imgSrc: '../harfler/harfler/3.png', audSrc: '../harfler/harfler/3.mp3' },
+                    { id: '4', name: 'Peltek Se', imgSrc: '../harfler/harfler/4.png', audSrc: '../harfler/harfler/4.mp3' }
                 ]
             },
             {
                 id: 2,
                 title: "2. Bölüm: Cim - Dal",
                 desc: "Cim, Ha, Hı ve Dal harfleri",
-                type: "letters",
                 badgeId: "badge_2",
                 badgeName: "🌿 Yeşil Vadi",
                 items: [
-                    { id: '5', name: 'Cim' },
-                    { id: '6', name: 'Ha' },
-                    { id: '7', name: 'Hı' },
-                    { id: '8', name: 'Dal' }
+                    { id: '5', name: 'Cim', imgSrc: '../harfler/harfler/5.png', audSrc: '../harfler/harfler/5.mp3' },
+                    { id: '6', name: 'Ha', imgSrc: '../harfler/harfler/6.png', audSrc: '../harfler/harfler/6.mp3' },
+                    { id: '7', name: 'Hı', imgSrc: '../harfler/harfler/7.png', audSrc: '../harfler/harfler/7.mp3' },
+                    { id: '8', name: 'Dal', imgSrc: '../harfler/harfler/8.png', audSrc: '../harfler/harfler/8.mp3' }
                 ]
             },
             {
                 id: 3,
                 title: "3. Bölüm: Zel - Sin",
                 desc: "Zel, Ra, Ze ve Sin harfleri",
-                type: "letters",
                 badgeId: "badge_3",
                 badgeName: "⚡ Hızlı Kaşif",
                 items: [
-                    { id: '9', name: 'Peltek Zel' },
-                    { id: '10', name: 'Ra' },
-                    { id: '11', name: 'Ze' },
-                    { id: '12', name: 'Sin' }
+                    { id: '9', name: 'Peltek Zel', imgSrc: '../harfler/harfler/9.png', audSrc: '../harfler/harfler/9.mp3' },
+                    { id: '10', name: 'Ra', imgSrc: '../harfler/harfler/10.png', audSrc: '../harfler/harfler/10.mp3' },
+                    { id: '11', name: 'Ze', imgSrc: '../harfler/harfler/11.png', audSrc: '../harfler/harfler/11.mp3' },
+                    { id: '12', name: 'Sin', imgSrc: '../harfler/harfler/12.png', audSrc: '../harfler/harfler/12.mp3' }
                 ]
             },
             {
                 id: 4,
                 title: "4. Bölüm: Şın - Tı",
                 desc: "Şın, Sad, Dad ve Tı harfleri",
-                type: "letters",
                 badgeId: "badge_4",
                 badgeName: "🌊 Mavi Nehir",
                 items: [
-                    { id: '13', name: 'Şın' },
-                    { id: '14', name: 'Sad' },
-                    { id: '15', name: 'Dad' },
-                    { id: '16', name: 'Tı' }
+                    { id: '13', name: 'Şın', imgSrc: '../harfler/harfler/13.png', audSrc: '../harfler/harfler/13.mp3' },
+                    { id: '14', name: 'Sad', imgSrc: '../harfler/harfler/14.png', audSrc: '../harfler/harfler/14.mp3' },
+                    { id: '15', name: 'Dad', imgSrc: '../harfler/harfler/15.png', audSrc: '../harfler/harfler/15.mp3' },
+                    { id: '16', name: 'Tı', imgSrc: '../harfler/harfler/16.png', audSrc: '../harfler/harfler/16.mp3' }
                 ]
             },
             {
                 id: 5,
                 title: "5. Bölüm: Zı - Fe",
                 desc: "Peltek Zı, Ayn, Gayn ve Fe harfleri",
-                type: "letters",
                 badgeId: "badge_5",
                 badgeName: "🌸 Harf Dostu",
                 items: [
-                    { id: '17', name: 'Peltek Zı' },
-                    { id: '18', name: 'Ayn' },
-                    { id: '19', name: 'Gayn' },
-                    { id: '20', name: 'Fe' }
+                    { id: '17', name: 'Peltek Zı', imgSrc: '../harfler/harfler/17.png', audSrc: '../harfler/harfler/17.mp3' },
+                    { id: '18', name: 'Ayn', imgSrc: '../harfler/harfler/18.png', audSrc: '../harfler/harfler/18.mp3' },
+                    { id: '19', name: 'Gayn', imgSrc: '../harfler/harfler/19.png', audSrc: '../harfler/harfler/19.mp3' },
+                    { id: '20', name: 'Fe', imgSrc: '../harfler/harfler/20.png', audSrc: '../harfler/harfler/20.mp3' }
                 ]
             },
             {
                 id: 6,
                 title: "6. Bölüm: Kaf - Mim",
                 desc: "Kaf, Kef, Lam ve Mim harfleri",
-                type: "letters",
                 badgeId: "badge_6",
                 badgeName: "🏰 Bilgi Kalesi",
                 items: [
-                    { id: '21', name: 'Kaf' },
-                    { id: '22', name: 'Kef' },
-                    { id: '23', name: 'Lam' },
-                    { id: '24', name: 'Mim' }
+                    { id: '21', name: 'Kaf', imgSrc: '../harfler/harfler/21.png', audSrc: '../harfler/harfler/21.mp3' },
+                    { id: '22', name: 'Kef', imgSrc: '../harfler/harfler/22.png', audSrc: '../harfler/harfler/22.mp3' },
+                    { id: '23', name: 'Lam', imgSrc: '../harfler/harfler/23.png', audSrc: '../harfler/harfler/23.mp3' },
+                    { id: '24', name: 'Mim', imgSrc: '../harfler/harfler/24.png', audSrc: '../harfler/harfler/24.mp3' }
                 ]
             },
             {
                 id: 7,
                 title: "7. Bölüm: Nun - Ye (Harfler Zirvesi)",
                 desc: "Nun, Vav, He, Lamelif ve Ye harfleri",
-                type: "letters",
                 badgeId: "badge_7",
                 badgeName: "🅰️ Harf Ustası",
                 items: [
-                    { id: '25', name: 'Nun' },
-                    { id: '26', name: 'Vav' },
-                    { id: '27', name: 'He' },
-                    { id: '28', name: 'Lâmelif' },
-                    { id: '29', name: 'Ye' }
+                    { id: '25', name: 'Nun', imgSrc: '../harfler/harfler/25.png', audSrc: '../harfler/harfler/25.mp3' },
+                    { id: '26', name: 'Vav', imgSrc: '../harfler/harfler/26.png', audSrc: '../harfler/harfler/26.mp3' },
+                    { id: '27', name: 'He', imgSrc: '../harfler/harfler/27.png', audSrc: '../harfler/harfler/27.mp3' },
+                    { id: '28', name: 'Lâmelif', imgSrc: '../harfler/harfler/28.png', audSrc: '../harfler/harfler/28.mp3' },
+                    { id: '29', name: 'Ye', imgSrc: '../harfler/harfler/29.png', audSrc: '../harfler/harfler/29.mp3' }
                 ]
             },
             {
                 id: 8,
-                title: "8. Bölüm: Üstün Harekeleri (E-A)",
-                desc: "Harflerin üstünlü halleri ve okunuşları",
-                type: "ustun",
+                title: "8. Bölüm: Üstün (Harfler)",
+                desc: "Harflerin üstünlü okunuşları (E - A)",
                 badgeId: "badge_8",
                 badgeName: "🎈 Üstün Kahramanı",
                 items: [
-                    { id: 1, name: 'E' },
-                    { id: 2, name: 'Be' },
-                    { id: 3, name: 'Te' },
-                    { id: 4, name: 'Se' },
-                    { id: 5, name: 'Ce' },
-                    { id: 8, name: 'De' },
-                    { id: 10, name: 'Ra' },
-                    { id: 23, name: 'Le' }
+                    { id: 'u1', name: 'E', imgSrc: '../ustun1/ustun1/1.jpg', audSrc: '../ustun1/ustun1/1.m4a' },
+                    { id: 'u2', name: 'Be', imgSrc: '../ustun1/ustun1/2.jpg', audSrc: '../ustun1/ustun1/2.m4a' },
+                    { id: 'u3', name: 'Te', imgSrc: '../ustun1/ustun1/3.jpg', audSrc: '../ustun1/ustun1/3.m4a' },
+                    { id: 'u4', name: 'Se', imgSrc: '../ustun1/ustun1/4.jpg', audSrc: '../ustun1/ustun1/4.m4a' },
+                    { id: 'u5', name: 'Ce', imgSrc: '../ustun1/ustun1/5.jpg', audSrc: '../ustun1/ustun1/5.m4a' },
+                    { id: 'u8', name: 'De', imgSrc: '../ustun1/ustun1/8.jpg', audSrc: '../ustun1/ustun1/8.m4a' },
+                    { id: 'u10', name: 'Ra', imgSrc: '../ustun1/ustun1/10.jpg', audSrc: '../ustun1/ustun1/10.m4a' },
+                    { id: 'u23', name: 'Le', imgSrc: '../ustun1/ustun1/23.jpg', audSrc: '../ustun1/ustun1/23.m4a' }
                 ]
             },
             {
                 id: 9,
-                title: "9. Bölüm: Esre & Ötre Dünyası (İ - Ü)",
-                desc: "Esreli ve ötreli okunuşları ayırt etme",
-                type: "esre_otre",
+                title: "9. Bölüm: Üstünlü Kelimeler",
+                desc: "Üstünlü 3 harfli kelimeleri okuma",
                 badgeId: "badge_9",
-                badgeName: "💧 Hareke Bilgini",
+                badgeName: "📖 Kelime Kaşifi",
                 items: [
-                    { id: 1, name: 'İ (Esre)', folder: 'esre1', soundFolder: 'esre1' },
-                    { id: 1, name: 'Ü (Ötre)', folder: 'otre1', soundFolder: 'otre1' },
-                    { id: 2, name: 'Bî (Esre)', folder: 'esre1', soundFolder: 'esre1' },
-                    { id: 2, name: 'Bû (Ötre)', folder: 'otre1', soundFolder: 'otre1' },
-                    { id: 3, name: 'Tî (Esre)', folder: 'esre1', soundFolder: 'esre1' },
-                    { id: 3, name: 'Tû (Ötre)', folder: 'otre1', soundFolder: 'otre1' },
-                    { id: 5, name: 'Cî (Esre)', folder: 'esre1', soundFolder: 'esre1' },
-                    { id: 5, name: 'Cû (Ötre)', folder: 'otre1', soundFolder: 'otre1' }
+                    { id: 'darabe', name: 'Darabe', imgSrc: '../ustun/ustun/darabe.png', audSrc: '../ustun/ustun/darabe.mp3' },
+                    { id: 'kesebe', name: 'Kesebe', imgSrc: '../ustun/ustun/kesebe.png', audSrc: '../ustun/ustun/kesebe.mp3' },
+                    { id: 'nezele', name: 'Nezele', imgSrc: '../ustun/ustun/nezele.png', audSrc: '../ustun/ustun/nezele.mp3' },
+                    { id: 'zehebe', name: 'Zehebe', imgSrc: '../ustun/ustun/zehebe.png', audSrc: '../ustun/ustun/zehebe.mp3' },
+                    { id: 'vecede', name: 'Vecede', imgSrc: '../ustun/ustun/vecede.png', audSrc: '../ustun/ustun/vecede.mp3' },
+                    { id: 'emera',  name: 'Emera',  imgSrc: '../ustun/ustun/emera.png',  audSrc: '../ustun/ustun/emera.mp3' },
+                    { id: 'sadeka', name: 'Sadaka', imgSrc: '../ustun/ustun/sadeka.png', audSrc: '../ustun/ustun/sadeka.mp3' }
                 ]
             },
             {
                 id: 10,
-                title: "10. Bölüm: Kelimeler & Büyük Şampiyonluk",
-                desc: "3 harfli kelimeleri doğru oku ve şampiyon ol!",
-                type: "words",
+                title: "10. Bölüm: Esre (Harfler)",
+                desc: "Harflerin esreli okunuşları (İ - I)",
                 badgeId: "badge_10",
+                badgeName: "💧 Esre Ustası",
+                items: [
+                    { id: 'e1', name: 'İ', imgSrc: '../esre1/esre1/1.jpg', audSrc: '../esre1/esre1/1.m4a' },
+                    { id: 'e2', name: 'Bi', imgSrc: '../esre1/esre1/2.jpg', audSrc: '../esre1/esre1/2.m4a' },
+                    { id: 'e3', name: 'Ti', imgSrc: '../esre1/esre1/3.jpg', audSrc: '../esre1/esre1/3.m4a' },
+                    { id: 'e4', name: 'Si', imgSrc: '../esre1/esre1/4.jpg', audSrc: '../esre1/esre1/4.m4a' },
+                    { id: 'e5', name: 'Ci', imgSrc: '../esre1/esre1/5.jpg', audSrc: '../esre1/esre1/5.m4a' },
+                    { id: 'e8', name: 'Di', imgSrc: '../esre1/esre1/8.jpg', audSrc: '../esre1/esre1/8.m4a' },
+                    { id: 'e10', name: 'Rı', imgSrc: '../esre1/esre1/10.jpg', audSrc: '../esre1/esre1/10.m4a' },
+                    { id: 'e23', name: 'Li', imgSrc: '../esre1/esre1/23.jpg', audSrc: '../esre1/esre1/23.m4a' }
+                ]
+            },
+            {
+                id: 11,
+                title: "11. Bölüm: Esreli Kelimeler",
+                desc: "Esre içeren kelimeleri doğru okuma",
+                badgeId: "badge_11",
+                badgeName: "💧 Esre Kelime Bilgini",
+                items: [
+                    { id: 'esre1', name: 'Esreli Kelime 1', imgSrc: '../esre/esre/esre1.png', audSrc: '../esre/esre/esre1.mp3' },
+                    { id: 'esre2', name: 'Esreli Kelime 2', imgSrc: '../esre/esre/esre2.png', audSrc: '../esre/esre/esre2.mp3' },
+                    { id: 'esre3', name: 'Esreli Kelime 3', imgSrc: '../esre/esre/esre3.png', audSrc: '../esre/esre/esre3.mp3' },
+                    { id: 'esre4', name: 'Esreli Kelime 4', imgSrc: '../esre/esre/esre4.png', audSrc: '../esre/esre/esre4.mp3' },
+                    { id: 'esre5', name: 'Esreli Kelime 5', imgSrc: '../esre/esre/esre5.png', audSrc: '../esre/esre/esre5.mp3' }
+                ]
+            },
+            {
+                id: 12,
+                title: "12. Bölüm: Ötre (Harfler)",
+                desc: "Harflerin ötreli okunuşları (Ü - U)",
+                badgeId: "badge_12",
+                badgeName: "🍩 Ötre Ustası",
+                items: [
+                    { id: 'o1', name: 'Ü', imgSrc: '../otre1/otre1/1.jpg', audSrc: '../otre1/otre1/1.m4a' },
+                    { id: 'o2', name: 'Bü', imgSrc: '../otre1/otre1/2.jpg', audSrc: '../otre1/otre1/2.m4a' },
+                    { id: 'o3', name: 'Tü', imgSrc: '../otre1/otre1/3.jpg', audSrc: '../otre1/otre1/3.m4a' },
+                    { id: 'o4', name: 'Sü', imgSrc: '../otre1/otre1/4.jpg', audSrc: '../otre1/otre1/4.m4a' },
+                    { id: 'o5', name: 'Cü', imgSrc: '../otre1/otre1/5.jpg', audSrc: '../otre1/otre1/5.m4a' },
+                    { id: 'o8', name: 'Dü', imgSrc: '../otre1/otre1/8.jpg', audSrc: '../otre1/otre1/8.m4a' },
+                    { id: 'o10', name: 'Ru', imgSrc: '../otre1/otre1/10.jpg', audSrc: '../otre1/otre1/10.m4a' },
+                    { id: 'o23', name: 'Lü', imgSrc: '../otre1/otre1/23.jpg', audSrc: '../otre1/otre1/23.m4a' }
+                ]
+            },
+            {
+                id: 13,
+                title: "13. Bölüm: Ötreli Kelimeler",
+                desc: "Ötre içeren kelimeleri doğru okuma",
+                badgeId: "badge_13",
+                badgeName: "🍩 Ötre Kelime Bilgini",
+                items: [
+                    { id: 'otre1', name: 'Ötreli Kelime 1', imgSrc: '../otre/otre/otre1.png', audSrc: '../otre/otre/otre1.mp3' },
+                    { id: 'otre2', name: 'Ötreli Kelime 2', imgSrc: '../otre/otre/otre2.png', audSrc: '../otre/otre/otre2.mp3' },
+                    { id: 'otre3', name: 'Ötreli Kelime 3', imgSrc: '../otre/otre/otre3.png', audSrc: '../otre/otre/otre3.mp3' },
+                    { id: 'otre4', name: 'Ötreli Kelime 4', imgSrc: '../otre/otre/otre4.png', audSrc: '../otre/otre/otre4.mp3' },
+                    { id: 'otre5', name: 'Ötreli Kelime 5', imgSrc: '../otre/otre/otre5.png', audSrc: '../otre/otre/otre5.mp3' }
+                ]
+            },
+            {
+                id: 14,
+                title: "14. Bölüm: Med Elif (Uzatma)",
+                desc: "Elif ile 1 elif miktarı uzatma",
+                badgeId: "badge_14",
+                badgeName: "🚀 Med Elif Ustası",
+                items: [
+                    { id: 'me1', name: 'Med Elif 1', imgSrc: '../medelif/medelif/medelif1.png', audSrc: '../medelif/medelif/medelif1.mp3' },
+                    { id: 'me2', name: 'Med Elif 2', imgSrc: '../medelif/medelif/medelif2.png', audSrc: '../medelif/medelif/medelif2.mp3' },
+                    { id: 'me3', name: 'Med Elif 3', imgSrc: '../medelif/medelif/medelif3.png', audSrc: '../medelif/medelif/medelif3.mp3' },
+                    { id: 'me4', name: 'Med Elif 4', imgSrc: '../medelif/medelif/medelif4.png', audSrc: '../medelif/medelif/medelif4.mp3' },
+                    { id: 'me5', name: 'Med Elif 5', imgSrc: '../medelif/medelif/medelif5.png', audSrc: '../medelif/medelif/medelif5.mp3' }
+                ]
+            },
+            {
+                id: 15,
+                title: "15. Bölüm: Med Vav & Med Ye",
+                desc: "Vav ve Ye harfleriyle ses uzatma",
+                badgeId: "badge_15",
+                badgeName: "🚗 Uzatma Ustası",
+                items: [
+                    { id: 'mv1', name: 'Med Vav 1', imgSrc: '../medvav/medvav/medvav1.png', audSrc: '../medvav/medvav/medvav1.mp3' },
+                    { id: 'mv2', name: 'Med Vav 2', imgSrc: '../medvav/medvav/medvav2.png', audSrc: '../medvav/medvav/medvav2.mp3' },
+                    { id: 'my1', name: 'Med Ye 1',  imgSrc: '../medye/medye/medye1.png',   audSrc: '../medye/medye/medye1.mp3' },
+                    { id: 'my2', name: 'Med Ye 2',  imgSrc: '../medye/medye/medye2.png',   audSrc: '../medye/medye/medye2.mp3' }
+                ]
+            },
+            {
+                id: 16,
+                title: "16. Bölüm: Cezm (Sükun)",
+                desc: "Harfleri tutturarak ve durarak okuma",
+                badgeId: "badge_16",
+                badgeName: "🔒 Cezm Muhafızı",
+                items: [
+                    { id: 'cz1', name: 'Cezm 1', imgSrc: '../cezm/cezm/cez1.png', audSrc: '../cezm/cezm/cez1.mp3' },
+                    { id: 'cz2', name: 'Cezm 2', imgSrc: '../cezm/cezm/cez2.png', audSrc: '../cezm/cezm/cez2.mp3' },
+                    { id: 'cz3', name: 'Cezm 3', imgSrc: '../cezm/cezm/cez3.png', audSrc: '../cezm/cezm/cez3.mp3' },
+                    { id: 'cz4', name: 'Cezm 4', imgSrc: '../cezm/cezm/cez4.png', audSrc: '../cezm/cezm/cez4.mp3' },
+                    { id: 'cz5', name: 'Cezm 5', imgSrc: '../cezm/cezm/cez5.png', audSrc: '../cezm/cezm/cez5.mp3' }
+                ]
+            },
+            {
+                id: 17,
+                title: "17. Bölüm: Şedde (İkileme)",
+                desc: "Harfi iki kere kuvvetlice okuma",
+                badgeId: "badge_17",
+                badgeName: "💥 Şedde Bükücü",
+                items: [
+                    { id: 'sd1', name: 'Şedde 1', imgSrc: '../sedde/sedde/cez16.png', audSrc: '../sedde/sedde/cez16.mp3' },
+                    { id: 'sd2', name: 'Şedde 2', imgSrc: '../sedde/sedde/cez17.png', audSrc: '../sedde/sedde/cez17.mp3' },
+                    { id: 'sd3', name: 'Şedde 3', imgSrc: '../sedde/sedde/cez18.png', audSrc: '../sedde/sedde/cez18.mp3' },
+                    { id: 'sd4', name: 'Şedde 4', imgSrc: '../sedde/sedde/cez19.png', audSrc: '../sedde/sedde/cez19.mp3' },
+                    { id: 'sd5', name: 'Şedde 5', imgSrc: '../sedde/sedde/cez20.png', audSrc: '../sedde/sedde/cez20.mp3' }
+                ]
+            },
+            {
+                id: 18,
+                title: "18. Bölüm: Tenvinler (En - İn - Ün)",
+                desc: "İki Üstün, İki Esre ve İki Ötre sesleri",
+                badgeId: "badge_18",
+                badgeName: "🌟 Tenvin Bilgini",
+                items: [
+                    { id: 'tu1', name: 'İki Üstün 1', imgSrc: '../ikiustun/ikiustun/ikiustun1.png', audSrc: '../ikiustun/ikiustun/ikiustun1.mp3' },
+                    { id: 'tu2', name: 'İki Üstün 2', imgSrc: '../ikiustun/ikiustun/ikiustun2.png', audSrc: '../ikiustun/ikiustun/ikiustun2.mp3' },
+                    { id: 'te1', name: 'İki Esre 1',  imgSrc: '../ikiesre/ikiesre/ikiesre1.png',   audSrc: '../ikiesre/ikiesre/ikiesre1.mp3' },
+                    { id: 'to1', name: 'İki Ötre 1',  imgSrc: '../ikiotre/ikiotre/ikiotre1.png',   audSrc: '../ikiotre/ikiotre/ikiotre1.mp3' }
+                ]
+            },
+            {
+                id: 19,
+                title: "19. Bölüm: 👑 Büyük Kur'an Şampiyonluğu Finali",
+                desc: "Tüm müfredattan karma şampiyonluk soruları!",
+                badgeId: "badge_19",
                 badgeName: "👑 Altın Elifba Şampiyonu",
                 items: [
-                    { id: 'darabe', name: 'Darabe' },
-                    { id: 'kesebe', name: 'Kesebe' },
-                    { id: 'nezele', name: 'Nezele' },
-                    { id: 'zehebe', name: 'Zehebe' },
-                    { id: 'vecede', name: 'Vecede' },
-                    { id: 'emera',  name: 'Emera' },
-                    { id: 'sadeka', name: 'Sadaka' }
+                    { id: 'f1', name: 'Elif',     imgSrc: '../harfler/harfler/1.png', audSrc: '../harfler/harfler/1.mp3' },
+                    { id: 'f2', name: 'Darabe',   imgSrc: '../ustun/ustun/darabe.png', audSrc: '../ustun/ustun/darabe.mp3' },
+                    { id: 'f3', name: 'Med Elif', imgSrc: '../medelif/medelif/medelif1.png', audSrc: '../medelif/medelif/medelif1.mp3' },
+                    { id: 'f4', name: 'Cezm',     imgSrc: '../cezm/cezm/cez1.png', audSrc: '../cezm/cezm/cez1.mp3' },
+                    { id: 'f5', name: 'Şedde',    imgSrc: '../sedde/sedde/cez16.png', audSrc: '../sedde/sedde/cez16.mp3' },
+                    { id: 'f6', name: 'Tenvin',   imgSrc: '../ikiustun/ikiustun/ikiustun1.png', audSrc: '../ikiustun/ikiustun/ikiustun1.mp3' }
                 ]
             }
         ];
 
-        // --- OYUNCU DURUMU & VERİLERİ (LOCALSTORAGE) ---
+// --- OYUNCU DURUMU & VERİLERİ (LOCALSTORAGE) ---
         let playerData = {
             name: "Öğrenci",
             unlockedStage: 1,
@@ -1337,50 +1456,33 @@
             const items = [...stage.items];
 
             for (let i = 0; i < 5; i++) {
-                // Rastgele hedef harf/kelime seç
                 const target = items[Math.floor(Math.random() * items.length)];
 
-                // 3 Adet Çeldirici Seç
-                let options = [{ ...target }];
+                // Çeldirici havuzu: Önce aynı aşamadan, yetmezse diğer aşamalardan
                 let distractorPool = [];
+                items.forEach(it => {
+                    if (it.id !== target.id) distractorPool.push({ ...it });
+                });
 
-                if (stage.type === 'letters') {
-                    // 1..29 harfler havuzundan farklı çeldiriciler
-                    for (let n = 1; n <= 29; n++) {
-                        const sid = String(n);
-                        if (sid !== String(target.id)) {
-                            distractorPool.push({ id: sid, name: allLetterDict[sid] || ('Harf ' + sid) });
-                        }
-                    }
-                } else if (stage.type === 'ustun') {
-                    for (let n = 1; n <= 28; n++) {
-                        if (n !== target.id) {
-                            distractorPool.push({ id: n, name: ustunDict[n] || ('Üstün ' + n) });
-                        }
-                    }
-                } else if (stage.type === 'esre_otre') {
-                    stage.items.forEach(it => {
-                        if (it.id !== target.id || it.folder !== target.folder) {
-                            distractorPool.push({ ...it });
-                        }
-                    });
-                } else if (stage.type === 'words') {
-                    stage.items.forEach(it => {
-                        if (it.id !== target.id) {
-                            distractorPool.push({ ...it });
-                        }
+                if (distractorPool.length < 3) {
+                    // Diğer aşamalardan rastgele öğeler ekle
+                    adventureStages.forEach(st => {
+                        st.items.forEach(it => {
+                            if (it.id !== target.id && !distractorPool.some(d => d.id === it.id)) {
+                                distractorPool.push({ ...it });
+                            }
+                        });
                     });
                 }
 
-                // Çeldiricileri karıştırıp 3 tane ekle
                 distractorPool.sort(() => Math.random() - 0.5);
+                let options = [{ ...target }];
                 for (let d = 0; d < 3 && d < distractorPool.length; d++) {
                     options.push(distractorPool[d]);
                 }
                 options.sort(() => Math.random() - 0.5);
 
                 currentQuestions.push({
-                    stageType: stage.type,
                     target: target,
                     options: options
                 });
@@ -1409,24 +1511,12 @@
                 card.className = 'option-choice-card';
 
                 const img = document.createElement('img');
+                img.src = opt.imgSrc;
+                img.alt = opt.name;
+
                 const nameLabel = document.createElement('div');
                 nameLabel.className = 'opt-name';
-
-                // DOĞRU VE EKSİKSİZ GÖRSEL YOLLARI
-                if (q.stageType === 'letters') {
-                    img.src = `../harfler/harfler/${opt.id}.png`;
-                    nameLabel.textContent = opt.name || allLetterDict[opt.id] || opt.id;
-                } else if (q.stageType === 'ustun') {
-                    img.src = `../ustun1/ustun1/${opt.id}.jpg`;
-                    nameLabel.textContent = opt.name || ustunDict[opt.id] || `Harf ${opt.id}`;
-                } else if (q.stageType === 'esre_otre') {
-                    const folder = opt.folder || 'esre1';
-                    img.src = `../${folder}/${folder}/${opt.id}.jpg`;
-                    nameLabel.textContent = opt.name;
-                } else if (q.stageType === 'words') {
-                    img.src = `../ustun/ustun/${opt.id}.png`;
-                    nameLabel.textContent = opt.name;
-                }
+                nameLabel.textContent = opt.name;
 
                 img.onerror = function() {
                     console.warn("Görsel yüklenemedi:", this.src);
@@ -1453,20 +1543,7 @@
 
             audioPlayer.pause();
             audioPlayer.currentTime = 0;
-
-            let audioSrc = '';
-            if (q.stageType === 'letters') {
-                audioSrc = `../harfler/harfler/${q.target.id}.mp3`;
-            } else if (q.stageType === 'ustun') {
-                audioSrc = `../ustun1/ustun1/${q.target.id}.m4a`;
-            } else if (q.stageType === 'esre_otre') {
-                const soundFolder = q.target.soundFolder || q.target.folder || 'esre1';
-                audioSrc = `../${soundFolder}/${soundFolder}/${q.target.id}.m4a`;
-            } else if (q.stageType === 'words') {
-                audioSrc = `../ustun/ustun/${q.target.id}.mp3`;
-            }
-
-            audioPlayer.src = audioSrc;
+            audioPlayer.src = q.target.audSrc;
             audioPlayer.load();
 
             const p = audioPlayer.play();
@@ -1479,13 +1556,7 @@
 
         // Seçeneğe Tıklandığında Kontrol
         function onSelectOption(cardEl, selectedOpt, q) {
-            let isCorrect = false;
-
-            if (q.stageType === 'esre_otre') {
-                isCorrect = (String(selectedOpt.id) === String(q.target.id)) && (selectedOpt.folder === q.target.folder);
-            } else {
-                isCorrect = (String(selectedOpt.id) === String(q.target.id));
-            }
+            let isCorrect = (String(selectedOpt.id) === String(q.target.id));
 
             if (isCorrect) {
                 cardEl.classList.add('correct');
@@ -1540,7 +1611,7 @@
             }
 
             // Sıradaki aşamayı aç
-            if (playerData.unlockedStage === currentStageId && currentStageId < 10) {
+            if (playerData.unlockedStage === currentStageId && currentStageId < 19) {
                 playerData.unlockedStage = currentStageId + 1;
             }
 
@@ -1569,7 +1640,7 @@
             document.getElementById('victory-score-text').textContent = `Kazanılan Puan: +${currentStageScore} | Yeni Etiket: ${stage.badgeName}`;
 
             const nextBtn = document.getElementById('btn-next-stage');
-            if (currentStageId >= 10) {
+            if (currentStageId >= 19) {
                 nextBtn.innerHTML = '<span>🎓</span> <span>Şampiyonluk Sertifikasını Aç!</span>';
                 nextBtn.onclick = () => {
                     closeVictoryModal();
@@ -1585,7 +1656,7 @@
 
         function proceedToNextStage() {
             closeVictoryModal();
-            if (currentStageId < 10) {
+            if (currentStageId < 19) {
                 startStage(currentStageId + 1);
             } else {
                 backToMap();

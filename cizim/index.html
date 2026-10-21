@@ -448,7 +448,39 @@
             { id: 4, name: '4. Bölüm', label: 'Şın - Tı', items: [13, 14, 15, 16] },
             { id: 5, name: '5. Bölüm', label: 'Zı - Fe', items: [17, 18, 19, 20] },
             { id: 6, name: '6. Bölüm', label: 'Kaf - Mim', items: [21, 22, 23, 24] },
-            { id: 7, name: '7. Bölüm', label: 'Nun - Ye', items: [25, 26, 27, 28, 29] }
+            { id: 7, name: '7. Bölüm', label: 'Nun - Ye', items: [25, 26, 27, 28, 29] },
+            { id: 'ustun', name: '🎈 Üstün', label: 'E - A', isCustom: true, items: [
+                { id: 'u1', name: 'E', imgSrc: '../ustun1/ustun1/1.jpg', audSrc: '../ustun1/ustun1/1.m4a' },
+                { id: 'u2', name: 'Be', imgSrc: '../ustun1/ustun1/2.jpg', audSrc: '../ustun1/ustun1/2.m4a' },
+                { id: 'u3', name: 'Te', imgSrc: '../ustun1/ustun1/3.jpg', audSrc: '../ustun1/ustun1/3.m4a' },
+                { id: 'u4', name: 'Se', imgSrc: '../ustun1/ustun1/4.jpg', audSrc: '../ustun1/ustun1/4.m4a' },
+                { id: 'u5', name: 'Ce', imgSrc: '../ustun1/ustun1/5.jpg', audSrc: '../ustun1/ustun1/5.m4a' },
+                { id: 'u8', name: 'De', imgSrc: '../ustun1/ustun1/8.jpg', audSrc: '../ustun1/ustun1/8.m4a' }
+            ]},
+            { id: 'esre', name: '💧 Esre', label: 'İ - I', isCustom: true, items: [
+                { id: 'e1', name: 'İ', imgSrc: '../esre1/esre1/1.jpg', audSrc: '../esre1/esre1/1.m4a' },
+                { id: 'e2', name: 'Bi', imgSrc: '../esre1/esre1/2.jpg', audSrc: '../esre1/esre1/2.m4a' },
+                { id: 'e3', name: 'Ti', imgSrc: '../esre1/esre1/3.jpg', audSrc: '../esre1/esre1/3.m4a' },
+                { id: 'e4', name: 'Si', imgSrc: '../esre1/esre1/4.jpg', audSrc: '../esre1/esre1/4.m4a' }
+            ]},
+            { id: 'otre', name: '🍩 Ötre', label: 'Ü - U', isCustom: true, items: [
+                { id: 'o1', name: 'Ü', imgSrc: '../otre1/otre1/1.jpg', audSrc: '../otre1/otre1/1.m4a' },
+                { id: 'o2', name: 'Bü', imgSrc: '../otre1/otre1/2.jpg', audSrc: '../otre1/otre1/2.m4a' },
+                { id: 'o3', name: 'Tü', imgSrc: '../otre1/otre1/3.jpg', audSrc: '../otre1/otre1/3.m4a' }
+            ]},
+            { id: 'cezm', name: '🔒 Cezm', label: 'Sükun', isCustom: true, items: [
+                { id: 'cz1', name: 'Cezm 1', imgSrc: '../cezm/cezm/cez1.png', audSrc: '../cezm/cezm/cez1.mp3' },
+                { id: 'cz2', name: 'Cezm 2', imgSrc: '../cezm/cezm/cez2.png', audSrc: '../cezm/cezm/cez2.mp3' }
+            ]},
+            { id: 'sedde', name: '💥 Şedde', label: 'İkileme', isCustom: true, items: [
+                { id: 'sd1', name: 'Şedde 1', imgSrc: '../sedde/sedde/cez16.png', audSrc: '../sedde/sedde/cez16.mp3' },
+                { id: 'sd2', name: 'Şedde 2', imgSrc: '../sedde/sedde/cez17.png', audSrc: '../sedde/sedde/cez17.mp3' }
+            ]},
+            { id: 'tenvin', name: '🌟 Tenvin', label: 'En-İn-Ün', isCustom: true, items: [
+                { id: 'tu1', name: 'İki Üstün 1', imgSrc: '../ikiustun/ikiustun/ikiustun1.png', audSrc: '../ikiustun/ikiustun/ikiustun1.mp3' },
+                { id: 'te1', name: 'İki Esre 1',  imgSrc: '../ikiesre/ikiesre/ikiesre1.png',   audSrc: '../ikiesre/ikiesre/ikiesre1.mp3' },
+                { id: 'to1', name: 'İki Ötre 1',  imgSrc: '../ikiotre/ikiotre/ikiotre1.png',   audSrc: '../ikiotre/ikiotre/ikiotre1.mp3' }
+            ]}
         ];
 
         let currentSectionId = 1;
@@ -498,11 +530,18 @@
             currentSectionId = secId;
             document.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
             if (secId === 'all') {
-                activePool = lettersData.map(l => l.id);
+                activePool = lettersData.map(l => ({ ...l, imgSrc: `../harfler/harfler/${l.id}.png`, audSrc: `../harfler/harfler/${l.id}.mp3` }));
                 document.querySelector('.sec-btn:first-child').classList.add('active');
             } else {
                 const sec = sections.find(s => s.id === secId);
-                activePool = [...sec.items];
+                if (sec.isCustom) {
+                    activePool = [...sec.items];
+                } else {
+                    activePool = sec.items.map(id => {
+                        const l = lettersData.find(x => x.id === id);
+                        return { ...l, imgSrc: `../harfler/harfler/${l.id}.png`, audSrc: `../harfler/harfler/${l.id}.mp3` };
+                    });
+                }
                 const btn = Array.from(document.querySelectorAll('.sec-btn')).find(b => b.textContent.includes(sec.name));
                 if (btn) btn.classList.add('active');
             }
@@ -512,17 +551,19 @@
 
         function loadCurrentLetter() {
             clearCanvas();
-            const letterId = activePool[currentIndex];
-            const letter = lettersData.find(l => l.id === letterId);
-            document.getElementById('letter-name').textContent = letter.name;
-            guideImg.src = `../harfler/harfler/${letter.id}.png`;
+            const cur = activePool[currentIndex];
+            const name = (typeof cur === 'object') ? cur.name : (lettersData.find(l => l.id === cur) || {}).name;
+            const imgSrc = (typeof cur === 'object' && cur.imgSrc) ? cur.imgSrc : `../harfler/harfler/${cur.id || cur}.png`;
+            document.getElementById('letter-name').textContent = name;
+            guideImg.src = imgSrc;
             playLetterSound();
             hasDrawn = false;
         }
 
         function playLetterSound() {
-            const letterId = activePool[currentIndex];
-            audioPlayer.src = `../harfler/harfler/${letterId}.mp3`;
+            const cur = activePool[currentIndex];
+            const audSrc = (typeof cur === 'object' && cur.audSrc) ? cur.audSrc : `../harfler/harfler/${cur.id || cur}.mp3`;
+            audioPlayer.src = audSrc;
             audioPlayer.play().catch(() => {});
         }
 

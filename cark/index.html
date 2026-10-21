@@ -254,8 +254,9 @@
 
     <!-- Mod Seçimi -->
     <div class="mode-row">
-        <button class="mode-btn active" id="btn-mode-sec" onclick="setWheelMode('sections')">📚 Bölüm Çarkı (7 Bölüm)</button>
-        <button class="mode-btn" id="btn-mode-let" onclick="setWheelMode('letters')">🅰️ Sürpriz Harf Çarkı</button>
+        <button class="mode-btn active" id="btn-mode-sec" onclick="setWheelMode('sections')">📚 Harf Bölümleri</button>
+        <button class="mode-btn" id="btn-mode-let" onclick="setWheelMode('letters')">🅰️ Harfler Çarkı</button>
+        <button class="mode-btn" id="btn-mode-topics" onclick="setWheelMode('topics')">🌈 Harekeler & Konular</button>
     </div>
 
     <!-- Çark Sahnesi -->
@@ -301,6 +302,18 @@
             { id: 17, name: 'Peltek Zı' }, { id: 18, name: 'Ayn' }, { id: 19, name: 'Gayn' }, { id: 20, name: 'Fe' },
             { id: 21, name: 'Kaf' }, { id: 22, name: 'Kef' }, { id: 23, name: 'Lam' }, { id: 24, name: 'Mim' },
             { id: 25, name: 'Nun' }, { id: 26, name: 'Vav' }, { id: 27, name: 'He' }, { id: 28, name: 'Lâmelif' }, { id: 29, name: 'Ye' }
+        ];
+
+        
+        const topicsData = [
+            { title: 'Üstün', sub: 'E - A Sesi', link: '../ustun1/index.html', imgSrc: '../ustun1/ustun1/1.jpg', audSrc: '../ustun1/ustun1/1.m4a', name: 'Üstün Harekeleri' },
+            { title: 'Esre', sub: 'İ - I Sesi', link: '../esre1/index.html', imgSrc: '../esre1/esre1/1.jpg', audSrc: '../esre1/esre1/1.m4a', name: 'Esre Harekeleri' },
+            { title: 'Ötre', sub: 'Ü - U Sesi', link: '../otre1/index.html', imgSrc: '../otre1/otre1/1.jpg', audSrc: '../otre1/otre1/1.m4a', name: 'Ötre Harekeleri' },
+            { title: 'Med Elif', sub: 'Uzatma', link: '../medelif/index.html', imgSrc: '../medelif/medelif/medelif1.png', audSrc: '../medelif/medelif/medelif1.mp3', name: 'Med Elif Harfi' },
+            { title: 'Cezm', sub: 'Sükun', link: '../cezm/index.html', imgSrc: '../cezm/cezm/cez1.png', audSrc: '../cezm/cezm/cez1.mp3', name: 'Cezm (Sükun)' },
+            { title: 'Şedde', sub: 'İkileme', link: '../sedde/index.html', imgSrc: '../sedde/sedde/cez16.png', audSrc: '../sedde/sedde/cez16.mp3', name: 'Şedde (İkileme)' },
+            { title: 'Tenvin', sub: 'En-İn-Ün', link: '../ikiustun/index.html', imgSrc: '../ikiustun/ikiustun/ikiustun1.png', audSrc: '../ikiustun/ikiustun/ikiustun1.mp3', name: 'Tenvinler' },
+            { title: 'Macera', sub: '19 Aşama', link: '../macera/index.html', imgSrc: '../harfler/harfler/1.png', audSrc: '../harfler/harfler/1.mp3', name: 'Büyük Elifba Macerası' }
         ];
 
         const sectionsData = [
