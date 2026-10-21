@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎡 Şans Çarkı - Elifba Çarkıfelek</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+    <script src="confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #f59e0b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fef9c3 100%);
+            margin: 0;
+            padding: 15px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            user-select: none;
+            color: #78350f;
+        }
+
+        /* Üst Menü */
+        .top-nav {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .home-btn {
+            background: white;
+            border: 2px solid #cbd5e1;
+            padding: 8px 18px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #334155;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .home-btn:hover { background: #f8fafc; transform: translateY(-2px); }
+
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            color: #b45309;
+            margin: 0;
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 0 #fff;
+        }
+
+        /* Çark Sahnesi */
+        .wheel-stage {
+            position: relative;
+            width: 380px;
+            height: 380px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Dış Altın Halka */
+        .wheel-outer-ring {
+            position: absolute;
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+            border: 12px solid #f59e0b;
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.35), inset 0 2px 10px rgba(0,0,0,0.2);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Çark İbresi (Üstteki Ok) */
+        .wheel-pointer {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 38px;
+            z-index: 25;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+
+        /* Dönen Çark Canvas */
+        #wheelCanvas {
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.05s linear;
+        }
+
+        /* Merkez Döndür Butonu */
+        .spin-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 82px;
+            height: 82px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+            color: white;
+            border: 4px solid white;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(239, 68, 68, 0.4);
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .spin-btn:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: linear-gradient(135deg, #f87171, #dc2626);
+        }
+        .spin-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Çark Modu Seçimi */
+        .mode-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .mode-btn {
+            background: white;
+            border: 2px solid #fde68a;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: #92400e;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mode-btn.active {
+            background: #f59e0b;
+            color: white;
+            border-color: #d97706;
+        }
+
+        /* Kazanan Harf Pop-up Modalı */
+        .winner-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .winner-card {
+            background: white;
+            padding: 30px 25px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 440px;
+            width: 100%;
+            border: 4px solid #f59e0b;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+            animation: popUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes popUp { from { transform: scale(0.7); } to { transform: scale(1); } }
+
+        .winner-img {
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            background: #fffbeb;
+            border: 3px dashed #f59e0b;
+            border-radius: 50%;
+            padding: 10px;
+            margin: 10px auto;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.2);
+            animation: pulseGlow 1s infinite alternate;
+        }
+        @keyframes pulseGlow {
+            from { transform: scale(1); }
+            to { transform: scale(1.08); }
+        }
+
+        .winner-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-link-btn {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            color: white;
+        }
+        .action-link-btn:hover { transform: translateY(-2px); }
+
+        .btn-balloon { background: linear-gradient(135deg, #0284c7, #0369a1); }
+        .btn-draw    { background: linear-gradient(135deg, #10b981, #059669); }
+        .btn-close   { background: #f1f5f9; color: #475569; border: 1.5px solid #cbd5e1; }
+
+        @media (max-width: 500px) {
+            .wheel-stage { width: 310px; height: 310px; }
+            .wheel-outer-ring { width: 310px; height: 310px; }
+            #wheelCanvas { width: 290px; height: 290px; }
+            .spin-btn { width: 68px; height: 68px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <a href="../index.html" class="home-btn">🏠 Menü</a>
+        <h1>🎡 Şans Çarkı</h1>
+        <div></div>
+    </div>
+
+    <!-- Mod Seçimi -->
+    <div class="mode-row">
+        <button class="mode-btn active" id="btn-mode-sec" onclick="setWheelMode('sections')">📚 Bölüm Çarkı (7 Bölüm)</button>
+        <button class="mode-btn" id="btn-mode-let" onclick="setWheelMode('letters')">🅰️ Sürpriz Harf Çarkı</button>
+    </div>
+
+    <!-- Çark Sahnesi -->
+    <div class="wheel-stage">
+        <!-- Üst Ok İbre -->
+        <svg class="wheel-pointer" viewBox="0 0 40 50">
+            <polygon points="20,50 5,5 35,5" fill="#ef4444" stroke="#ffffff" stroke-width="3"/>
+            <circle cx="20" cy="15" r="5" fill="#fde047"/>
+        </svg>
+
+        <div class="wheel-outer-ring"></div>
+        <canvas id="wheelCanvas" width="360" height="360"></canvas>
+        <button class="spin-btn" id="spin-btn" onclick="spinWheel()">ÇEVİR!</button>
+    </div>
+
+    <p style="text-align: center; font-weight: 700; color: #92400e; margin-top: 5px;">
+        Ortadaki kırmızı butona bas ve günün şanslı harfini belirle! 🌟
+    </p>
+
+    <!-- Kazanan Harf Pop-up Modalı -->
+    <div class="winner-modal" id="winner-modal" style="display: none;">
+        <div class="winner-card">
+            <h2 style="color: #b45309; margin: 0 0 5px;" id="win-title">🎉 Şanslı Harfin Geldi!</h2>
+            <div style="font-size: 1.4rem; font-family: 'Fredoka One', cursive; color: #0284c7;" id="win-name">Elif</div>
+            <img class="winner-img" id="win-img" src="../harfler/harfler/1.png" alt="Harf">
+            
+            <div class="winner-actions">
+                <a href="../balonlar/index.html" class="action-link-btn btn-balloon">🎈 Balon Patlatma Oyununda Oyna</a>
+                <a href="../cizim/index.html" class="action-link-btn btn-draw">✍️ Çizim Modunda Bu Harfi Yaz</a>
+                <button class="action-link-btn btn-close" onclick="closeWinnerModal()">🔄 Çarkı Tekrar Çevir</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="audio-player"></audio>
+
+    <script>
+        const lettersData = [
+            { id: 1, name: 'Elif' }, { id: 2, name: 'Be' }, { id: 3, name: 'Te' }, { id: 4, name: 'Peltek Se' },
+            { id: 5, name: 'Cim' }, { id: 6, name: 'Ha' }, { id: 7, name: 'Hı' }, { id: 8, name: 'Dal' },
+            { id: 9, name: 'Peltek Zel' }, { id: 10, name: 'Ra' }, { id: 11, name: 'Ze' }, { id: 12, name: 'Sin' },
+            { id: 13, name: 'Şın' }, { id: 14, name: 'Sad' }, { id: 15, name: 'Dad' }, { id: 16, name: 'Tı' },
+            { id: 17, name: 'Peltek Zı' }, { id: 18, name: 'Ayn' }, { id: 19, name: 'Gayn' }, { id: 20, name: 'Fe' },
+            { id: 21, name: 'Kaf' }, { id: 22, name: 'Kef' }, { id: 23, name: 'Lam' }, { id: 24, name: 'Mim' },
+            { id: 25, name: 'Nun' }, { id: 26, name: 'Vav' }, { id: 27, name: 'He' }, { id: 28, name: 'Lâmelif' }, { id: 29, name: 'Ye' }
+        ];
+
+        const sectionsData = [
+            { id: 1, label: '1. Bölüm', sub: 'Elif - Se', letterId: 1, name: 'Elif' },
+            { id: 2, label: '2. Bölüm', sub: 'Cim - Dal', letterId: 5, name: 'Cim' },
+            { id: 3, label: '3. Bölüm', sub: 'Zel - Sin', letterId: 9, name: 'Peltek Zel' },
+            { id: 4, label: '4. Bölüm', sub: 'Şın - Tı', letterId: 13, name: 'Şın' },
+            { id: 5, label: '5. Bölüm', sub: 'Zı - Fe', letterId: 17, name: 'Peltek Zı' },
+            { id: 6, label: '6. Bölüm', sub: 'Kaf - Mim', letterId: 21, name: 'Kaf' },
+            { id: 7, label: '7. Bölüm', sub: 'Nun - Ye', letterId: 25, name: 'Nun' }
+        ];
+
+        let wheelMode = 'sections'; // 'sections' veya 'letters'
+        let segments = [];
+        let currentRotation = 0;
+        let isSpinning = false;
+
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+        const spinBtn = document.getElementById('spin-btn');
+        const audioPlayer = document.getElementById('audio-player');
+
+        const sliceColors = [
+            '#ef4444', '#f97316', '#f59e0b', '#10b981', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899'
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setWheelMode('sections');
+        });
+
+        function setWheelMode(mode) {
+            wheelMode = mode;
+            document.getElementById('btn-mode-sec').classList.toggle('active', mode === 'sections');
+            document.getElementById('btn-mode-let').classList.toggle('active', mode === 'letters');
+
+            if (mode === 'sections') {
+                segments = sectionsData.map((s, idx) => ({
+                    title: s.label,
+                    sub: s.sub,
+                    letterId: s.letterId,
+                    name: s.name,
+                    color: sliceColors[idx % sliceColors.length]
+                }));
+            } else {
+                // Rastgele 8 harf seç
+                const shuffled = [...lettersData].sort(() => Math.random() - 0.5).slice(0, 8);
+                segments = shuffled.map((l, idx) => ({
+                    title: l.name,
+                    sub: '',
+                    letterId: l.id,
+                    name: l.name,
+                    color: sliceColors[idx % sliceColors.length]
+                }));
+            }
+
+            drawWheel(0);
+        }
+
+        function drawWheel(rotationAngle) {
+            const numSlices = segments.length;
+            const sliceAngle = (2 * Math.PI) / numSlices;
+            const center = canvas.width / 2;
+            const radius = center - 8;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(center, center);
+            ctx.rotate(rotationAngle);
+
+            for (let i = 0; i < numSlices; i++) {
+                const startA = i * sliceAngle;
+                const endA = startA + sliceAngle;
+                const seg = segments[i];
+
+                // Dilim
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, radius, startA, endA);
+                ctx.fillStyle = seg.color;
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Dilim İçi Metin
+                ctx.save();
+                ctx.rotate(startA + sliceAngle / 2);
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 15px Quicksand, sans-serif';
+                ctx.shadowColor = 'rgba(0,0,0,0.4)';
+                ctx.shadowBlur = 4;
+                ctx.fillText(seg.title, radius - 22, 5);
+
+                if (seg.sub) {
+                    ctx.font = 'bold 11px Quicksand, sans-serif';
+                    ctx.fillText(seg.sub, radius - 22, 22);
+                }
+                ctx.restore();
+            }
+
+            ctx.restore();
+        }
+
+        function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+            spinBtn.disabled = true;
+
+            const numSlices = segments.length;
+            const sliceAngle = (2 * Math.PI) / numSlices;
+
+            // Rastgele bir dilim seç
+            const winnerIdx = Math.floor(Math.random() * numSlices);
+            
+            // Ok üstte duruyor (açı: 3 * Math.PI / 2 veya -Math.PI / 2)
+            // Çark dönecek: 4-6 tam tur + kazanan dilimin tam ortaya gelmesi
+            const fullSpins = Math.floor(Math.random() * 3 + 5) * 2 * Math.PI;
+            const targetSliceCenter = winnerIdx * sliceAngle + sliceAngle / 2;
+            const finalAngle = fullSpins + ((3 * Math.PI / 2) - targetSliceCenter);
+
+            const duration = 4000;
+            const startTime = performance.now();
+            const startRot = currentRotation % (2 * Math.PI);
+            let lastTickSlice = -1;
+
+            function animate(time) {
+                const elapsed = time - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                // Easing out cubic: 1 - pow(1 - progress, 3)
+                const ease = 1 - Math.pow(1 - progress, 3);
+                currentRotation = startRot + (finalAngle - startRot) * ease;
+
+                drawWheel(currentRotation);
+
+                // Tik sesi efekti
+                const curSlice = Math.floor(((currentRotation % (2 * Math.PI)) / sliceAngle));
+                if (curSlice !== lastTickSlice) {
+                    playTickSound();
+                    lastTickSlice = curSlice;
+                }
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    isSpinning = false;
+                    spinBtn.disabled = false;
+                    onSpinComplete(segments[winnerIdx]);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function onSpinComplete(winner) {
+            playFanfareSound();
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 70, spread: 75, origin: { y: 0.5 } });
+            }
+
+            document.getElementById('win-name').textContent = winner.name;
+            document.getElementById('win-img').src = `../harfler/harfler/${winner.letterId}.png`;
+
+            // Harfin sesini çal
+            audioPlayer.src = `../harfler/harfler/${winner.letterId}.mp3`;
+            audioPlayer.play().catch(() => {});
+
+            document.getElementById('winner-modal').style.display = 'flex';
+        }
+
+        function closeWinnerModal() {
+            document.getElementById('winner-modal').style.display = 'none';
+        }
+
+        // Web Audio Efektleri
+        function playTickSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                if (ctx.state === 'suspended') ctx.resume();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.04);
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.04);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.05);
+            } catch(e) {}
+        }
+
+        function playFanfareSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                if (ctx.state === 'suspended') ctx.resume();
+                [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(f, ctx.currentTime + i * 0.1);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.1 + 0.35);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + i * 0.1);
+                    osc.stop(ctx.currentTime + i * 0.1 + 0.36);
+                });
+            } catch(e) {}
+        }
+    </script>
+</body>
+</html>

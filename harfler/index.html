@@ -4,7 +4,273 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kur'an Harfleri - Bölüm Bölüm Öğren ve Çalış</title>
-    <script src="confetti.browser.min.js"></script>
+    <script src="confetti.browser.min.js">
+        /* --- YILDIZ & BAŞARI DOLABI YÖNETİMİ --- */
+        function getGlobalStars() {
+            return parseInt(localStorage.getItem('elifbam_total_stars') || '0', 10);
+        }
+
+        function addGlobalStars(amount) {
+            let stars = getGlobalStars() + amount;
+            localStorage.setItem('elifbam_total_stars', stars);
+            updateTopStarBadge();
+            return stars;
+        }
+
+        function updateTopStarBadge() {
+            const el = document.getElementById('top-star-count');
+            if (el) el.textContent = getGlobalStars();
+        }
+
+        // --- SEVİMLİ MASKOT HÜDHÜD ---
+        const mascotQuotes = [
+            "Kur'an harflerini öğrenmek çok kıymetli ve çok eğlenceli! 🌟",
+            "Her harfi öğrendiğinde minik kalbine bir nur doğar! 🕊️",
+            "Takıldığın bir harf olursa çekinme, 'Dinle' butonuna bas! 🎧",
+            "Mikrofonla kendi sesini kaydettin mi? Kendi sesini dinlemek harika! 🎙️",
+            "Üst üste doğru cevaplarla seri hedefini tamamlayabilirsin! 🔥",
+            "Seninle çalışmak çok güzel! Haydi bir sonraki harfe bakalım! 🐥",
+            "Maşallah sana! Harfleri çok güzel öğreniyorsun! ✨"
+        ];
+
+        function mascotRandomQuote() {
+            playChirpSound(1.2);
+            const q = mascotQuotes[Math.floor(Math.random() * mascotQuotes.length)];
+            mascotSpeak(q);
+        }
+
+        function mascotSpeak(text) {
+            const bubble = document.getElementById('hudhud-bubble');
+            const bubbleText = document.getElementById('hudhud-bubble-text');
+            if (!bubble || !bubbleText) return;
+            bubbleText.textContent = text;
+            bubble.classList.add('show');
+            if (window.mascotBubbleTimeout) clearTimeout(window.mascotBubbleTimeout);
+            window.mascotBubbleTimeout = setTimeout(() => {
+                bubble.classList.remove('show');
+            }, 4500);
+        }
+
+        function playChirpSound(pitch = 1) {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                if (ctx.state === 'suspended') ctx.resume();
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600 * pitch, now);
+                osc.frequency.exponentialRampToValueAtTime(1200 * pitch, now + 0.08);
+                osc.frequency.exponentialRampToValueAtTime(800 * pitch, now + 0.18);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.22);
+            } catch(e) {}
+        }
+
+        // --- MİKROFON SES KAYIT VE AYNA STÜDYOSU ---
+        let voiceStudioLetterId = '1';
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let recordedAudioUrl = null;
+        let recordingTimerInterval = null;
+        let recordingSeconds = 0;
+
+        function openVoiceStudio() {
+            const activeIds = Array.from(selectedLetterIds);
+            const firstId = activeIds.length > 0 ? activeIds[0] : '1';
+            openVoiceStudioForLetter(firstId);
+        }
+
+        function openVoiceStudioForLetter(letterId) {
+            voiceStudioLetterId = String(letterId);
+            updateVoiceStudioCard();
+            document.getElementById('voice-modal').style.display = 'flex';
+            updateVoiceStatus('Hocayı dinledikten sonra kırmızı mikrofon butonuna bas ve harfi söyle!');
+            mascotSpeak('Hadi bakalım, mikrofon sende! Harfi hocadan dinleyip tekrar et! 🎙️');
+        }
+
+        function closeVoiceStudio() {
+            stopChildRecording();
+            document.getElementById('voice-modal').style.display = 'none';
+        }
+
+        function updateVoiceStudioCard() {
+            const info = lettersData.find(l => l.id === voiceStudioLetterId);
+            const imgEl = document.getElementById('voice-letter-img');
+            const nameEl = document.getElementById('voice-letter-name');
+            if (imgEl) imgEl.src = 'harfler/' + voiceStudioLetterId + '.png';
+            if (nameEl) nameEl.textContent = info ? (info.id + '. ' + info.name) : voiceStudioLetterId;
+
+            // Reset playback & award
+            const playBtn = document.getElementById('btn-play-child');
+            if (playBtn) playBtn.disabled = true;
+
+            const awardBtn = document.getElementById('btn-voice-award');
+            if (awardBtn) {
+                awardBtn.disabled = false;
+                awardBtn.innerHTML = '<span class="act-icon">⭐</span> <span>Harika Telaffuz Ettim! (+5 Yıldız)</span>';
+            }
+        }
+
+        function voicePrevLetter() {
+            stopChildRecording();
+            const list = Array.from(selectedLetterIds).sort((a,b) => parseInt(a) - parseInt(b));
+            let idx = list.indexOf(voiceStudioLetterId);
+            if (idx === -1) idx = 0;
+            idx = (idx - 1 + list.length) % list.length;
+            voiceStudioLetterId = list[idx];
+            updateVoiceStudioCard();
+        }
+
+        function voiceNextLetter() {
+            stopChildRecording();
+            const list = Array.from(selectedLetterIds).sort((a,b) => parseInt(a) - parseInt(b));
+            let idx = list.indexOf(voiceStudioLetterId);
+            if (idx === -1) idx = 0;
+            idx = (idx + 1) % list.length;
+            voiceStudioLetterId = list[idx];
+            updateVoiceStudioCard();
+        }
+
+        function playTeacherVoice() {
+            audioPlayer.pause();
+            audioPlayer.src = 'harfler/' + voiceStudioLetterId + '.mp3';
+            audioPlayer.play().catch(e => console.log('Ses hatası:', e));
+            updateVoiceStatus('🔊 Hoca telaffuzu çalınıyor... Dikkatlice dinle!');
+        }
+
+        async function toggleChildRecording() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                stopChildRecording();
+            } else {
+                startChildRecording();
+            }
+        }
+
+        async function startChildRecording() {
+            try {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    alert('Tarayıcınız mikrofon kaydını desteklemiyor veya izin verilmedi.');
+                    return;
+                }
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioChunks = [];
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) audioChunks.push(e.data);
+                };
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                    if (recordedAudioUrl) URL.revokeObjectURL(recordedAudioUrl);
+                    recordedAudioUrl = URL.createObjectURL(blob);
+
+                    const playBtn = document.getElementById('btn-play-child');
+                    if (playBtn) playBtn.disabled = false;
+
+                    updateVoiceStatus('Harika! Şimdi "3. Kendi Sesini Dinle" butonuna bas ve telaffuzunu kontrol et!');
+                    mascotSpeak('Süper bir kayıt oldu! Haydi kendi sesini dinle! 🎧');
+                };
+
+                mediaRecorder.start();
+                recordingSeconds = 0;
+                setRecordingStateUI(true);
+                updateVoiceStatus('🔴 Sesin kaydediliyor... Harfi açık ve net bir şekilde söyle!');
+
+                recordingTimerInterval = setInterval(() => {
+                    recordingSeconds++;
+                    updateRecordingTimerUI();
+                    if (recordingSeconds >= 8) {
+                        stopChildRecording();
+                    }
+                }, 1000);
+            } catch (err) {
+                console.error('Mikrofon erişim hatası:', err);
+                alert('Mikrofona erişilemedi. Lütfen tarayıcı ayarlarından mikrofon iznini onaylayın.');
+                setRecordingStateUI(false);
+            }
+        }
+
+        function stopChildRecording() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(t => t.stop());
+            }
+            if (recordingTimerInterval) {
+                clearInterval(recordingTimerInterval);
+                recordingTimerInterval = null;
+            }
+            setRecordingStateUI(false);
+        }
+
+        function setRecordingStateUI(isRecording) {
+            const btn = document.getElementById('btn-mic-record');
+            const icon = document.getElementById('mic-rec-icon');
+            const label = document.getElementById('mic-rec-label');
+            const timer = document.getElementById('mic-rec-timer');
+
+            if (!btn) return;
+
+            if (isRecording) {
+                btn.classList.add('recording');
+                icon.textContent = '⏹️';
+                label.textContent = 'Kaydı Durdur';
+                if (timer) {
+                    timer.style.display = 'inline-block';
+                    timer.textContent = '0:00';
+                }
+            } else {
+                btn.classList.remove('recording');
+                icon.textContent = '🎙️';
+                label.textContent = '2. Kendi Sesini Kaydet';
+                if (timer) timer.style.display = 'none';
+            }
+        }
+
+        function updateRecordingTimerUI() {
+            const timer = document.getElementById('mic-rec-timer');
+            if (timer) {
+                const s = recordingSeconds < 10 ? ('0' + recordingSeconds) : recordingSeconds;
+                timer.textContent = '0:' + s;
+            }
+        }
+
+        function playChildRecording() {
+            if (!recordedAudioUrl) return;
+            const childAudio = new Audio(recordedAudioUrl);
+            childAudio.play();
+            updateVoiceStatus('🎧 Kendi sesin çalınıyor... Nasıl söyledin?');
+            childAudio.onended = () => {
+                updateVoiceStatus('Güzel söyledin mi? Beğendiysen "Harika Telaffuz Ettim" ile yıldız kazan!');
+            };
+        }
+
+        function celebrateVoiceSuccess() {
+            addGlobalStars(5);
+            playChirpSound(1.5);
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 70, spread: 70, origin: { y: 0.5 } });
+            }
+            updateVoiceStatus('🌟 Tebrikler! 5 Yıldız kazandın!');
+            mascotSpeak('Maşallah! Harika telaffuz ettin! 5 Yıldız kazandın! ⭐');
+            const awardBtn = document.getElementById('btn-voice-award');
+            if (awardBtn) {
+                awardBtn.disabled = true;
+                awardBtn.innerHTML = '<span>✅</span> <span>Yıldızlar Alındı! (+5 ⭐)</span>';
+            }
+        }
+
+        function updateVoiceStatus(msg) {
+            const bar = document.getElementById('voice-status-msg');
+            if (bar) bar.textContent = msg;
+        }
+
+    </script>
     <style>
         :root {
             --primary: #2563eb;
@@ -69,26 +335,40 @@
             max-width: 1100px;
         }
 
-        /* Sağ Üst Sabit Anasayfa Butonu */
-        .home-btn {
+        /* Sağ Üst Sabit Menü & Başarı Dolabı Barı */
+        .top-nav-bar {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .home-btn {
             background: white;
             border: 2px solid #cbd5e1;
-            padding: 10px 18px;
-            font-size: 18px;
+            padding: 8px 16px;
+            font-size: 16px;
             font-weight: bold;
             color: #334155;
             border-radius: 30px;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             transition: all 0.2s ease;
-            z-index: 100;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            text-decoration: none;
         }
+
+        .home-btn.star-vault-btn {
+            border-color: #facc15;
+            background: #fffbeb;
+            color: #b45309;
+        }
+
         .home-btn:hover {
             background: #f8fafc;
             border-color: #94a3b8;
@@ -991,12 +1271,367 @@
             cursor: pointer;
         }
 
+    
+        /* --- KART İÇİ MİKROFON VE BUTON DÜZENİ --- */
+        .learn-card-tools {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+            direction: ltr;
+        }
+
+        .learn-card-mic-btn {
+            background: #fffbeb;
+            border: 1px solid #fde047;
+            color: #b45309;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .learn-card-mic-btn:hover {
+            background: #fef08a;
+            border-color: #facc15;
+            transform: scale(1.05);
+        }
+
+        /* --- MİKROFON SES AYNASI MODALI --- */
+        .voice-modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .voice-modal-card {
+            background: white;
+            border-radius: 28px;
+            max-width: 520px;
+            width: 100%;
+            padding: 28px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            position: relative;
+            text-align: center;
+            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 4px solid #facc15;
+        }
+
+        @keyframes modalPop {
+            0% { transform: scale(0.85); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .voice-modal-close {
+            position: absolute;
+            top: 16px;
+            right: 18px;
+            background: #f1f5f9;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: bold;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .voice-modal-close:hover {
+            background: #ef4444;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .voice-modal-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .voice-modal-icon {
+            font-size: 2.2rem;
+            background: #fef3c7;
+            padding: 10px;
+            border-radius: 18px;
+        }
+
+        .voice-modal-title {
+            margin: 0;
+            color: #1e3a8a;
+            font-size: 1.35rem;
+            font-weight: 800;
+        }
+
+        .voice-modal-sub {
+            margin: 3px 0 0;
+            color: #64748b;
+            font-size: 0.88rem;
+        }
+
+        .voice-letter-showcase {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 22px;
+        }
+
+        .voice-card-center {
+            background: #eff6ff;
+            border: 3px solid #bfdbfe;
+            border-radius: 22px;
+            padding: 16px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 170px;
+        }
+
+        .voice-card-center img {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: contain;
+        }
+
+        .voice-letter-label {
+            margin-top: 8px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #1e3a8a;
+        }
+
+        .voice-nav-arrow {
+            background: #f1f5f9;
+            border: 2px solid #cbd5e1;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 18px;
+            color: #1e3a8a;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .voice-nav-arrow:hover {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+            transform: scale(1.1);
+        }
+
+        .voice-controls-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn-voice-act {
+            border: none;
+            padding: 13px 20px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-listen-teacher {
+            background: #dbeafe;
+            color: #1d4ed8;
+            border: 2px solid #93c5fd;
+        }
+        .btn-listen-teacher:hover {
+            background: #bfdbfe;
+            transform: translateY(-2px);
+        }
+
+        .btn-record-child {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 2px solid #fca5a5;
+        }
+        .btn-record-child:hover {
+            background: #fecaca;
+            transform: translateY(-2px);
+        }
+        .btn-record-child.recording {
+            background: #ef4444;
+            color: white;
+            animation: recordPulse 1s infinite alternate;
+        }
+
+        @keyframes recordPulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+            100% { transform: scale(1.03); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+        }
+
+        .btn-playback-child {
+            background: #dcfce7;
+            color: #15803d;
+            border: 2px solid #86efac;
+        }
+        .btn-playback-child:hover:not(:disabled) {
+            background: #bbf7d0;
+            transform: translateY(-2px);
+        }
+        .btn-playback-child:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-award-child {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        .btn-award-child:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(245, 158, 11, 0.4);
+        }
+
+        .rec-timer {
+            background: rgba(0,0,0,0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+        }
+
+        .voice-status-bar {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        /* --- SEVİMLİ MASKOT HÜDHÜD STİLLERİ --- */
+        .hudhud-companion {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .hudhud-bubble {
+            background: white;
+            border: 3px solid #f59e0b;
+            border-radius: 18px;
+            padding: 10px 14px;
+            max-width: 230px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #78350f;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            margin-bottom: 8px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(10px) scale(0.9);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: auto;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .hudhud-bubble.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .hudhud-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 32px;
+            border-width: 10px 10px 0 0;
+            border-style: solid;
+            border-color: white transparent;
+            display: block;
+            width: 0;
+        }
+
+        .hudhud-avatar {
+            pointer-events: auto;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            animation: hudhudFloat 3s infinite ease-in-out alternate;
+        }
+
+        .hudhud-avatar:hover {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        @keyframes hudhudFloat {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        .hudhud-badge {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #78350f;
+            color: #fef3c7;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 10px;
+            border: 1px solid #facc15;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .hudhud-companion {
+                bottom: 12px;
+                right: 12px;
+            }
+            .hudhud-svg {
+                width: 65px;
+                height: 65px;
+            }
+            .hudhud-bubble {
+                max-width: 180px;
+                font-size: 0.8rem;
+            }
+        }
+
     </style>
 </head>
 <body>
 
     <!-- Her Zaman Sabit Sağ Üst Anasayfa Butonu -->
-    <button class="home-btn" onclick="goToHome()" title="Ana Ekrana / Menüye Dön">🏠 Menü</button>
+    <!-- Sağ Üst Sabit Menü & Başarı Dolabı Barı -->
+    <div class="top-nav-bar">
+        <button class="home-btn" onclick="goToHome()" title="Ana Ekrana / Menüye Dön">🏠 Menü</button>
+        <a href="../basarilar/index.html" class="home-btn star-vault-btn" title="Başarı Dolabına Git">
+            <span>⭐</span> <span id="top-star-count">0</span>
+        </a>
+    </div>
 
     <div id="game-container">
         <h1 id="main-title">✨ Kur'an Harfleri ✨</h1>
@@ -1068,6 +1703,9 @@
                 <div class="learn-action-btns">
                     <button class="btn-learn-tool" id="btn-auto-play" onclick="toggleAutoPlay()">
                         <span>🔊</span> <span id="btn-auto-play-text">Sırayla Oku (Otomatik)</span>
+                    </button>
+                    <button class="btn-learn-tool" style="background:#f59e0b; color:white; border-color:#d97706;" onclick="openVoiceStudio()">
+                        <span>🎙️</span> <span>Sesimi Kaydet & Dinle</span>
                     </button>
                     <button class="btn-learn-tool" style="background:#2563eb; color:white; border-color:#1d4ed8;" onclick="startQuizFromLearn()">
                         <span>🎮</span> <span>Bu Harflerle Oyna</span>
@@ -1243,6 +1881,10 @@
             buildSectionPills();
             buildLetterPickerGrid();
             updateSelectionSummary();
+            updateTopStarBadge();
+            setTimeout(() => {
+                mascotSpeak("Hoş geldin! Kur'an harflerini birlikte öğrenelim mi? 🌟");
+            }, 1000);
         });
 
         // --- BÖLÜM VE HARF SEÇİM YÖNETİMİ ---
@@ -1501,9 +2143,23 @@
                 soundIcon.className = 'learn-card-sound-icon';
                 soundIcon.innerHTML = '<span>🔊</span> <span>Dinle</span>';
 
+                const micBtn = document.createElement('button');
+                micBtn.className = 'learn-card-mic-btn';
+                micBtn.innerHTML = '<span>🎙️</span> <span>Kaydet</span>';
+                micBtn.title = (info ? info.name : '') + ' için sesini kaydet';
+                micBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    openVoiceStudioForLetter(letterId);
+                };
+
+                const cardTools = document.createElement('div');
+                cardTools.className = 'learn-card-tools';
+                cardTools.appendChild(soundIcon);
+                cardTools.appendChild(micBtn);
+
                 card.appendChild(img);
                 card.appendChild(nameEl);
-                card.appendChild(soundIcon);
+                card.appendChild(cardTools);
                 
                 card.onclick = () => {
                     stopAutoPlay();
@@ -2169,6 +2825,8 @@
             }
 
             toast.classList.add('show');
+            addGlobalStars(completedTarget >= 15 ? 10 : 5);
+            mascotSpeak("Harikasın! " + completedTarget + "'lik seriyi tamamladın ve yıldız kazandın! ⭐");
             if (toastTimeout) clearTimeout(toastTimeout);
             toastTimeout = setTimeout(() => {
                 toast.classList.remove('show');
@@ -2267,6 +2925,103 @@
         </div>
     </div>
     </div>
+
+    <!-- SEVİMLİ MASKOT HÜDHÜD -->
+    <div id="hudhud-companion" class="hudhud-companion">
+        <div id="hudhud-bubble" class="hudhud-bubble" onclick="mascotRandomQuote()">
+            <div id="hudhud-bubble-text" class="hudhud-bubble-text">Selam! Ben Hüdhüd. Birlikte Kur'an harflerini öğrenelim mi? 🌟</div>
+        </div>
+        <div class="hudhud-avatar" onclick="mascotRandomQuote()" title="Hüdhüd'e tıkla, sana moral versin!">
+            <svg class="hudhud-svg" viewBox="0 0 100 100" width="85" height="85">
+                <!-- Gölge -->
+                <ellipse cx="50" cy="94" rx="32" ry="6" fill="rgba(0,0,0,0.15)"/>
+                <!-- Gövde -->
+                <ellipse cx="50" cy="56" rx="34" ry="34" fill="#fbbf24"/>
+                <ellipse cx="50" cy="62" rx="26" ry="24" fill="#fef3c7"/>
+                <!-- İbik / Baş Tüyleri -->
+                <path d="M48 24 C45 10 38 4 36 2 C44 4 52 14 50 24" fill="#f97316"/>
+                <path d="M52 24 C55 10 62 4 64 2 C56 4 48 14 50 24" fill="#f59e0b"/>
+                <path d="M50 22 C50 6 52 0 50 0 C48 0 50 6 50 22" fill="#fbbf24"/>
+                <!-- Sol Göz -->
+                <circle cx="38" cy="46" r="7" fill="#ffffff"/>
+                <circle cx="39" cy="46" r="4.5" fill="#1e293b"/>
+                <circle cx="41" cy="44" r="2" fill="#ffffff"/>
+                <!-- Sağ Göz -->
+                <circle cx="62" cy="46" r="7" fill="#ffffff"/>
+                <circle cx="61" cy="46" r="4.5" fill="#1e293b"/>
+                <circle cx="63" cy="44" r="2" fill="#ffffff"/>
+                <!-- Yanak Allıkları -->
+                <circle cx="30" cy="56" r="4" fill="#f87171" opacity="0.6"/>
+                <circle cx="70" cy="56" r="4" fill="#f87171" opacity="0.6"/>
+                <!-- Gaga -->
+                <polygon points="45,52 55,52 50,65" fill="#ea580c"/>
+                <!-- Kanatlar -->
+                <path class="hudhud-wing-left" d="M18 52 Q10 65 20 74 Q24 64 24 55 Z" fill="#d97706"/>
+                <path class="hudhud-wing-right" d="M82 52 Q90 65 80 74 Q76 64 76 55 Z" fill="#d97706"/>
+                <!-- Ayaklar -->
+                <ellipse cx="40" cy="88" rx="5" ry="3" fill="#ea580c"/>
+                <ellipse cx="60" cy="88" rx="5" ry="3" fill="#ea580c"/>
+            </svg>
+            <div class="hudhud-badge">Hüdhüd 🐥</div>
+        </div>
+    </div>
+
+    <!-- MİKROFON SES AYNASI VE KAYIT MODALI -->
+    <div id="voice-modal" class="voice-modal-backdrop" style="display: none;">
+        <div class="voice-modal-card">
+            <button class="voice-modal-close" onclick="closeVoiceStudio()" title="Kapat">✖</button>
+            <div class="voice-modal-header">
+                <span class="voice-modal-icon">🎙️</span>
+                <div>
+                    <h3 class="voice-modal-title">Ses Kayıt & Ayna Stüdyosu</h3>
+                    <p class="voice-modal-sub">Hocayı dinle, sonra mikrofonla kendi sesini kaydet ve karşılaştır!</p>
+                </div>
+            </div>
+
+            <div class="voice-stage">
+                <div class="voice-letter-showcase">
+                    <button class="voice-nav-arrow" onclick="voicePrevLetter()" title="Önceki Harf">◀</button>
+                    <div class="voice-card-center">
+                        <img id="voice-letter-img" src="harfler/1.png" alt="Harf">
+                        <div id="voice-letter-name" class="voice-letter-label">1. Elif</div>
+                    </div>
+                    <button class="voice-nav-arrow" onclick="voiceNextLetter()" title="Sonraki Harf">▶</button>
+                </div>
+
+                <div class="voice-controls-panel">
+                    <!-- 1. Hoca Telaffuzu -->
+                    <button class="btn-voice-act btn-listen-teacher" onclick="playTeacherVoice()">
+                        <span class="act-icon">🔊</span>
+                        <span>1. Hoca Telaffuzunu Dinle</span>
+                    </button>
+
+                    <!-- 2. Kayıt Butonu -->
+                    <button id="btn-mic-record" class="btn-voice-act btn-record-child" onclick="toggleChildRecording()">
+                        <span id="mic-rec-icon" class="act-icon">🎙️</span>
+                        <span id="mic-rec-label">2. Kendi Sesini Kaydet</span>
+                        <span id="mic-rec-timer" class="rec-timer" style="display:none;">0:00</span>
+                    </button>
+
+                    <!-- 3. Dinleme Butonu -->
+                    <button id="btn-play-child" class="btn-voice-act btn-playback-child" onclick="playChildRecording()" disabled>
+                        <span class="act-icon">🎧</span>
+                        <span id="playback-label">3. Kendi Sesini Dinle</span>
+                    </button>
+
+                    <!-- 4. Yıldız / Tebrik Butonu -->
+                    <button id="btn-voice-award" class="btn-voice-act btn-award-child" onclick="celebrateVoiceSuccess()">
+                        <span class="act-icon">⭐</span>
+                        <span>Harika Telaffuz Ettim! (+5 Yıldız)</span>
+                    </button>
+                </div>
+
+                <div class="voice-status-bar" id="voice-status-msg">
+                    Hocayı dinledikten sonra kırmızı mikrofon butonuna bas ve harfi söyle!
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 <h2><font size="3"><a href="../index.html">ANA MENÜYE DÖN</a></font></h2>
 <h2><font size="3"><a href="https://www.dindersioyun.com/">dindersioyun.com</a></font></h2>

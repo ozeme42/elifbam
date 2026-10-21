@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎈 Balon Patlatma Oyunu - Elifba</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+    <script src="confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --sky-top: #38bdf8;
+            --sky-bottom: #e0f2fe;
+            --primary: #2563eb;
+            --accent: #f59e0b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%);
+            min-height: 100vh;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        /* Gökyüzü Bulutları */
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            opacity: 0.85;
+            z-index: 1;
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.05));
+            animation: floatCloud linear infinite;
+        }
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+        }
+        .cloud-1 { width: 140px; height: 50px; top: 12%; left: -160px; animation-duration: 35s; }
+        .cloud-1::before { width: 60px; height: 60px; top: -30px; left: 20px; }
+        .cloud-1::after { width: 45px; height: 45px; top: -20px; right: 25px; }
+
+        .cloud-2 { width: 180px; height: 60px; top: 28%; left: -200px; animation-duration: 48s; animation-delay: 10s; }
+        .cloud-2::before { width: 80px; height: 80px; top: -40px; left: 30px; }
+        .cloud-2::after { width: 60px; height: 60px; top: -25px; right: 35px; }
+
+        @keyframes floatCloud {
+            from { transform: translateX(0); }
+            to { transform: translateX(calc(100vw + 300px)); }
+        }
+
+        /* Üst Menü & Kontrol Paneli */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-bottom: 2px solid #bae6fd;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .home-btn {
+            background: white;
+            border: 2px solid #cbd5e1;
+            padding: 8px 16px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #334155;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .home-btn:hover { background: #f8fafc; transform: translateY(-2px); }
+
+        .title-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.4rem;
+            color: #0369a1;
+        }
+
+        .stat-badges {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-chip {
+            background: white;
+            border: 2px solid #e2e8f0;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .score-chip { color: #0284c7; border-color: #7dd3fc; }
+        .streak-chip { color: #ea580c; border-color: #fdba74; }
+        .stars-chip { color: #ca8a04; border-color: #fde047; background: #fefce8; }
+
+        /* Bölüm Seçim Hapları */
+        .section-bar {
+            position: fixed;
+            top: 65px;
+            left: 0;
+            right: 0;
+            z-index: 45;
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .sec-btn {
+            background: white;
+            border: 1.5px solid #cbd5e1;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sec-btn:hover { background: #f1f5f9; }
+        .sec-btn.active {
+            background: #0284c7;
+            color: white;
+            border-color: #0369a1;
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+        }
+
+        /* Hedef Soru Kartı (Sabit Üst Ortada) */
+        .target-card {
+            position: fixed;
+            top: 115px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 40;
+            background: white;
+            border: 3px solid #facc15;
+            border-radius: 25px;
+            padding: 10px 24px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 8px 20px rgba(250, 204, 21, 0.25); }
+            100% { box-shadow: 0 10px 28px rgba(250, 204, 21, 0.55); }
+        }
+
+        .target-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .target-name {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.4rem;
+            color: #b45309;
+        }
+
+        .btn-repeat-sound {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 3px 8px rgba(16, 185, 129, 0.3);
+            transition: all 0.2s;
+        }
+        .btn-repeat-sound:hover { transform: scale(1.05); }
+
+        /* Balon Oyun Alanı */
+        #game-stage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        /* Balon Öğesi */
+        .balloon {
+            position: absolute;
+            width: 100px;
+            height: 125px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset -8px -8px 15px rgba(0,0,0,0.15), inset 8px 8px 15px rgba(255,255,255,0.6), 0 10px 20px rgba(0,0,0,0.12);
+            transition: transform 0.15s ease-out;
+            will-change: transform, top, left;
+        }
+
+        .balloon:hover {
+            transform: scale(1.1) !important;
+        }
+
+        /* Balon Düğümü ve İpi */
+        .balloon::before {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 8px;
+            background: inherit;
+            border-radius: 3px;
+        }
+
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -36px;
+            left: 50%;
+            width: 2px;
+            height: 32px;
+            background: rgba(100, 116, 139, 0.5);
+        }
+
+        /* Balon Parlaması */
+        .balloon-shine {
+            position: absolute;
+            top: 15px;
+            left: 18px;
+            width: 22px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: rotate(-35deg);
+            pointer-events: none;
+        }
+
+        /* Balon İçindeki Harf Görseli */
+        .balloon img {
+            width: 62px;
+            height: 62px;
+            object-fit: contain;
+            pointer-events: none;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 50%;
+            padding: 6px;
+        }
+
+        /* Balon Renkleri */
+        .b-red    { background: linear-gradient(135deg, #ff6b81, #ee5253); }
+        .b-blue   { background: linear-gradient(135deg, #48dbfb, #0abde3); }
+        .b-green  { background: linear-gradient(135deg, #1dd1a1, #10ac84); }
+        .b-yellow { background: linear-gradient(135deg, #feca57, #ff9f43); }
+        .b-purple { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
+        .b-pink   { background: linear-gradient(135deg, #fd79a8, #e84393); }
+
+        /* Balon Patlama Efekti */
+        .popping {
+            animation: popDisappear 0.25s forwards cubic-bezier(0.1, 0.8, 0.3, 1);
+            pointer-events: none;
+        }
+        @keyframes popDisappear {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.8; filter: brightness(1.5); }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+
+        /* Skor Puan Artış Animasyonu (+10 ⭐) */
+        .float-score {
+            position: absolute;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.8rem;
+            color: #f59e0b;
+            text-shadow: 2px 2px 0 #fff;
+            pointer-events: none;
+            z-index: 100;
+            animation: floatUpFade 1s forwards ease-out;
+        }
+        @keyframes floatUpFade {
+            0% { transform: translateY(0) scale(0.8); opacity: 1; }
+            100% { transform: translateY(-70px) scale(1.2); opacity: 0; }
+        }
+
+        /* Sevimli Maskot "Hüdhüd" */
+        .mascot-container {
+            position: fixed;
+            bottom: 15px;
+            left: 20px;
+            z-index: 40;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .mascot-character {
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.2s;
+            animation: mascotIdle 2.5s infinite ease-in-out;
+        }
+        .mascot-character:hover { transform: scale(1.15) rotate(5deg); }
+
+        @keyframes mascotIdle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .mascot-bubble {
+            background: white;
+            border: 2px solid #38bdf8;
+            padding: 8px 14px;
+            border-radius: 18px 18px 18px 0;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #0369a1;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 220px;
+            pointer-events: auto;
+            animation: bubblePop 0.3s ease;
+        }
+
+        @keyframes bubblePop {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Level-Up Toast Bildirimi */
+        .target-levelup-toast {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50px) scale(0.9);
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            border: 3px solid #facc15;
+            border-radius: 22px;
+            padding: 14px 24px;
+            color: white;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 25px rgba(250, 204, 21, 0.4);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 90%;
+            width: max-content;
+        }
+        .target-levelup-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        @media (max-width: 600px) {
+            .title-box { font-size: 1.1rem; }
+            .target-card { top: 125px; padding: 6px 14px; gap: 8px; }
+            .target-name { font-size: 1.15rem; }
+            .mascot-container { bottom: 10px; left: 10px; }
+            .mascot-character { width: 65px; height: 65px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Gökyüzü Bulutları -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+
+    <!-- Üst Kontrol Barı -->
+    <div class="top-nav">
+        <a href="../index.html" class="home-btn">🏠 Menü</a>
+        <div class="title-box">🎈 Balon Patlatma Oyunu</div>
+        <div class="stat-badges">
+            <div class="stat-chip score-chip">🎯 Skor: <span id="val-score">0</span></div>
+            <div class="stat-chip streak-chip">🔥 Seri: <span id="val-streak">0</span>/<span id="val-target">5</span></div>
+            <div class="stat-chip stars-chip">⭐ Yıldız: <span id="val-stars">0</span></div>
+        </div>
+    </div>
+
+    <!-- Bölüm Seçim Çubuğu -->
+    <div class="section-bar" id="section-bar"></div>
+
+    <!-- Hedef Harf Kartı -->
+    <div class="target-card">
+        <div>
+            <div class="target-label">Patlatılacak Harf:</div>
+            <div class="target-name" id="target-name">Elif</div>
+        </div>
+        <button class="btn-repeat-sound" onclick="playTargetSound()">🔊 Dinle</button>
+    </div>
+
+    <!-- Balonların Uçuştuğu Oyun Alanı -->
+    <div id="game-stage"></div>
+
+    <!-- Sevimli Maskot Hüdhüd -->
+    <div class="mascot-container">
+        <!-- Sevimli Kuş Maskotu SVG -->
+        <svg class="mascot-character" id="mascot-svg" onclick="onMascotClick()" viewBox="0 0 100 100">
+            <!-- Kuş Gövdesi -->
+            <ellipse cx="50" cy="55" rx="35" ry="32" fill="#38bdf8"/>
+            <!-- Karın Kısmı -->
+            <ellipse cx="50" cy="62" rx="24" ry="20" fill="#bae6fd"/>
+            <!-- Tepe Tüyü (İbik) -->
+            <path d="M50 24 C45 10, 35 15, 42 26" fill="none" stroke="#f59e0b" stroke-width="5" stroke-linecap="round"/>
+            <path d="M52 24 C55 8, 65 12, 58 26" fill="none" stroke="#f59e0b" stroke-width="5" stroke-linecap="round"/>
+            <!-- Kanat -->
+            <path d="M22 55 Q12 40 28 65" fill="#0284c7"/>
+            <path d="M78 55 Q88 40 72 65" fill="#0284c7"/>
+            <!-- Gözler -->
+            <circle cx="38" cy="45" r="8" fill="white"/>
+            <circle cx="40" cy="45" r="4" fill="#0f172a"/>
+            <circle cx="42" cy="43" r="1.5" fill="white"/>
+
+            <circle cx="62" cy="45" r="8" fill="white"/>
+            <circle cx="60" cy="45" r="4" fill="#0f172a"/>
+            <circle cx="62" cy="43" r="1.5" fill="white"/>
+            <!-- Gaga -->
+            <polygon points="50,49 43,56 57,56" fill="#f59e0b"/>
+            <!-- Yanak Allıkları -->
+            <circle cx="30" cy="54" r="4" fill="#f472b6" opacity="0.6"/>
+            <circle cx="70" cy="54" r="4" fill="#f472b6" opacity="0.6"/>
+            <!-- Ayaklar -->
+            <line x1="42" y1="87" x2="38" y2="95" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+            <line x1="58" y1="87" x2="62" y2="95" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <div class="mascot-bubble" id="mascot-bubble">Merhaba! Sesi dinle ve doğru balonu patlat! 🎈</div>
+    </div>
+
+    <!-- Otomatik Hedef Yükseltme Bildirimi -->
+    <div id="target-levelup-toast" class="target-levelup-toast">
+        <div style="font-size: 2.4rem;" id="levelup-icon">🏆</div>
+        <div>
+            <div style="font-size: 1.15rem; font-weight: 900; color: #fde047;" id="levelup-title">🎯 5'TE 5 HEDEFİ TAMAMLANDI!</div>
+            <div style="font-size: 0.85rem; color: #fef08a;" id="levelup-badge">🥉 Bronz Balon Avcısı Rozeti</div>
+            <div style="font-size: 0.9rem; color: #a7f3d0; margin-top: 3px;" id="levelup-next">🚀 Yeni Hedef: <strong>10 Seri</strong></div>
+        </div>
+    </div>
+
+    <audio id="audio-player"></audio>
+
+    <script>
+        // Harfler Verisi (1..29)
+        const lettersData = [
+            { id: 1, name: 'Elif', sec: 1 },
+            { id: 2, name: 'Be', sec: 1 },
+            { id: 3, name: 'Te', sec: 1 },
+            { id: 4, name: 'Peltek Se', sec: 1 },
+            { id: 5, name: 'Cim', sec: 2 },
+            { id: 6, name: 'Ha', sec: 2 },
+            { id: 7, name: 'Hı', sec: 2 },
+            { id: 8, name: 'Dal', sec: 2 },
+            { id: 9, name: 'Peltek Zel', sec: 3 },
+            { id: 10, name: 'Ra', sec: 3 },
+            { id: 11, name: 'Ze', sec: 3 },
+            { id: 12, name: 'Sin', sec: 3 },
+            { id: 13, name: 'Şın', sec: 4 },
+            { id: 14, name: 'Sad', sec: 4 },
+            { id: 15, name: 'Dad', sec: 4 },
+            { id: 16, name: 'Tı', sec: 4 },
+            { id: 17, name: 'Peltek Zı', sec: 5 },
+            { id: 18, name: 'Ayn', sec: 5 },
+            { id: 19, name: 'Gayn', sec: 5 },
+            { id: 20, name: 'Fe', sec: 5 },
+            { id: 21, name: 'Kaf', sec: 6 },
+            { id: 22, name: 'Kef', sec: 6 },
+            { id: 23, name: 'Lam', sec: 6 },
+            { id: 24, name: 'Mim', sec: 6 },
+            { id: 25, name: 'Nun', sec: 7 },
+            { id: 26, name: 'Vav', sec: 7 },
+            { id: 27, name: 'He', sec: 7 },
+            { id: 28, name: 'Lâmelif', sec: 7 },
+            { id: 29, name: 'Ye', sec: 7 }
+        ];
+
+        const sections = [
+            { id: 1, name: '1. Bölüm', label: 'Elif - Se', items: [1, 2, 3, 4] },
+            { id: 2, name: '2. Bölüm', label: 'Cim - Dal', items: [5, 6, 7, 8] },
+            { id: 3, name: '3. Bölüm', label: 'Zel - Sin', items: [9, 10, 11, 12] },
+            { id: 4, name: '4. Bölüm', label: 'Şın - Tı', items: [13, 14, 15, 16] },
+            { id: 5, name: '5. Bölüm', label: 'Zı - Fe', items: [17, 18, 19, 20] },
+            { id: 6, name: '6. Bölüm', label: 'Kaf - Mim', items: [21, 22, 23, 24] },
+            { id: 7, name: '7. Bölüm', label: 'Nun - Ye', items: [25, 26, 27, 28, 29] }
+        ];
+
+        let currentSectionId = 1;
+        let activePool = [1, 2, 3, 4];
+        let currentTargetLetter = null;
+
+        let score = 0;
+        let streak = 0;
+        let streakTarget = 5;
+        let baseTarget = 5;
+        let totalStars = parseInt(localStorage.getItem('elifbam_total_stars') || '0', 10);
+
+        let activeBalloons = [];
+        let animationFrameId = null;
+        let balloonSpawnTimer = null;
+        let toastTimeout = null;
+
+        const stage = document.getElementById('game-stage');
+        const audioPlayer = document.getElementById('audio-player');
+        const colors = ['b-red', 'b-blue', 'b-green', 'b-yellow', 'b-purple', 'b-pink'];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            buildSectionBar();
+            updateStatsUI();
+            setNewTarget();
+            startSpawningBalloons();
+            requestAnimationFrame(gameLoop);
+        });
+
+        function buildSectionBar() {
+            const bar = document.getElementById('section-bar');
+            bar.innerHTML = '';
+
+            const allBtn = document.createElement('button');
+            allBtn.className = 'sec-btn' + (currentSectionId === 'all' ? ' active' : '');
+            allBtn.textContent = '⭐ Tüm Harfler';
+            allBtn.onclick = () => selectSection('all');
+            bar.appendChild(allBtn);
+
+            sections.forEach(sec => {
+                const b = document.createElement('button');
+                b.className = 'sec-btn' + (currentSectionId === sec.id ? ' active' : '');
+                b.textContent = `${sec.name} (${sec.label})`;
+                b.onclick = () => selectSection(sec.id);
+                bar.appendChild(b);
+            });
+        }
+
+        function selectSection(secId) {
+            currentSectionId = secId;
+            document.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
+            if (secId === 'all') {
+                activePool = lettersData.map(l => l.id);
+                document.querySelector('.sec-btn:first-child').classList.add('active');
+            } else {
+                const sec = sections.find(s => s.id === secId);
+                activePool = [...sec.items];
+                const btn = Array.from(document.querySelectorAll('.sec-btn')).find(b => b.textContent.includes(sec.name));
+                if (btn) btn.classList.add('active');
+            }
+            clearBalloons();
+            setNewTarget();
+            setMascotMessage(`Bölüm değişti! Yeni harfler geliyor, hazır mısın? 🎈`);
+        }
+
+        function setNewTarget() {
+            const randId = activePool[Math.floor(Math.random() * activePool.length)];
+            currentTargetLetter = lettersData.find(l => l.id === randId);
+            document.getElementById('target-name').textContent = currentTargetLetter.name;
+            playTargetSound();
+        }
+
+        function playTargetSound() {
+            if (!currentTargetLetter) return;
+            audioPlayer.src = `../harfler/harfler/${currentTargetLetter.id}.mp3`;
+            audioPlayer.play().catch(() => {});
+        }
+
+        function startSpawningBalloons() {
+            if (balloonSpawnTimer) clearInterval(balloonSpawnTimer);
+            balloonSpawnTimer = setInterval(() => {
+                if (activeBalloons.length < 5) {
+                    spawnBalloon();
+                }
+            }, 1400);
+        }
+
+        function spawnBalloon() {
+            let letterId;
+            // %40 ihtimalle aranan hedef harf gelsin, böylece oyuncu çok beklemez
+            if (Math.random() < 0.4 || !activeBalloons.some(b => b.letterId === currentTargetLetter.id)) {
+                letterId = currentTargetLetter.id;
+            } else {
+                letterId = activePool[Math.floor(Math.random() * activePool.length)];
+            }
+
+            const balloon = document.createElement('div');
+            const colorClass = colors[Math.floor(Math.random() * colors.length)];
+            balloon.className = `balloon ${colorClass}`;
+
+            const shine = document.createElement('div');
+            shine.className = 'balloon-shine';
+            balloon.appendChild(shine);
+
+            const img = document.createElement('img');
+            img.src = `../harfler/harfler/${letterId}.png`;
+            img.alt = "Harf";
+            balloon.appendChild(img);
+
+            const stageWidth = window.innerWidth;
+            const x = Math.random() * (stageWidth - 140) + 20;
+            const y = window.innerHeight + 20;
+            const speed = Math.random() * 1.2 + 1.6; // Yükselme hızı
+            const swayAmp = Math.random() * 25 + 15;
+            const swayFreq = Math.random() * 0.03 + 0.02;
+
+            const bObj = {
+                el: balloon,
+                letterId: letterId,
+                x: x,
+                y: y,
+                speed: speed,
+                swayAmp: swayAmp,
+                swayFreq: swayFreq,
+                swayOffset: Math.random() * Math.PI * 2,
+                popped: false
+            };
+
+            balloon.onclick = (e) => onBalloonClick(bObj, e);
+            stage.appendChild(balloon);
+            activeBalloons.push(bObj);
+        }
+
+        function gameLoop() {
+            for (let i = activeBalloons.length - 1; i >= 0; i--) {
+                const b = activeBalloons[i];
+                if (b.popped) continue;
+
+                b.y -= b.speed;
+                const swayX = Math.sin(b.y * b.swayFreq + b.swayOffset) * b.swayAmp;
+                b.el.style.top = b.y + 'px';
+                b.el.style.left = (b.x + swayX) + 'px';
+
+                // Ekrandan çıktıysa kaldır
+                if (b.y < -150) {
+                    b.el.remove();
+                    activeBalloons.splice(i, 1);
+                }
+            }
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        function onBalloonClick(bObj, event) {
+            if (bObj.popped) return;
+
+            if (bObj.letterId === currentTargetLetter.id) {
+                // DOĞRU BALON PATLADI!
+                bObj.popped = true;
+                playPopSound();
+                createPopSparks(event.clientX, event.clientY);
+                showFloatingScore(event.clientX, event.clientY, '+10 ⭐');
+
+                bObj.el.classList.add('popping');
+                setTimeout(() => {
+                    bObj.el.remove();
+                    activeBalloons = activeBalloons.filter(b => b !== bObj);
+                }, 220);
+
+                score += 10;
+                streak++;
+                totalStars++;
+                localStorage.setItem('elifbam_total_stars', totalStars);
+
+                // Alev ve motivasyon mesajı
+                if (streak >= streakTarget) {
+                    const completed = streakTarget;
+                    streakTarget += 5;
+                    showAutoLevelUpToast(completed, streakTarget);
+                    setMascotMessage(`🎉 Harikasın! ${completed} hedefi tamamlandı!`);
+                } else {
+                    const cheers = ["Süpersin!", "Tam isabet! 🎯", "Harika patlatma! 🎈", "Aferin sana!", "Çok hızlısın! ⚡"];
+                    setMascotMessage(cheers[Math.floor(Math.random() * cheers.length)]);
+                }
+
+                updateStatsUI();
+                setNewTarget();
+            } else {
+                // YANLIŞ BALON
+                playBoopSound();
+                bObj.el.style.transform = 'scale(0.85) rotate(-10deg)';
+                setTimeout(() => bObj.el.style.transform = '', 200);
+
+                streak = 0;
+                streakTarget = baseTarget;
+                updateStatsUI();
+                setMascotMessage("O aradığımız harf değil! Sesi tekrar dinle bakalım 🧐");
+            }
+        }
+
+        function createPopSparks(x, y) {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 25,
+                    spread: 50,
+                    origin: { x: x / window.innerWidth, y: y / window.innerHeight }
+                });
+            }
+        }
+
+        function showFloatingScore(x, y, text) {
+            const el = document.createElement('div');
+            el.className = 'float-score';
+            el.textContent = text;
+            el.style.left = (x - 20) + 'px';
+            el.style.top = (y - 30) + 'px';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1000);
+        }
+
+        function clearBalloons() {
+            activeBalloons.forEach(b => b.el.remove());
+            activeBalloons = [];
+        }
+
+        function updateStatsUI() {
+            document.getElementById('val-score').textContent = score;
+            document.getElementById('val-streak').textContent = streak;
+            document.getElementById('val-target').textContent = streakTarget;
+            document.getElementById('val-stars').textContent = totalStars;
+        }
+
+        function setMascotMessage(msg) {
+            const b = document.getElementById('mascot-bubble');
+            if (b) {
+                b.textContent = msg;
+                b.style.animation = 'none';
+                void b.offsetWidth;
+                b.style.animation = 'bubblePop 0.3s ease';
+            }
+        }
+
+        function onMascotClick() {
+            playPopSound();
+            const quotes = [
+                "Cik cik! Harfleri öğrenmek çok eğlenceli!",
+                "Uçan balonları dikkatle takip et!",
+                "Birlikte harika bir takım olduk! 🎈",
+                "Dinle butonuna basıp sesi tekrar duyabilirsin!",
+                "Maşallah, çok güzel gidiyorsun!"
+            ];
+            setMascotMessage(quotes[Math.floor(Math.random() * quotes.length)]);
+        }
+
+        function showAutoLevelUpToast(completed, next) {
+            playFanfareSound();
+            const toast = document.getElementById('target-levelup-toast');
+            if (!toast) return;
+
+            document.getElementById('levelup-title').textContent = `🎯 ${completed}'TE ${completed} HEDEFİ TAMAMLANDI!`;
+            document.getElementById('levelup-next').innerHTML = `🚀 Yeni Hedef: <strong>${next} Seri</strong>`;
+            
+            toast.classList.add('show');
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), 2600);
+        }
+
+        // --- WEB AUDIO API SES SENTETİZÖRÜ ---
+        function playPopSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                if (ctx.state === 'suspended') ctx.resume();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.12);
+                gain.gain.setValueAtTime(0.4, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.13);
+            } catch(e) {}
+        }
+
+        function playBoopSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                if (ctx.state === 'suspended') ctx.resume();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.21);
+            } catch(e) {}
+        }
+
+        function playFanfareSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                if (ctx.state === 'suspended') ctx.resume();
+                const notes = [523.25, 659.25, 783.99, 1046.5];
+                notes.forEach((f, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(f, ctx.currentTime + i * 0.1);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.1 + 0.35);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + i * 0.1);
+                    osc.stop(ctx.currentTime + i * 0.1 + 0.36);
+                });
+            } catch(e) {}
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>✍️ Harf Çizme & Yazma - Elifba</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+    <script src="confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #fdfbf7;
+            --primary: #0284c7;
+        }
+
+        * { box-sizing: border-box; touch-action: none; }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: #1e293b;
+            user-select: none;
+        }
+
+        /* Üst Menü */
+        .top-nav {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .home-btn {
+            background: white;
+            border: 2px solid #cbd5e1;
+            padding: 8px 18px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #334155;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .home-btn:hover { background: #f8fafc; transform: translateY(-2px); }
+
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            color: #0369a1;
+            margin: 0;
+            font-size: 2.2rem;
+            text-align: center;
+        }
+
+        .star-badge {
+            background: #fefce8;
+            border: 2px solid #fde047;
+            color: #b45309;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+
+        /* Bölüm Seçim Çubuğu */
+        .section-bar {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            max-width: 850px;
+        }
+
+        .sec-btn {
+            background: white;
+            border: 1.5px solid #cbd5e1;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sec-btn:hover { background: #f1f5f9; }
+        .sec-btn.active {
+            background: #0284c7;
+            color: white;
+            border-color: #0369a1;
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+        }
+
+        /* Çizim Alanı Çerçevesi */
+        .canvas-card {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 3px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+        }
+
+        /* Harf Bilgi Başlığı */
+        .letter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 12px;
+            padding: 0 10px;
+        }
+
+        .letter-name-tag {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.6rem;
+            color: #0f766e;
+        }
+
+        .btn-sound {
+            background: #0f766e;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-sound:hover { background: #115e59; transform: scale(1.05); }
+
+        /* Canvas Kapsayıcısı */
+        .canvas-container {
+            position: relative;
+            width: 380px;
+            height: 380px;
+            border: 3px dashed #94a3b8;
+            border-radius: 24px;
+            background: #fafafa;
+            overflow: hidden;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        /* Arka Plandaki Şablon Harf Görseli */
+        .guide-template {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 82%;
+            height: 82%;
+            object-fit: contain;
+            opacity: 0.22;
+            pointer-events: none;
+            filter: grayscale(100%);
+            transition: opacity 0.3s;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+
+        /* Renk & Araç Çubuğu */
+        .tools-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .color-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+        .color-dot:hover { transform: scale(1.15); }
+        .color-dot.active {
+            transform: scale(1.22);
+            border-color: #0f172a;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .rainbow-dot {
+            background: linear-gradient(135deg, #ff0000, #ff9900, #33cc33, #3399ff, #9933ff);
+        }
+
+        /* Boyut Butonları */
+        .size-btn-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .size-btn {
+            background: white;
+            border: 1.5px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .size-btn.active {
+            background: #0284c7;
+            color: white;
+            border-color: #0369a1;
+        }
+
+        /* Alt Aksiyon Butonları */
+        .action-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-top: 18px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: white;
+            border: 2px solid #cbd5e1;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover { background: #f8fafc; transform: translateY(-2px); }
+
+        .btn-finish {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 12px 26px;
+            border-radius: 25px;
+            font-weight: 800;
+            font-size: 1.05rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+            transition: all 0.2s;
+        }
+        .btn-finish:hover { transform: translateY(-2px) scale(1.03); }
+
+        .btn-clear {
+            background: #f1f5f9;
+            border: 1.5px solid #cbd5e1;
+            color: #64748b;
+            padding: 8px 14px;
+            border-radius: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .btn-clear:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+
+        /* Maskot Kutusu */
+        .mascot-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 2px solid #bae6fd;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-top: 15px;
+            max-width: 550px;
+            width: 100%;
+        }
+
+        .mascot-avatar {
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            animation: mascotWiggle 2s infinite alternate;
+        }
+        @keyframes mascotWiggle {
+            0% { transform: rotate(-5deg); }
+            100% { transform: rotate(5deg); }
+        }
+
+        .mascot-text {
+            font-weight: 700;
+            color: #0369a1;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 500px) {
+            .canvas-container { width: 300px; height: 300px; }
+            h1 { font-size: 1.6rem; }
+            .btn-finish { width: 100%; order: -1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <a href="../index.html" class="home-btn">🏠 Menü</a>
+        <h1>✍️ Harf Çizme & Yazma</h1>
+        <div class="star-badge">⭐ <span id="val-stars">0</span> Yıldız</div>
+    </div>
+
+    <!-- Bölüm Seçimi -->
+    <div class="section-bar" id="section-bar"></div>
+
+    <!-- Çizim Kartı -->
+    <div class="canvas-card">
+        <div class="letter-header">
+            <div>
+                <span style="font-size: 0.85rem; color: #64748b; font-weight: bold;">Çizilen Harf:</span>
+                <div class="letter-name-tag" id="letter-name">Elif</div>
+            </div>
+            <button class="btn-sound" onclick="playLetterSound()">🔊 Sesi Dinle</button>
+        </div>
+
+        <!-- Canvas Alanı -->
+        <div class="canvas-container">
+            <img id="guide-img" class="guide-template" src="../harfler/harfler/1.png" alt="Şablon">
+            <canvas id="paintCanvas" width="380" height="380"></canvas>
+        </div>
+
+        <!-- Renk & Fırça Araçları -->
+        <div class="tools-bar">
+            <div class="color-palette">
+                <div class="color-dot active" style="background: #2563eb;" onclick="setColor('#2563eb', this)"></div>
+                <div class="color-dot" style="background: #dc2626;" onclick="setColor('#dc2626', this)"></div>
+                <div class="color-dot" style="background: #16a34a;" onclick="setColor('#16a34a', this)"></div>
+                <div class="color-dot" style="background: #d97706;" onclick="setColor('#d97706', this)"></div>
+                <div class="color-dot" style="background: #9333ea;" onclick="setColor('#9333ea', this)"></div>
+                <div class="color-dot rainbow-dot" title="Gökkuşağı Rengi" onclick="setColor('rainbow', this)"></div>
+            </div>
+
+            <div class="size-btn-group">
+                <button class="size-btn" onclick="setBrushSize(8, this)">İnce</button>
+                <button class="size-btn active" onclick="setBrushSize(16, this)">Orta</button>
+                <button class="size-btn" onclick="setBrushSize(26, this)">Kalın</button>
+                <button class="btn-clear" onclick="clearCanvas()">🧹 Temizle</button>
+            </div>
+        </div>
+
+        <!-- İleri Geri & Tamamladım Aksiyonları -->
+        <div class="action-row">
+            <button class="nav-btn" onclick="prevLetter()">⬅️ Önceki</button>
+            <button class="btn-finish" onclick="onFinishDrawing()">✨ Harfi Yazdım! (Tebrik)</button>
+            <button class="nav-btn" onclick="nextLetter()">Sonraki ➡️</button>
+        </div>
+    </div>
+
+    <!-- Maskot Hüdhüd -->
+    <div class="mascot-box">
+        <svg class="mascot-avatar" viewBox="0 0 100 100" onclick="onMascotClick()">
+            <ellipse cx="50" cy="55" rx="35" ry="32" fill="#0284c7"/>
+            <ellipse cx="50" cy="62" rx="24" ry="20" fill="#bae6fd"/>
+            <path d="M50 24 C45 10, 35 15, 42 26" fill="none" stroke="#f59e0b" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="38" cy="45" r="7" fill="white"/>
+            <circle cx="40" cy="45" r="3.5" fill="#0f172a"/>
+            <circle cx="62" cy="45" r="7" fill="white"/>
+            <circle cx="60" cy="45" r="3.5" fill="#0f172a"/>
+            <polygon points="50,49 43,56 57,56" fill="#f59e0b"/>
+            <circle cx="30" cy="54" r="4" fill="#f472b6" opacity="0.6"/>
+            <circle cx="70" cy="54" r="4" fill="#f472b6" opacity="0.6"/>
+        </svg>
+        <div class="mascot-text" id="mascot-text">Silik çizginin üzerinden parmağınla veya fareyle geçerek harfi yaz! 🎨</div>
+    </div>
+
+    <audio id="audio-player"></audio>
+
+    <script>
+        const lettersData = [
+            { id: 1, name: 'Elif', sec: 1 },
+            { id: 2, name: 'Be', sec: 1 },
+            { id: 3, name: 'Te', sec: 1 },
+            { id: 4, name: 'Peltek Se', sec: 1 },
+            { id: 5, name: 'Cim', sec: 2 },
+            { id: 6, name: 'Ha', sec: 2 },
+            { id: 7, name: 'Hı', sec: 2 },
+            { id: 8, name: 'Dal', sec: 2 },
+            { id: 9, name: 'Peltek Zel', sec: 3 },
+            { id: 10, name: 'Ra', sec: 3 },
+            { id: 11, name: 'Ze', sec: 3 },
+            { id: 12, name: 'Sin', sec: 3 },
+            { id: 13, name: 'Şın', sec: 4 },
+            { id: 14, name: 'Sad', sec: 4 },
+            { id: 15, name: 'Dad', sec: 4 },
+            { id: 16, name: 'Tı', sec: 4 },
+            { id: 17, name: 'Peltek Zı', sec: 5 },
+            { id: 18, name: 'Ayn', sec: 5 },
+            { id: 19, name: 'Gayn', sec: 5 },
+            { id: 20, name: 'Fe', sec: 5 },
+            { id: 21, name: 'Kaf', sec: 6 },
+            { id: 22, name: 'Kef', sec: 6 },
+            { id: 23, name: 'Lam', sec: 6 },
+            { id: 24, name: 'Mim', sec: 6 },
+            { id: 25, name: 'Nun', sec: 7 },
+            { id: 26, name: 'Vav', sec: 7 },
+            { id: 27, name: 'He', sec: 7 },
+            { id: 28, name: 'Lâmelif', sec: 7 },
+            { id: 29, name: 'Ye', sec: 7 }
+        ];
+
+        const sections = [
+            { id: 1, name: '1. Bölüm', label: 'Elif - Se', items: [1, 2, 3, 4] },
+            { id: 2, name: '2. Bölüm', label: 'Cim - Dal', items: [5, 6, 7, 8] },
+            { id: 3, name: '3. Bölüm', label: 'Zel - Sin', items: [9, 10, 11, 12] },
+            { id: 4, name: '4. Bölüm', label: 'Şın - Tı', items: [13, 14, 15, 16] },
+            { id: 5, name: '5. Bölüm', label: 'Zı - Fe', items: [17, 18, 19, 20] },
+            { id: 6, name: '6. Bölüm', label: 'Kaf - Mim', items: [21, 22, 23, 24] },
+            { id: 7, name: '7. Bölüm', label: 'Nun - Ye', items: [25, 26, 27, 28, 29] }
+        ];
+
+        let currentSectionId = 1;
+        let activePool = [1, 2, 3, 4];
+        let currentIndex = 0;
+        let currentColor = '#2563eb';
+        let brushSize = 16;
+        let isRainbow = false;
+        let rainbowHue = 0;
+        let isDrawing = false;
+        let lastX = 0, lastY = 0;
+        let hasDrawn = false;
+        let totalStars = parseInt(localStorage.getItem('elifbam_total_stars') || '0', 10);
+
+        const canvas = document.getElementById('paintCanvas');
+        const ctx = canvas.getContext('2d');
+        const guideImg = document.getElementById('guide-img');
+        const audioPlayer = document.getElementById('audio-player');
+
+        window.addEventListener('DOMContentLoaded', () => {
+            buildSectionBar();
+            updateStarsUI();
+            loadCurrentLetter();
+            initDrawingEvents();
+        });
+
+        function buildSectionBar() {
+            const bar = document.getElementById('section-bar');
+            bar.innerHTML = '';
+
+            const allBtn = document.createElement('button');
+            allBtn.className = 'sec-btn' + (currentSectionId === 'all' ? ' active' : '');
+            allBtn.textContent = '⭐ Tüm Harfler (29)';
+            allBtn.onclick = () => selectSection('all');
+            bar.appendChild(allBtn);
+
+            sections.forEach(sec => {
+                const b = document.createElement('button');
+                b.className = 'sec-btn' + (currentSectionId === sec.id ? ' active' : '');
+                b.textContent = `${sec.name} (${sec.label})`;
+                b.onclick = () => selectSection(sec.id);
+                bar.appendChild(b);
+            });
+        }
+
+        function selectSection(secId) {
+            currentSectionId = secId;
+            document.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
+            if (secId === 'all') {
+                activePool = lettersData.map(l => l.id);
+                document.querySelector('.sec-btn:first-child').classList.add('active');
+            } else {
+                const sec = sections.find(s => s.id === secId);
+                activePool = [...sec.items];
+                const btn = Array.from(document.querySelectorAll('.sec-btn')).find(b => b.textContent.includes(sec.name));
+                if (btn) btn.classList.add('active');
+            }
+            currentIndex = 0;
+            loadCurrentLetter();
+        }
+
+        function loadCurrentLetter() {
+            clearCanvas();
+            const letterId = activePool[currentIndex];
+            const letter = lettersData.find(l => l.id === letterId);
+            document.getElementById('letter-name').textContent = letter.name;
+            guideImg.src = `../harfler/harfler/${letter.id}.png`;
+            playLetterSound();
+            hasDrawn = false;
+        }
+
+        function playLetterSound() {
+            const letterId = activePool[currentIndex];
+            audioPlayer.src = `../harfler/harfler/${letterId}.mp3`;
+            audioPlayer.play().catch(() => {});
+        }
+
+        function nextLetter() {
+            currentIndex = (currentIndex + 1) % activePool.length;
+            loadCurrentLetter();
+        }
+
+        function prevLetter() {
+            currentIndex = (currentIndex - 1 + activePool.length) % activePool.length;
+            loadCurrentLetter();
+        }
+
+        function setColor(c, dotEl) {
+            document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+            dotEl.classList.add('active');
+            if (c === 'rainbow') {
+                isRainbow = true;
+            } else {
+                isRainbow = false;
+                currentColor = c;
+            }
+        }
+
+        function setBrushSize(size, btnEl) {
+            brushSize = size;
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasDrawn = false;
+        }
+
+        function initDrawingEvents() {
+            // Mouse Olayları
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            window.addEventListener('mouseup', stopDraw);
+
+            // Dokunmatik (Touch) Olayları
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                startDraw(touch);
+            }, { passive: false });
+
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                draw(touch);
+            }, { passive: false });
+
+            window.addEventListener('touchend', stopDraw);
+        }
+
+        function getCanvasPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            return {
+                x: (e.clientX - rect.left) * scaleX,
+                y: (e.clientY - rect.top) * scaleY
+            };
+        }
+
+        function startDraw(e) {
+            isDrawing = true;
+            hasDrawn = true;
+            const pos = getCanvasPos(e);
+            lastX = pos.x;
+            lastY = pos.y;
+            draw(e);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const pos = getCanvasPos(e);
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(pos.x, pos.y);
+
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.lineWidth = brushSize;
+
+            if (isRainbow) {
+                rainbowHue = (rainbowHue + 4) % 360;
+                ctx.strokeStyle = `hsl(${rainbowHue}, 100%, 50%)`;
+                ctx.shadowColor = `hsl(${rainbowHue}, 100%, 50%)`;
+                ctx.shadowBlur = 8;
+            } else {
+                ctx.strokeStyle = currentColor;
+                ctx.shadowColor = currentColor;
+                ctx.shadowBlur = 4;
+            }
+
+            ctx.stroke();
+            ctx.shadowBlur = 0; // Sıfırla
+
+            lastX = pos.x;
+            lastY = pos.y;
+        }
+
+        function stopDraw() {
+            isDrawing = false;
+        }
+
+        function onFinishDrawing() {
+            if (!hasDrawn) {
+                setMascotMessage("Henüz harfi çizmedin! Parmağınla üzerinden geç bakalım ✍️");
+                return;
+            }
+
+            // Tebrik & Başarı
+            playChimeSound();
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+            }
+
+            totalStars += 1;
+            localStorage.setItem('elifbam_total_stars', totalStars);
+            updateStarsUI();
+
+            const curLetter = lettersData.find(l => l.id === activePool[currentIndex]);
+            setMascotMessage(`🎉 Harika bir çizim oldu! Maşallah! ${curLetter.name} harfini çok güzel yazdın!`);
+
+            // Harfin kılavuz resmini parlat
+            guideImg.style.opacity = '0.9';
+            setTimeout(() => guideImg.style.opacity = '0.22', 1200);
+        }
+
+        function updateStarsUI() {
+            document.getElementById('val-stars').textContent = totalStars;
+        }
+
+        function setMascotMessage(msg) {
+            document.getElementById('mascot-text').textContent = msg;
+        }
+
+        function onMascotClick() {
+            playChimeSound();
+            const quotes = [
+                "Yazı yazdıkça el kasların gelişir!",
+                "Arapça harfler sağdan sola doğru yazılır!",
+                "Gökkuşağı rengini denedin mi? Çok eğlenceli!",
+                "Harika bir hat ustası olacaksın maşallah!"
+            ];
+            setMascotMessage(quotes[Math.floor(Math.random() * quotes.length)]);
+        }
+
+        function playChimeSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                if (ctx.state === 'suspended') ctx.resume();
+                [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(f, ctx.currentTime + i * 0.08);
+                    gain.gain.setValueAtTime(0.25, ctx.currentTime + i * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.08 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + i * 0.08);
+                    osc.stop(ctx.currentTime + i * 0.08 + 0.31);
+                });
+            } catch(e) {}
+        }
+    </script>
+</body>
+</html>

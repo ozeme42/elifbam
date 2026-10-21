@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 Başarı Dolabı & Yıldız Sandığı - Elifba</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+    <script src="confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --gold-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fefce8 0%, #fef3c7 50%, #fffbeb 100%);
+            margin: 0;
+            padding: 20px 15px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: #78350f;
+            user-select: none;
+        }
+
+        .top-nav {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .home-btn {
+            background: white;
+            border: 2px solid #cbd5e1;
+            padding: 8px 18px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #334155;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .home-btn:hover { background: #f8fafc; transform: translateY(-2px); }
+
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            color: #b45309;
+            margin: 0;
+            font-size: 2.2rem;
+            text-align: center;
+            text-shadow: 1px 1px 0 #fff;
+        }
+
+        /* Toplam Yıldız Paneli */
+        .stars-vault-card {
+            background: white;
+            border: 3px solid #facc15;
+            border-radius: 26px;
+            padding: 16px 28px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.15);
+            margin-bottom: 25px;
+            max-width: 500px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .stars-icon {
+            font-size: 2.8rem;
+            animation: starSpin 3s infinite ease-in-out alternate;
+        }
+        @keyframes starSpin { from { transform: scale(1) rotate(-8deg); } to { transform: scale(1.15) rotate(8deg); } }
+
+        .stars-info-title { font-size: 0.9rem; font-weight: 700; color: #92400e; }
+        .stars-count { font-family: 'Fredoka One', cursive; font-size: 2.2rem; color: #b45309; line-height: 1; }
+
+        /* SİHİRLİ SANDIK BÖLÜMÜ */
+        .chest-section {
+            background: white;
+            border: 3px solid #fde047;
+            border-radius: 28px;
+            padding: 24px;
+            max-width: 650px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+        }
+
+        .chest-visual-box {
+            position: relative;
+            margin: 15px auto;
+            width: 130px;
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chest-emoji {
+            font-size: 5.5rem;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.15));
+        }
+        .chest-emoji:hover { transform: scale(1.12); }
+        .chest-ready { animation: chestPound 1s infinite alternate; }
+        @keyframes chestPound {
+            0% { transform: scale(1) rotate(-3deg); }
+            100% { transform: scale(1.15) rotate(4deg); }
+        }
+
+        .chest-progress-track {
+            background: #e2e8f0;
+            height: 16px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 15px auto 8px;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .chest-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f59e0b, #ef4444);
+            border-radius: 12px;
+            transition: width 0.5s ease;
+        }
+
+        .btn-open-chest {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+        .btn-open-chest:hover { transform: translateY(-2px) scale(1.05); }
+        .btn-open-chest:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ROZET & KUPA DOLABI */
+        .trophy-section {
+            max-width: 850px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .trophy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .badge-card {
+            background: white;
+            border-radius: 22px;
+            padding: 20px 15px;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.25s;
+        }
+        .badge-card.unlocked {
+            border-color: #facc15;
+            background: #fffbeb;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.15);
+        }
+        .badge-card.locked {
+            opacity: 0.55;
+            filter: grayscale(80%);
+        }
+
+        .badge-icon {
+            font-size: 3.2rem;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .badge-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.1rem;
+            color: #92400e;
+            margin-bottom: 4px;
+        }
+
+        .badge-desc {
+            font-size: 0.82rem;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        .badge-status-pill {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+        .status-unlocked { background: #dcfce7; color: #15803d; }
+        .status-locked { background: #f1f5f9; color: #64748b; }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <a href="../index.html" class="home-btn">🏠 Menü</a>
+        <h1>🏆 Başarı & Kupa Dolabı</h1>
+        <div></div>
+    </div>
+
+    <!-- Yıldız Kasası -->
+    <div class="stars-vault-card">
+        <div class="stars-icon">⭐</div>
+        <div>
+            <div class="stars-info-title">TOPLAM KAZANILAN YILDIZLAR</div>
+            <div class="stars-count" id="val-stars">0</div>
+        </div>
+    </div>
+
+    <!-- SİHİRLİ SANDIK -->
+    <div class="chest-section">
+        <h2 style="margin: 0; color: #b45309; font-size: 1.4rem;">🎁 Sihirli Yıldız Sandığı</h2>
+        <p style="margin: 5px 0 10px; color: #78350f; font-size: 0.95rem;" id="chest-subtitle">
+            Oyun oynayarak yıldız biriktir, sandığı aç ve sürpriz ödülleri kap!
+        </p>
+
+        <div class="chest-visual-box">
+            <div class="chest-emoji" id="chest-emoji" onclick="tryOpenChest()">🧰</div>
+        </div>
+
+        <div class="chest-progress-track">
+            <div class="chest-progress-fill" id="chest-fill" style="width: 0%;"></div>
+        </div>
+        <div style="font-weight: bold; font-size: 0.9rem;" id="chest-req-text">0 / 25 Yıldız</div>
+
+        <button class="btn-open-chest" id="btn-open-chest" onclick="tryOpenChest()" disabled>
+            ✨ Sandığı Aç!
+        </button>
+    </div>
+
+    <!-- KUPA VE ROZET VİTRİNİ -->
+    <div class="trophy-section">
+        <h2 style="color: #92400e; margin: 0;">🎖️ Rozet Koleksiyonu</h2>
+        <p style="color: #78350f; font-size: 0.95rem; margin: 4px 0 15px;">Farklı modları deneyimleyerek tüm rozetleri topla!</p>
+
+        <div class="trophy-grid" id="trophy-grid"></div>
+    </div>
+
+    <script>
+        const badgesData = [
+            { id: 'first_play', title: 'İlk Adım', desc: 'Elifba dünyasına adım attın!', icon: '🌱', reqStars: 1 },
+            { id: 'balloon_master', title: 'Balon Avcısı', desc: 'Balon patlatma oyununda başarı kazandın.', icon: '🎈', reqStars: 10 },
+            { id: 'memory_ace', title: 'Keskin Hafıza', desc: 'Kart eşleştirme oyununu tamamladın.', icon: '🃏', reqStars: 20 },
+            { id: 'little_scribe', title: 'Minik Hattat', desc: 'Harfleri parmağınla güzelce yazdın.', icon: '✍️', reqStars: 30 },
+            { id: 'train_driver', title: 'Tren Makinisti', desc: 'Harf vagonlarını birleştirip yola çıktın.', icon: '🚂', reqStars: 45 },
+            { id: 'lucky_spinner', title: 'Şanslı Kaşif', desc: 'Şans çarkını çevirip yeni harfler keşfettin.', icon: '🎡', reqStars: 60 },
+            { id: 'streak_legend', title: 'Seri Ustası', desc: 'Üst üste 10 veya daha fazla doğru bildin.', icon: '🔥', reqStars: 80 },
+            { id: 'champion', title: 'Elifba Şampiyonu', desc: 'Büyük başarı! 100 yıldız sınırını aştın!', icon: '👑', reqStars: 100 }
+        ];
+
+        let totalStars = parseInt(localStorage.getItem('elifbam_total_stars') || '0', 10);
+        let chestGoal = 25;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+        });
+
+        function updateUI() {
+            document.getElementById('val-stars').textContent = totalStars;
+
+            // Sandık Hedefi Hesapla (25 -> 50 -> 100 -> 200)
+            if (totalStars < 25) chestGoal = 25;
+            else if (totalStars < 50) chestGoal = 50;
+            else if (totalStars < 100) chestGoal = 100;
+            else chestGoal = 200;
+
+            const pct = Math.min(100, Math.round((totalStars / chestGoal) * 100));
+            document.getElementById('chest-fill').style.width = pct + '%';
+            document.getElementById('chest-req-text').textContent = `${totalStars} / ${chestGoal} Yıldız`;
+
+            const chestBtn = document.getElementById('btn-open-chest');
+            const chestEmoji = document.getElementById('chest-emoji');
+
+            if (totalStars >= chestGoal) {
+                chestBtn.disabled = false;
+                chestBtn.textContent = '✨ Sandığı Aç! (Tıkla)';
+                chestEmoji.className = 'chest-emoji chest-ready';
+                chestEmoji.textContent = '🎁';
+            } else {
+                chestBtn.disabled = true;
+                chestBtn.textContent = `Açmaya ${chestGoal - totalStars} Yıldız Kaldı`;
+                chestEmoji.className = 'chest-emoji';
+                chestEmoji.textContent = '🧰';
+            }
+
+            renderBadges();
+        }
+
+        function renderBadges() {
+            const grid = document.getElementById('trophy-grid');
+            grid.innerHTML = '';
+
+            badgesData.forEach(badge => {
+                const isUnlocked = totalStars >= badge.reqStars;
+                const card = document.createElement('div');
+                card.className = `badge-card ${isUnlocked ? 'unlocked' : 'locked'}`;
+
+                card.innerHTML = `
+                    <div class="badge-icon">${badge.icon}</div>
+                    <div class="badge-title">${badge.title}</div>
+                    <div class="badge-desc">${badge.desc}</div>
+                    <div class="badge-status-pill ${isUnlocked ? 'status-unlocked' : 'status-locked'}">
+                        ${isUnlocked ? '✓ Açıldı' : `🔒 ${badge.reqStars} Yıldız`}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function tryOpenChest() {
+            if (totalStars < chestGoal) return;
+
+            playFanfare();
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 100, spread: 80, origin: { y: 0.5 } });
+            }
+
+            const chestEmoji = document.getElementById('chest-emoji');
+            chestEmoji.textContent = '🎉';
+            chestEmoji.classList.remove('chest-ready');
+
+            alert(`🎉 TEBRİKLER! ${chestGoal} Yıldız Sandığını Açtın! Harika bir Elifba Ustasısın! 🌟`);
+        }
+
+        function playFanfare() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                if (ctx.state === 'suspended') ctx.resume();
+                [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(f, ctx.currentTime + i * 0.1);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.1 + 0.35);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + i * 0.1);
+                    osc.stop(ctx.currentTime + i * 0.1 + 0.36);
+                });
+            } catch(e) {}
+        }
+    </script>
+</body>
+</html>

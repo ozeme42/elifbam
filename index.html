@@ -3,14 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elifba Öğreniyorum</title>
-    <!-- Çocuk dostu sevimli bir yazı tipi ekliyoruz -->
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <title>✨ Elifba Öğreniyorum - Eğlenceli Kur'an Dünyası</title>
+    <!-- Çocuk dostu sevimli yazı tipleri -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --bg-color: #eef9ff;
-            --text-color: #2c3e50;
+            --text-color: #1e293b;
+            --primary: #2563eb;
+            --gold: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
@@ -21,130 +27,644 @@
             background-position: 0 0, 20px 20px;
             color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            padding: 20px 15px 50px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        /* Üst Gezinme ve Yıldız Barı */
+        .top-navbar {
+            max-width: 1050px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .brand-badge {
+            background: white;
+            border: 2px solid #cbd5e1;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: 800;
+            color: #1e3a8a;
+            font-size: 1.05rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+        }
+
+        .star-vault-pill {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 2px solid #facc15;
+            padding: 8px 18px;
+            border-radius: 25px;
+            color: #92400e;
+            font-weight: 800;
+            font-size: 1.05rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+            transition: all 0.2s;
+        }
+
+        .star-vault-pill:hover {
+            transform: translateY(-2px);
+            background: #fef08a;
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);
+        }
+
+        .star-vault-pill .star-val {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.3rem;
+            color: #b45309;
         }
 
         header {
             text-align: center;
             margin-bottom: 30px;
-            animation: bounce 2s infinite alternate;
         }
 
         h1 {
             font-family: 'Fredoka One', cursive;
             color: #ff5722;
-            font-size: 3rem;
-            text-shadow: 3px 3px 0px #fff, 5px 5px 0px #ffcc80;
-            margin: 10px 0;
+            font-size: 3.2rem;
+            text-shadow: 3px 3px 0px #fff, 6px 6px 0px #ffcc80;
+            margin: 5px 0;
+            animation: gentleFloat 3s infinite ease-in-out alternate;
+        }
+
+        @keyframes gentleFloat {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
         }
 
         p.subtitle {
-            font-size: 1.2rem;
-            color: #4caf50;
-            font-weight: bold;
+            font-size: 1.25rem;
+            color: #059669;
+            font-weight: 800;
+            margin: 0;
         }
 
-        /* Menü Konteyneri */
-        .menu-container {
-            max-width: 1000px;
+        /* Bölüm Başlıkları */
+        .section-headline {
+            max-width: 1050px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 30px 0 16px;
+            padding-left: 5px;
+        }
+
+        .section-headline h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.55rem;
+            margin: 0;
+            color: #1e3a8a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-headline .sec-pill {
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 0.8rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .section-headline .line {
+            flex: 1;
+            height: 3px;
+            background: #e2e8f0;
+            border-radius: 3px;
+        }
+
+        /* --- 1. ÖNE ÇIKAN OYUNLAR VE AKTİVİTELER (HERO GRID) --- */
+        .games-hero-grid {
+            max-width: 1050px;
             width: 100%;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
             gap: 20px;
-            padding: 10px;
+            margin-bottom: 25px;
         }
 
-        /* Eğlenceli Buton Kartları */
+        .game-hero-card {
+            background: white;
+            border-radius: 24px;
+            padding: 22px 20px;
+            text-decoration: none;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 3px solid transparent;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 8px; height: 100%;
+            transition: width 0.2s;
+        }
+
+        .game-hero-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 16px 32px rgba(0,0,0,0.12);
+        }
+
+        .game-hero-card:hover::before {
+            width: 12px;
+        }
+
+        .hero-icon-box {
+            width: 68px;
+            height: 68px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.3rem;
+            flex-shrink: 0;
+            transition: transform 0.3s;
+        }
+
+        .game-hero-card:hover .hero-icon-box {
+            transform: scale(1.12) rotate(6deg);
+        }
+
+        .hero-card-content {
+            flex: 1;
+        }
+
+        .hero-card-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.3rem;
+            margin: 0 0 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hero-card-desc {
+            font-size: 0.92rem;
+            color: #64748b;
+            margin: 0;
+            line-height: 1.35;
+            font-weight: 600;
+        }
+
+        /* Oyun Kartları Özel Temaları */
+        .card-balon {
+            border-color: #fda4af;
+        }
+        .card-balon::before { background: #f43f5e; }
+        .card-balon .hero-icon-box { background: #ffe4e6; }
+        .card-balon .hero-card-title { color: #e11d48; }
+
+        .card-hafiza {
+            border-color: #d8b4fe;
+        }
+        .card-hafiza::before { background: #9333ea; }
+        .card-hafiza .hero-icon-box { background: #f3e8ff; }
+        .card-hafiza .hero-card-title { color: #7e22ce; }
+
+        .card-cizim {
+            border-color: #6ee7b7;
+        }
+        .card-cizim::before { background: #10b981; }
+        .card-cizim .hero-icon-box { background: #d1fae5; }
+        .card-cizim .hero-card-title { color: #047857; }
+
+        .card-tren {
+            border-color: #fdba74;
+        }
+        .card-tren::before { background: #f97316; }
+        .card-tren .hero-icon-box { background: #ffedd5; }
+        .card-tren .hero-card-title { color: #c2410c; }
+
+        .card-cark {
+            border-color: #93c5fd;
+        }
+        .card-cark::before { background: #2563eb; }
+        .card-cark .hero-icon-box { background: #dbeafe; }
+        .card-cark .hero-card-title { color: #1d4ed8; }
+
+        .card-basarilar {
+            border-color: #fde047;
+            background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
+        }
+        .card-basarilar::before { background: #eab308; }
+        .card-basarilar .hero-icon-box { background: #fef9c3; }
+        .card-basarilar .hero-card-title { color: #b45309; }
+
+        /* --- 2. DERS VE AKTİVİTE MENÜ KUTULARI --- */
+        .menu-container {
+            max-width: 1050px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
         .menu-card {
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 25px 15px;
+            padding: 20px 14px;
             border-radius: 20px;
-            box-shadow: 0 8px 0px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 0px rgba(0,0,0,0.08);
             text-decoration: none;
             color: white;
-            font-size: 1.3rem;
+            font-size: 1.15rem;
             font-weight: 700;
             transition: transform 0.2s, box-shadow 0.2s;
-            border: 4px solid white;
+            border: 3px solid rgba(255,255,255,0.8);
         }
 
-        /* Kartların Üzerine Gelindiğinde (Hover) */
         .menu-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 0px rgba(0,0,0,0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 0px rgba(0,0,0,0.12);
         }
 
         .menu-card:active {
             transform: translateY(2px);
-            box-shadow: 0 4px 0px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 0px rgba(0,0,0,0.1);
         }
 
-        /* Çocuk Dostu Renk Paleti */
-        .bg-red    { background-color: #ff4757; }
-        .bg-blue   { background-color: #2ed573; }
-        .bg-green  { background-color: #1e90ff; }
-        .bg-orange { background-color: #ffa502; }
-        .bg-purple { background-color: #9b59b6; }
-        .bg-pink   { background-color: #ff6b81; }
-        .bg-teal   { background-color: #2ed573; }
-        .bg-yellow { background-color: #ffbc00; color: #2c3e50; }
+        /* Renk Paleti */
+        .bg-red    { background: linear-gradient(135deg, #ff4757 0%, #ee5253 100%); }
+        .bg-blue   { background: linear-gradient(135deg, #2ed573 0%, #10ac84 100%); }
+        .bg-green  { background: linear-gradient(135deg, #1e90ff 0%, #2e86de 100%); }
+        .bg-orange { background: linear-gradient(135deg, #ffa502 0%, #ff793f 100%); }
+        .bg-purple { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); }
+        .bg-pink   { background: linear-gradient(135deg, #ff6b81 0%, #e056fd 100%); }
+        .bg-teal   { background: linear-gradient(135deg, #20bf6b 0%, #0fb9b1 100%); }
+        .bg-yellow { background: linear-gradient(135deg, #fbc531 0%, #e1b12c 100%); color: #2c3e50; }
+        .bg-indigo { background: linear-gradient(135deg, #4834d4 0%, #686de0 100%); }
 
-        /* Başlık animasyonu */
-        @keyframes bounce {
+        /* SEVİMLİ MASKOT HÜDHÜD STİLLERİ */
+        .hudhud-companion {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .hudhud-bubble {
+            background: white;
+            border: 3px solid #f59e0b;
+            border-radius: 18px;
+            padding: 12px 16px;
+            max-width: 250px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #78350f;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            margin-bottom: 8px;
+            position: relative;
+            opacity: 1;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: auto;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .hudhud-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 32px;
+            border-width: 10px 10px 0 0;
+            border-style: solid;
+            border-color: white transparent;
+            display: block;
+            width: 0;
+        }
+
+        .hudhud-avatar {
+            pointer-events: auto;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            animation: hudhudFloat 3s infinite ease-in-out alternate;
+        }
+
+        .hudhud-avatar:hover {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        @keyframes hudhudFloat {
             0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
+            100% { transform: translateY(-8px); }
+        }
+
+        .hudhud-badge {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #78350f;
+            color: #fef3c7;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 10px;
+            border: 1px solid #facc15;
+            white-space: nowrap;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        footer a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
         }
 
         /* Mobil Ekranlar İçin Ayar */
         @media (max-width: 600px) {
-            h1 { font-size: 2.2rem; }
-            .menu-container { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
-            .menu-card { font-size: 1.1rem; padding: 20px 10px; }
+            h1 { font-size: 2.3rem; }
+            .games-hero-grid { grid-template-columns: 1fr; }
+            .menu-container { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+            .menu-card { font-size: 1rem; padding: 16px 10px; }
+            .hudhud-companion { bottom: 12px; right: 12px; }
+            .hudhud-svg { width: 68px; height: 68px; }
+            .hudhud-bubble { max-width: 200px; font-size: 0.85rem; }
         }
     </style>
 </head>
 <body>
 
+    <!-- ÜST YILDIZ VE BAŞARI BARI -->
+    <div class="top-navbar">
+        <div class="brand-badge">
+            <span>✨</span> <span>Kur'an-ı Kerim Elifbası</span>
+        </div>
+        <a href="basarilar/index.html" class="star-vault-pill" title="Başarı Dolabına ve Rozetlerine Git">
+            <span>⭐ Toplam Yıldız:</span>
+            <span class="star-val" id="portal-stars">0</span>
+            <span>🏆 Dolabım</span>
+        </a>
+    </div>
+
     <header>
-        <h1>✨ Elifba Öğren ✨</h1>
-        <p class="subtitle">Haydi, eğlenerek Kur'an-ı Kerim harflerini öğrenelim!</p>
+        <h1>✨ Elifba Dünyası ✨</h1>
+        <p class="subtitle">Haydi, eğlenceli oyunlar ve aktivitelerle harfleri keşfedelim!</p>
     </header>
 
+    <!-- 1. EĞLENCELİ OYUNLAR VE AKTİVİTELER (HERO GRID) -->
+    <div class="section-headline">
+        <h2><span>🎮</span> <span>Eğlenceli Oyunlar & Aktiviteler</span></h2>
+        <span class="sec-pill">Yeni & İnteraktif</span>
+        <div class="line"></div>
+    </div>
+
+    <div class="games-hero-grid">
+        <!-- 🎈 Balon Patlatma -->
+        <a href="balonlar/index.html" class="game-hero-card card-balon">
+            <div class="hero-icon-box">🎈</div>
+            <div class="hero-card-content">
+                <h3 class="hero-card-title">Balon Patlatma</h3>
+                <p class="hero-card-desc">Sesi dinle, gökyüzüne uçan doğru harf balonunu patlatıp yıldız kazan!</p>
+            </div>
+        </a>
+
+        <!-- 🃏 Hafıza & Kart Eşleştirme -->
+        <a href="hafiza/index.html" class="game-hero-card card-hafiza">
+            <div class="hero-icon-box">🃏</div>
+            <div class="hero-card-content">
+                <h3 class="hero-card-title">Hafıza & Eşleştirme</h3>
+                <p class="hero-card-desc">Kartları 3D çevir, harf ikizlerini eşleştir ve hafıza rekoru kır!</p>
+            </div>
+        </a>
+
+        <!-- ✍️ Harf Çizme & Yazma -->
+        <a href="cizim/index.html" class="game-hero-card card-cizim">
+            <div class="hero-icon-box">✍️</div>
+            <div class="hero-card-content">
+                <h3 class="hero-card-title">Harf Çizme & Yazma</h3>
+                <p class="hero-card-desc">Renkli fırçalarla harf şablonlarının üzerinden çiz ve hattat ol!</p>
+            </div>
+        </a>
+
+        <!-- 🚂 Harf Treni -->
+        <a href="tren/index.html" class="game-hero-card card-tren">
+            <div class="hero-icon-box">🚂</div>
+            <div class="hero-card-content">
+                <h3 class="hero-card-title">Harf Treni</h3>
+                <p class="hero-card-desc">Vagonları doğru harflerle sıraya diz, treni düdük çalarak yola çıkar!</p>
+            </div>
+        </a>
+
+        <!-- 🎡 Şans Çarkı -->
+        <a href="cark/index.html" class="game-hero-card card-cark">
+            <div class="hero-icon-box">🎡</div>
+            <div class="hero-card-content">
+                <h3 class="hero-card-title">Şans Çarkıfeleği</h3>
+                <p class="hero-card-desc">Çarkı çevir, şansına gelen sürpriz harf veya bölümle çalış!</p>
+            </div>
+        </a>
+
+        <!-- 🏆 Başarı Dolabı -->
+        <a href="basarilar/index.html" class="game-hero-card card-basarilar">
+            <div class="hero-icon-box">🏆</div>
+            <div class="hero-card-content">
+                <h3 class="hero-card-title">Başarı & Yıldız Sandığı</h3>
+                <p class="hero-card-desc">Yıldızlarını biriktir, sihirli sandıkları aç ve 8 özel rozeti topla!</p>
+            </div>
+        </a>
+    </div>
+
+    <!-- 2. TEMEL HARF DERSLERİ VE ÇALIŞMA ALANI -->
+    <div class="section-headline">
+        <h2><span>📖</span> <span>Temel Harf Dersleri & Çalışma</span></h2>
+        <div class="line"></div>
+    </div>
+
     <div class="menu-container">
-        <!-- Özel ve Aktivite Linkleri (Büyük ve dikkat çekici) -->
-        <a href="elana/index.html" class="menu-card bg-red">🎨 Resimlerle Harfleri Öğren</a>
-        <a href="elbo2/index.html" class="menu-card bg-orange">✏️ Boyayarak Harfleri Öğren</a>
-        <a href="harfler/index.html" class="menu-card bg-green">🅰️ Harfler</a>
-        <a href="harekeler/index.html" class="menu-card bg-yellow">🌈 Harekeler Bir Arada (E-İ-Ü)</a>
-        
-        <!-- Ders Konuları -->
+        <a href="harfler/index.html" class="menu-card bg-green" style="box-shadow: 0 6px 0 #15803d; border: 3px solid #86efac;">
+            🅰️ Harfler (Bölüm Bölüm & Mikrofon)
+        </a>
+        <a href="harekeler/index.html" class="menu-card bg-yellow">
+            🌈 Harekeler Bir Arada (E-İ-Ü)
+        </a>
+        <a href="elana/index.html" class="menu-card bg-red">
+            🎨 Resimlerle Harfleri Öğren
+        </a>
+        <a href="elbo2/index.html" class="menu-card bg-orange">
+            ✏️ Boyayarak Harfleri Öğren
+        </a>
+    </div>
+
+    <!-- 3. HAREKELER VE KELİMELER -->
+    <div class="section-headline">
+        <h2><span>🎈</span> <span>Harekeler (Üstün, Esre, Ötre)</span></h2>
+        <div class="line"></div>
+    </div>
+
+    <div class="menu-container">
         <a href="ustun1/index.html" class="menu-card bg-blue">🎈 Üstün (Harfler)</a>
         <a href="ustun/index.html" class="menu-card bg-blue">🎈 Üstün (Kelimeler)</a>
         <a href="esre1/index.html" class="menu-card bg-purple">💧 Esre (Harfler)</a>
         <a href="esre/index.html" class="menu-card bg-purple">💧 Esre (Kelimeler)</a>
         <a href="otre1/index.html" class="menu-card bg-pink">🍩 Ötre (Harfler)</a>
         <a href="otre/index.html" class="menu-card bg-pink">🍩 Ötre (Kelimeler)</a>
-        
-        <!-- Med Harfleri -->
+    </div>
+
+    <!-- 4. MED HARFLERİ -->
+    <div class="section-headline">
+        <h2><span>🚀</span> <span>Med (Uzatma) Harfleri</span></h2>
+        <div class="line"></div>
+    </div>
+
+    <div class="menu-container">
         <a href="medelif/index.html" class="menu-card bg-red">🚀 Med Elif</a>
         <a href="medvav/index.html" class="menu-card bg-orange">🚗 Med Vav</a>
         <a href="medye/index.html" class="menu-card bg-green">✈️ Med Ye</a>
-        
-        <!-- Dil Bilgisi Kuralları -->
+    </div>
+
+    <!-- 5. DİL BİLGİSİ VE TENVİNLER -->
+    <div class="section-headline">
+        <h2><span>🔒</span> <span>Cezm, Şedde ve Tenvinler</span></h2>
+        <div class="line"></div>
+    </div>
+
+    <div class="menu-container">
         <a href="cezm/index.html" class="menu-card bg-purple">🔒 Cezm</a>
         <a href="sedde/index.html" class="menu-card bg-pink">💥 Şedde</a>
-        
-        <!-- Tenvinler -->
         <a href="ikiustun/index.html" class="menu-card bg-blue">🌟 Tenvin Üstün</a>
         <a href="ikiesre/index.html" class="menu-card bg-teal">🌙 Tenvin Esre</a>
         <a href="ikiotre/index.html" class="menu-card bg-yellow">☀️ Tenvin Ötre</a>
     </div>
 
+    <!-- SEVİMLİ MASKOT HÜDHÜD -->
+    <div id="hudhud-companion" class="hudhud-companion">
+        <div id="hudhud-bubble" class="hudhud-bubble" onclick="mascotRandomQuote()">
+            <div id="hudhud-bubble-text">Hoş geldin! Bugün hangi eğlenceli oyunu oynamak istersin? 🐥</div>
+        </div>
+        <div class="hudhud-avatar" onclick="mascotRandomQuote()" title="Hüdhüd'e tıkla, sana oyun önersin!">
+            <svg class="hudhud-svg" viewBox="0 0 100 100" width="85" height="85">
+                <!-- Gölge -->
+                <ellipse cx="50" cy="94" rx="32" ry="6" fill="rgba(0,0,0,0.15)"/>
+                <!-- Gövde -->
+                <ellipse cx="50" cy="56" rx="34" ry="34" fill="#fbbf24"/>
+                <ellipse cx="50" cy="62" rx="26" ry="24" fill="#fef3c7"/>
+                <!-- İbik / Baş Tüyleri -->
+                <path d="M48 24 C45 10 38 4 36 2 C44 4 52 14 50 24" fill="#f97316"/>
+                <path d="M52 24 C55 10 62 4 64 2 C56 4 48 14 50 24" fill="#f59e0b"/>
+                <path d="M50 22 C50 6 52 0 50 0 C48 0 50 6 50 22" fill="#fbbf24"/>
+                <!-- Sol Göz -->
+                <circle cx="38" cy="46" r="7" fill="#ffffff"/>
+                <circle cx="39" cy="46" r="4.5" fill="#1e293b"/>
+                <circle cx="41" cy="44" r="2" fill="#ffffff"/>
+                <!-- Sağ Göz -->
+                <circle cx="62" cy="46" r="7" fill="#ffffff"/>
+                <circle cx="61" cy="46" r="4.5" fill="#1e293b"/>
+                <circle cx="63" cy="44" r="2" fill="#ffffff"/>
+                <!-- Yanak Allıkları -->
+                <circle cx="30" cy="56" r="4" fill="#f87171" opacity="0.6"/>
+                <circle cx="70" cy="56" r="4" fill="#f87171" opacity="0.6"/>
+                <!-- Gaga -->
+                <polygon points="45,52 55,52 50,65" fill="#ea580c"/>
+                <!-- Kanatlar -->
+                <path d="M18 52 Q10 65 20 74 Q24 64 24 55 Z" fill="#d97706"/>
+                <path d="M82 52 Q90 65 80 74 Q76 64 76 55 Z" fill="#d97706"/>
+                <!-- Ayaklar -->
+                <ellipse cx="40" cy="88" rx="5" ry="3" fill="#ea580c"/>
+                <ellipse cx="60" cy="88" rx="5" ry="3" fill="#ea580c"/>
+            </svg>
+            <div class="hudhud-badge">Hüdhüd 🐥</div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Elifba Öğreniyorum &bull; <a href="https://www.dindersioyun.com/" target="_blank">dindersioyun.com</a></p>
+    </footer>
+
+    <script>
+        // Yıldız Sayısını Güncelle
+        function updatePortalStars() {
+            const stars = parseInt(localStorage.getItem('elifbam_total_stars') || '0', 10);
+            const el = document.getElementById('portal-stars');
+            if (el) el.textContent = stars;
+        }
+
+        window.addEventListener('DOMContentLoaded', updatePortalStars);
+
+        // Sevimli Maskot Hüdhüd
+        const mascotSuggestions = [
+            "Balon patlatma oyununda balonları yakalamak çok eğlenceli! 🎈",
+            "Hafıza kartlarını eşleştirip rekor kırmaya ne dersin? 🃏",
+            "Fırçanı al ve rengarenk harfler çizmeye başla! ✍️",
+            "Harf treni kalkıyor, vagonları birleştirmeye koş! 🚂",
+            "Şans çarkını çevir, bakalım bugün hangi harf çıkacak? 🎡",
+            "Yıldızlarını biriktirip Başarı Dolabındaki sandıkları açtın mı? 🏆",
+            "Harfler bölümünde mikrofonla sesini kaydetmeyi denedin mi? 🎙️"
+        ];
+
+        function mascotRandomQuote() {
+            playPortalChirp();
+            const quote = mascotSuggestions[Math.floor(Math.random() * mascotSuggestions.length)];
+            const textEl = document.getElementById('hudhud-bubble-text');
+            if (textEl) textEl.textContent = quote;
+        }
+
+        function playPortalChirp() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                if (ctx.state === 'suspended') ctx.resume();
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(650, now);
+                osc.frequency.exponentialRampToValueAtTime(1250, now + 0.08);
+                osc.frequency.exponentialRampToValueAtTime(850, now + 0.18);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.22);
+            } catch(e) {}
+        }
+    </script>
 </body>
 </html>
