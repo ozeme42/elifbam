@@ -543,7 +543,11 @@
 
             currentWord = wordPuzzles[currentPuzzleIndex];
             document.getElementById('target-word-name').textContent = currentWord.name;
-            document.getElementById('target-word-img').src = `../ustun/ustun/${currentWord.id}.png`;
+            const targetImg = document.getElementById('target-word-img');
+            targetImg.src = currentWord.imgSrc || `../ustun/ustun/${currentWord.id}.png`;
+            targetImg.onerror = function() {
+                console.warn("Kelime görseli yüklenemedi:", this.src);
+            };
 
             // Seçenek harfleri oluştur: Doğru 3 harf + 1 adet çeldirici ekstra harf
             let pool = [...currentWord.letters];
@@ -563,7 +567,10 @@
 
         function playTargetWordSound() {
             if (!currentWord) return;
-            audioPlayer.src = `../ustun/ustun/${currentWord.id}.mp3`;
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            audioPlayer.src = currentWord.audSrc || `../ustun/ustun/${currentWord.id}.mp3`;
+            audioPlayer.load();
             audioPlayer.play().catch(() => {});
         }
 

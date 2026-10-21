@@ -444,6 +444,12 @@
                 { id: 'o5', name: 'Cü', imgSrc: '../otre1/otre1/5.jpg', audSrc: '../otre1/otre1/5.m4a' },
                 { id: 'o8', name: 'Dü', imgSrc: '../otre1/otre1/8.jpg', audSrc: '../otre1/otre1/8.m4a' }
             ]},
+            { id: 'med', name: '🚀 Med', label: 'Uzatma', isCustom: true, items: [
+                { id: 'me1', name: 'Med Elif 1', imgSrc: '../medelif/medelif/medelif1.png', audSrc: '../medelif/medelif/medelif1.mp3' },
+                { id: 'me2', name: 'Med Elif 2', imgSrc: '../medelif/medelif/medelif2.png', audSrc: '../medelif/medelif/medelif2.mp3' },
+                { id: 'mv1', name: 'Med Vav 1', imgSrc: '../medvav/medvav/medvav1.png', audSrc: '../medvav/medvav/medvav1.mp3' },
+                { id: 'my1', name: 'Med Ye 1',  imgSrc: '../medye/medye/medye1.png',   audSrc: '../medye/medye/medye1.mp3' }
+            ]},
             { id: 'cezm', name: '🔒 Cezm', label: 'Sükun', isCustom: true, items: [
                 { id: 'cz1', name: 'Cezm 1', imgSrc: '../cezm/cezm/cez1.png', audSrc: '../cezm/cezm/cez1.mp3' },
                 { id: 'cz2', name: 'Cezm 2', imgSrc: '../cezm/cezm/cez2.png', audSrc: '../cezm/cezm/cez2.mp3' },
@@ -558,11 +564,23 @@
                 chosen.push(extra);
             }
 
-            // Her harften 2 adet kart oluştur
+            // Her harften / öğeden 2 adet kart oluştur
             let cardDeck = [];
-            chosen.forEach((letterId, idx) => {
-                cardDeck.push({ uid: `${idx}-A`, letterId: letterId });
-                cardDeck.push({ uid: `${idx}-B`, letterId: letterId });
+            chosen.forEach((itemRaw, idx) => {
+                let itemObj;
+                if (typeof itemRaw === 'object' && itemRaw !== null) {
+                    itemObj = { ...itemRaw };
+                } else {
+                    const found = lettersData.find(l => l.id === itemRaw) || lettersData[0];
+                    itemObj = {
+                        id: found.id,
+                        name: found.name,
+                        imgSrc: `../harfler/harfler/${found.id}.png`,
+                        audSrc: `../harfler/harfler/${found.id}.mp3`
+                    };
+                }
+                cardDeck.push({ uid: `${idx}-A`, ...itemObj });
+                cardDeck.push({ uid: `${idx}-B`, ...itemObj });
             });
 
             cardDeck = shuffleArray(cardDeck);
@@ -581,30 +599,32 @@
             deck.forEach(cardItem => {
                 const wrap = document.createElement('div');
                 wrap.className = 'card-wrapper';
-                wrap.dataset.letterId = cardItem.letterId;
+                wrap.dataset.letterId = cardItem.id;
                 wrap.dataset.uid = cardItem.uid;
+                wrap.dataset.name = cardItem.name;
+                wrap.dataset.audSrc = cardItem.audSrc;
 
                 wrap.innerHTML = `
                     <div class="card-inner">
                         <div class="card-face card-back"></div>
                         <div class="card-face card-front">
-                            <img src="../harfler/harfler/${cardItem.letterId}.png" alt="Harf">
+                            <img src="${cardItem.imgSrc}" alt="${cardItem.name || 'Harf'}">
                         </div>
                     </div>
                 `;
 
-                wrap.onclick = () => onCardClick(wrap, cardItem.letterId);
+                wrap.onclick = () => onCardClick(wrap, cardItem);
                 gridEl.appendChild(wrap);
             });
         }
 
-        function onCardClick(cardEl, letterId) {
+        function onCardClick(cardEl, cardItem) {
             if (isLockGrid) return;
             if (cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
 
             // Kartı çevir ve sesini dinlet
             cardEl.classList.add('flipped');
-            playLetterSound(letterId);
+            playLetterSound(cardItem.audSrc || cardItem.id);
             playFlipSound();
             flippedCards.push(cardEl);
 
@@ -633,9 +653,8 @@
                     localStorage.setItem('elifbam_total_stars', totalStars);
                     updateStarsUI();
 
-                    const letterInfo = lettersData.find(l => l.id == l1);
-                    const name = letterInfo ? letterInfo.name : "";
-                    setMascotMessage(`🎉 Harika! ${name} harfini eşleştirdin!`);
+                    const name = c1.dataset.name || "Harf";
+                    setMascotMessage(`🎉 Harika! ${name} eşleştirdin!`);
 
                     flippedCards = [];
                     isLockGrid = false;
@@ -694,8 +713,14 @@
             return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
         }
 
-        function playLetterSound(id) {
-            cardAudio.src = `../harfler/harfler/${id}.mp3`;
+        function playLetterSound(soundOrId) {
+            if (!soundOrId) return;
+            let src = soundOrId;
+            if (typeof soundOrId === 'number' || (typeof soundOrId === 'string' && !soundOrId.includes('/'))) {
+                src = `../harfler/harfler/${soundOrId}.mp3`;
+            }
+            cardAudio.src = src;
+            cardAudio.load();
             cardAudio.play().catch(() => {});
         }
 

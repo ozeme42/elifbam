@@ -583,85 +583,106 @@
         </div>
     </a>
 
-    <!-- 1. EĞLENCELİ OYUNLAR VE AKTİVİTELER (HERO GRID) -->
-    <div class="section-headline">
-        <h2><span>🎮</span> <span>Eğlenceli Oyunlar & Aktiviteler</span></h2>
-        <span class="sec-pill">Yeni & İnteraktif</span>
-        <div class="line"></div>
-    </div>
+    <!-- 1. EĞLENCELİ OYUNLAR VE AKTİVİTELER (AÇILIR BUTON ALTINDA) -->
+    <div class="games-hub-wrapper" style="max-width: 1050px; margin-bottom: 25px;">
+        <button type="button" class="btn-toggle-games-hub" onclick="togglePortalGamesHub()" id="btn-games-hub" style="padding: 16px 24px; border-radius: 24px;">
+            <span class="hub-btn-left">
+                <span class="hub-icon" style="width: 58px; height: 58px; font-size: 2.5rem;">🎮</span>
+                <span class="hub-text">
+                    <span class="hub-main-title" style="font-size: 1.35rem;">Eğlenceli Oyunlar & Aktiviteler (Tıkla & Aç)</span>
+                    <span class="hub-sub-title" style="font-size: 0.95rem;">Balon patlatma, hafıza, harf çizme, tren ve şans çarkı oyunları burada!</span>
+                </span>
+            </span>
+            <span class="hub-btn-right">
+                <span class="hub-points-badge" id="hub-points-pill">🏆 <span class="hub-pts-val">0</span> Puan</span>
+                <span class="hub-chevron" style="width: 36px; height: 36px; font-size: 1.3rem;">▼</span>
+            </span>
+        </button>
 
-    <div class="games-hero-grid">
-        <!-- 🎈 Balon Patlatma -->
-        <a href="balonlar/index.html" class="game-hero-card card-balon" id="hero-card-balon" onclick="return handleHeroCardClick(event, 'balonlar')">
-            <div class="hero-icon-box">🎈</div>
-            <div class="hero-card-content">
-                <h3 class="hero-card-title">
-                    <span>Balon Patlatma</span>
-                    <span class="hub-card-status" id="badge-hero-balon">...</span>
-                </h3>
-                <p class="hero-card-desc">Sesi dinle, gökyüzüne uçan doğru harf balonunu patlatıp yıldız kazan!</p>
+        <div class="games-hub-drawer" id="games-hub-drawer" style="display: none; padding: 24px; border-radius: 0 0 24px 24px;">
+            <div class="hub-drawer-header" style="margin-bottom: 18px;">
+                <div class="hub-drawer-title">
+                    <span>🎯 Puanlarınla Oyunların Kilidini Aç!</span>
+                </div>
+                <div class="hub-drawer-info">
+                    <span>Dersleri dinle ve test çözerek puan topla!</span>
+                </div>
             </div>
-        </a>
 
-        <!-- 🃏 Hafıza & Kart Eşleştirme -->
-        <a href="hafiza/index.html" class="game-hero-card card-hafiza" id="hero-card-hafiza" onclick="return handleHeroCardClick(event, 'hafiza')">
-            <div class="hero-icon-box">🃏</div>
-            <div class="hero-card-content">
-                <h3 class="hero-card-title">
-                    <span>Hafıza & Eşleştirme</span>
-                    <span class="hub-card-status" id="badge-hero-hafiza">...</span>
-                </h3>
-                <p class="hero-card-desc">Kartları 3D çevir, harf ikizlerini eşleştir ve hafıza rekoru kır!</p>
-            </div>
-        </a>
+            <div class="games-hero-grid" style="margin-bottom: 0;">
+                <!-- 🎈 Balon Patlatma -->
+                <a href="balonlar/index.html" class="game-hero-card card-balon" id="hero-card-balon" onclick="return handleHeroCardClick(event, 'balonlar')">
+                    <div class="hero-icon-box">🎈</div>
+                    <div class="hero-card-content">
+                        <h3 class="hero-card-title">
+                            <span>Balon Patlatma</span>
+                            <span class="hub-card-status" id="badge-hero-balon">...</span>
+                        </h3>
+                        <p class="hero-card-desc">Sesi dinle, gökyüzüne uçan doğru harf balonunu patlatıp yıldız kazan!</p>
+                    </div>
+                </a>
 
-        <!-- ✍️ Harf Çizme & Yazma -->
-        <a href="cizim/index.html" class="game-hero-card card-cizim" id="hero-card-cizim" onclick="return handleHeroCardClick(event, 'cizim')">
-            <div class="hero-icon-box">✍️</div>
-            <div class="hero-card-content">
-                <h3 class="hero-card-title">
-                    <span>Harf Çizme & Yazma</span>
-                    <span class="hub-card-status" id="badge-hero-cizim">...</span>
-                </h3>
-                <p class="hero-card-desc">Renkli fırçalarla harf şablonlarının üzerinden çiz ve hattat ol!</p>
-            </div>
-        </a>
+                <!-- 🃏 Hafıza & Kart Eşleştirme -->
+                <a href="hafiza/index.html" class="game-hero-card card-hafiza" id="hero-card-hafiza" onclick="return handleHeroCardClick(event, 'hafiza')">
+                    <div class="hero-icon-box">🃏</div>
+                    <div class="hero-card-content">
+                        <h3 class="hero-card-title">
+                            <span>Hafıza & Eşleştirme</span>
+                            <span class="hub-card-status" id="badge-hero-hafiza">...</span>
+                        </h3>
+                        <p class="hero-card-desc">Kartları 3D çevir, harf ikizlerini eşleştir ve hafıza rekoru kır!</p>
+                    </div>
+                </a>
 
-        <!-- 🚂 Harf Treni -->
-        <a href="tren/index.html" class="game-hero-card card-tren" id="hero-card-tren" onclick="return handleHeroCardClick(event, 'tren')">
-            <div class="hero-icon-box">🚂</div>
-            <div class="hero-card-content">
-                <h3 class="hero-card-title">
-                    <span>Harf Treni</span>
-                    <span class="hub-card-status" id="badge-hero-tren">...</span>
-                </h3>
-                <p class="hero-card-desc">Vagonları doğru harflerle sıraya diz, treni düdük çalarak yola çıkar!</p>
-            </div>
-        </a>
+                <!-- ✍️ Harf Çizme & Yazma -->
+                <a href="cizim/index.html" class="game-hero-card card-cizim" id="hero-card-cizim" onclick="return handleHeroCardClick(event, 'cizim')">
+                    <div class="hero-icon-box">✍️</div>
+                    <div class="hero-card-content">
+                        <h3 class="hero-card-title">
+                            <span>Harf Çizme & Yazma</span>
+                            <span class="hub-card-status" id="badge-hero-cizim">...</span>
+                        </h3>
+                        <p class="hero-card-desc">Renkli fırçalarla harf şablonlarının üzerinden çiz ve hattat ol!</p>
+                    </div>
+                </a>
 
-        <!-- 🎡 Şans Çarkı -->
-        <a href="cark/index.html" class="game-hero-card card-cark" id="hero-card-cark" onclick="return handleHeroCardClick(event, 'cark')">
-            <div class="hero-icon-box">🎡</div>
-            <div class="hero-card-content">
-                <h3 class="hero-card-title">
-                    <span>Şans Çarkıfeleği</span>
-                    <span class="hub-card-status" id="badge-hero-cark">...</span>
-                </h3>
-                <p class="hero-card-desc">Çarkı çevir, şansına gelen sürpriz harf veya bölümle çalış!</p>
-            </div>
-        </a>
+                <!-- 🚂 Harf Treni -->
+                <a href="tren/index.html" class="game-hero-card card-tren" id="hero-card-tren" onclick="return handleHeroCardClick(event, 'tren')">
+                    <div class="hero-icon-box">🚂</div>
+                    <div class="hero-card-content">
+                        <h3 class="hero-card-title">
+                            <span>Harf Treni</span>
+                            <span class="hub-card-status" id="badge-hero-tren">...</span>
+                        </h3>
+                        <p class="hero-card-desc">Vagonları doğru harflerle sıraya diz, treni düdük çalarak yola çıkar!</p>
+                    </div>
+                </a>
 
-        <!-- 🏆 Başarı Dolabı -->
-        <a href="basarilar/index.html" class="game-hero-card card-basarilar">
-            <div class="hero-icon-box">🏆</div>
-            <div class="hero-card-content">
-                <h3 class="hero-card-title">
-                    <span>Başarı & Yıldız Sandığı</span>
-                    <span class="hub-card-status" style="background:#fef08a; color:#854d0e;">✨ 8 Rozet</span>
-                </h3>
-                <p class="hero-card-desc">Yıldızlarını biriktir, sihirli sandıkları aç ve 8 özel rozeti topla!</p>
+                <!-- 🎡 Şans Çarkı -->
+                <a href="cark/index.html" class="game-hero-card card-cark" id="hero-card-cark" onclick="return handleHeroCardClick(event, 'cark')">
+                    <div class="hero-icon-box">🎡</div>
+                    <div class="hero-card-content">
+                        <h3 class="hero-card-title">
+                            <span>Şans Çarkıfeleği</span>
+                            <span class="hub-card-status" id="badge-hero-cark">...</span>
+                        </h3>
+                        <p class="hero-card-desc">Çarkı çevir, şansına gelen sürpriz harf veya bölümle çalış!</p>
+                    </div>
+                </a>
+
+                <!-- 🏆 Başarı Dolabı -->
+                <a href="basarilar/index.html" class="game-hero-card card-basarilar">
+                    <div class="hero-icon-box">🏆</div>
+                    <div class="hero-card-content">
+                        <h3 class="hero-card-title">
+                            <span>Başarı & Yıldız Sandığı</span>
+                            <span class="hub-card-status" style="background:#fef08a; color:#854d0e;">✨ 8 Rozet</span>
+                        </h3>
+                        <p class="hero-card-desc">Yıldızlarını biriktir, sihirli sandıkları aç ve 8 özel rozeti topla!</p>
+                    </div>
+                </a>
             </div>
-        </a>
+        </div>
     </div>
 
     <!-- 2. TEMEL HARF DERSLERİ VE ÇALIŞMA ALANI -->
@@ -816,6 +837,20 @@
                 return false;
             }
             return true;
+        }
+
+        function togglePortalGamesHub() {
+            const drawer = document.getElementById('games-hub-drawer');
+            const btn = document.getElementById('btn-games-hub');
+            if (!drawer || !btn) return;
+            if (drawer.style.display === 'none' || drawer.style.display === '') {
+                drawer.style.display = 'block';
+                btn.classList.add('is-open');
+                updatePortalStatus();
+            } else {
+                drawer.style.display = 'none';
+                btn.classList.remove('is-open');
+            }
         }
 
         window.addEventListener('DOMContentLoaded', updatePortalStatus);

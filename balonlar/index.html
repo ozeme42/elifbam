@@ -647,7 +647,7 @@
             if (typeof chosen === 'object' && chosen !== null) {
                 currentTargetLetter = { ...chosen };
             } else {
-                const found = lettersData.find(l => l.id === chosen);
+                const found = lettersData.find(l => l.id === chosen) || lettersData[0];
                 currentTargetLetter = { ...found, imgSrc: `../harfler/harfler/${found.id}.png`, audSrc: `../harfler/harfler/${found.id}.mp3` };
             }
             document.getElementById('target-name').textContent = currentTargetLetter.name;
@@ -657,6 +657,7 @@
         function playTargetSound() {
             if (!currentTargetLetter) return;
             audioPlayer.src = currentTargetLetter.audSrc || `../harfler/harfler/${currentTargetLetter.id}.mp3`;
+            audioPlayer.load();
             audioPlayer.play().catch(() => {});
         }
 
@@ -670,12 +671,18 @@
         }
 
         function spawnBalloon() {
-            let letterId;
+            let item;
             // %40 ihtimalle aranan hedef harf gelsin, böylece oyuncu çok beklemez
-            if (Math.random() < 0.4 || !activeBalloons.some(b => b.letterId === currentTargetLetter.id)) {
-                letterId = currentTargetLetter.id;
+            if (Math.random() < 0.4 || !activeBalloons.some(b => String(b.letterId) === String(currentTargetLetter.id))) {
+                item = currentTargetLetter;
             } else {
-                letterId = activePool[Math.floor(Math.random() * activePool.length)];
+                const raw = activePool[Math.floor(Math.random() * activePool.length)];
+                if (typeof raw === 'object' && raw !== null) {
+                    item = { ...raw };
+                } else {
+                    const found = lettersData.find(l => l.id === raw) || lettersData[0];
+                    item = { ...found, imgSrc: `../harfler/harfler/${found.id}.png`, audSrc: `../harfler/harfler/${found.id}.mp3` };
+                }
             }
 
             const balloon = document.createElement('div');
@@ -687,8 +694,8 @@
             balloon.appendChild(shine);
 
             const img = document.createElement('img');
-            img.src = `../harfler/harfler/${letterId}.png`;
-            img.alt = "Harf";
+            img.src = item.imgSrc;
+            img.alt = item.name || "Öğe";
             balloon.appendChild(img);
 
             const stageWidth = window.innerWidth;
@@ -700,7 +707,10 @@
 
             const bObj = {
                 el: balloon,
-                letterId: letterId,
+                letterId: item.id,
+                name: item.name,
+                imgSrc: item.imgSrc,
+                audSrc: item.audSrc,
                 x: x,
                 y: y,
                 speed: speed,

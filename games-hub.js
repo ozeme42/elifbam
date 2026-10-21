@@ -136,28 +136,23 @@
 
     // 4. BULUNDUĞUMUZ DİZİNİ VE YOLU TESPİT ETME
     function getRootPrefix() {
-        const path = window.location.pathname.replace(/\\/g, '/');
-        // Kök dizinde miyiz yoksa alt klasörde mi?
-        // Eğer yol bir alt klasör içeriyorsa (örn: /harfler/index.html) -> ../
-        // Eğer doğrudan /index.html veya kök ise -> ''
-        const parts = path.split('/').filter(p => p.length > 0);
-        if (parts.length > 0 && !parts[parts.length - 1].endsWith('.html')) {
-            // Klasör içi dizin
-            return '../';
-        }
-        if (parts.length >= 2) {
-            // Örn: ['elifbam', 'harfler', 'index.html'] ya da ['harfler', 'index.html']
-            const last = parts[parts.length - 1];
-            if (last.endsWith('.html') && parts[parts.length - 2] !== 'elifbam' && parts.length > 1) {
-                // harfler/index.html gibi
-                return '../';
-            }
-        }
-        // HTML içindeki script veya link etiketinden tespit
         const script = document.querySelector('script[src*="games-hub.js"]');
         if (script) {
             const src = script.getAttribute('src');
             if (src.startsWith('../')) return '../';
+            if (src.startsWith('games-hub') || src === 'games-hub.js') return '';
+        }
+
+        const path = window.location.pathname.replace(/\\/g, '/');
+        const parts = path.split('/').filter(p => p.length > 0);
+        if (parts.length > 0 && !parts[parts.length - 1].endsWith('.html')) {
+            return '../';
+        }
+        if (parts.length >= 2) {
+            const last = parts[parts.length - 1];
+            if (last.endsWith('.html') && parts[parts.length - 2] !== 'elifbam' && parts.length > 1) {
+                return '../';
+            }
         }
         return '';
     }

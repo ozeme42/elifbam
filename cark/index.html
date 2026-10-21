@@ -349,8 +349,12 @@
 
         function setWheelMode(mode) {
             wheelMode = mode;
-            document.getElementById('btn-mode-sec').classList.toggle('active', mode === 'sections');
-            document.getElementById('btn-mode-let').classList.toggle('active', mode === 'letters');
+            const btnSec = document.getElementById('btn-mode-sec');
+            const btnLet = document.getElementById('btn-mode-let');
+            const btnTop = document.getElementById('btn-mode-topics');
+            if (btnSec) btnSec.classList.toggle('active', mode === 'sections');
+            if (btnLet) btnLet.classList.toggle('active', mode === 'letters');
+            if (btnTop) btnTop.classList.toggle('active', mode === 'topics');
 
             if (mode === 'sections') {
                 segments = sectionsData.map((s, idx) => ({
@@ -358,6 +362,18 @@
                     sub: s.sub,
                     letterId: s.letterId,
                     name: s.name,
+                    imgSrc: `../harfler/harfler/${s.letterId}.png`,
+                    audSrc: `../harfler/harfler/${s.letterId}.mp3`,
+                    color: sliceColors[idx % sliceColors.length]
+                }));
+            } else if (mode === 'topics') {
+                segments = topicsData.map((t, idx) => ({
+                    title: t.title,
+                    sub: t.sub,
+                    name: t.name,
+                    imgSrc: t.imgSrc,
+                    audSrc: t.audSrc,
+                    link: t.link,
                     color: sliceColors[idx % sliceColors.length]
                 }));
             } else {
@@ -368,6 +384,8 @@
                     sub: '',
                     letterId: l.id,
                     name: l.name,
+                    imgSrc: `../harfler/harfler/${l.id}.png`,
+                    audSrc: `../harfler/harfler/${l.id}.mp3`,
                     color: sliceColors[idx % sliceColors.length]
                 }));
             }
@@ -475,15 +493,30 @@
             playFanfareSound();
             if (typeof confetti === 'function') {
                 confetti({ particleCount: 70, spread: 75, origin: { y: 0.5 } });
-            if (window.addGlobalPoints) addGlobalPoints(10, "Şans Çarkı!");
             }
+            if (window.addGlobalPoints) addGlobalPoints(10, "Şans Çarkı!");
 
-            document.getElementById('win-name').textContent = winner.name;
-            document.getElementById('win-img').src = `../harfler/harfler/${winner.letterId}.png`;
+            const name = winner.name || winner.title || "Harf";
+            const imgSrc = winner.imgSrc || `../harfler/harfler/${winner.letterId}.png`;
+            const audSrc = winner.audSrc || `../harfler/harfler/${winner.letterId}.mp3`;
 
-            // Harfin sesini çal
-            audioPlayer.src = `../harfler/harfler/${winner.letterId}.mp3`;
+            document.getElementById('win-name').textContent = name;
+            document.getElementById('win-img').src = imgSrc;
+
+            // Harfin / Konunun sesini çal
+            audioPlayer.src = audSrc;
+            audioPlayer.load();
             audioPlayer.play().catch(() => {});
+
+            // Buton linklerini ayarla
+            const balloonBtn = document.getElementById('btn-action-balloon');
+            if (balloonBtn) {
+                balloonBtn.href = winner.link || `../balonlar/index.html`;
+            }
+            const drawBtn = document.getElementById('btn-action-draw');
+            if (drawBtn) {
+                drawBtn.href = winner.link || `../cizim/index.html`;
+            }
 
             document.getElementById('winner-modal').style.display = 'flex';
         }

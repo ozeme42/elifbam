@@ -849,6 +849,9 @@
                     <button class="btn-action-big btn-badges" onclick="openBadgesModal()">
                         <span>🏅</span> <span>Kazanılan Etiketler & Rozetler</span>
                     </button>
+                    <button class="btn-action-big" onclick="unlockAllStages()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: 2px solid #a7f3d0;">
+                        <span>🔓</span> <span>Tüm Aşamaları Aç (Serbest Keşif)</span>
+                    </button>
                     <button class="btn-reset" onclick="confirmResetProgress()">
                         <span>🔄</span> <span>İlerlemeyi Sıfırla</span>
                     </button>
@@ -1416,20 +1419,28 @@
                     <div class="stage-status-icon">${isUnlocked ? (starsCount > 0 ? '✅' : '▶️') : '🔒'}</div>
                 `;
 
-                if (isUnlocked) {
-                    card.onclick = () => {
-                        unlockAudio();
-                        startStage(stage.id);
-                    };
-                } else {
-                    card.onclick = () => {
-                        playBoopSound();
-                        mascotSpeak(`Önce ${stage.id - 1}. Aşamayı tamamlamalısın! 🚀`);
-                    };
-                }
+                card.onclick = () => {
+                    unlockAudio();
+                    if (!isUnlocked) {
+                        playerData.unlockedStage = Math.max(playerData.unlockedStage, stage.id);
+                        savePlayerData();
+                        renderMapStages();
+                    }
+                    startStage(stage.id);
+                };
 
                 container.appendChild(card);
             });
+        }
+
+        function unlockAllStages() {
+            unlockAudio();
+            playerData.unlockedStage = 19;
+            savePlayerData();
+            renderMapStages();
+            playFanfareSound();
+            if (typeof confetti === 'function') confetti({ particleCount: 70, spread: 70 });
+            mascotSpeak("Tüm 19 aşama açıldı! İstediğin adıma tıklayıp oynayabilirsin! 🌟");
         }
 
         // --- AŞAMAYI BAŞLATMA ---
@@ -1521,7 +1532,18 @@
                 nameLabel.textContent = opt.name;
 
                 img.onerror = function() {
-                    console.warn("Görsel yüklenemedi:", this.src);
+                    this.style.display = 'none';
+                    let txt = card.querySelector('.opt-fallback-text');
+                    if (!txt) {
+                        txt = document.createElement('div');
+                        txt.className = 'opt-fallback-text';
+                        txt.style.fontSize = '2.2rem';
+                        txt.style.fontWeight = 'bold';
+                        txt.style.color = '#1e3a8a';
+                        txt.style.padding = '8px';
+                        txt.textContent = opt.name;
+                        card.insertBefore(txt, nameLabel);
+                    }
                 };
 
                 card.appendChild(img);
@@ -1540,6 +1562,7 @@
 
         // DOĞRU VE EKSİKSİZ SES OYNATICI
         function playQuestionAudio(q) {
+            if (!q || !q.target) return;
             if (!audioPlayer) audioPlayer = document.getElementById('adventure-audio-player');
             if (!audioPlayer) return;
 
