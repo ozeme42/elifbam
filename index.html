@@ -6,6 +6,8 @@
     <title>✨ Elifba Öğreniyorum - Eğlenceli Kur'an Dünyası</title>
     <!-- Çocuk dostu sevimli yazı tipleri -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="games-hub.css">
+    <script src="games-hub.js"></script>
     
     <style>
         :root {
@@ -550,11 +552,17 @@
         <div class="brand-badge">
             <span>✨</span> <span>Kur'an-ı Kerim Elifbası</span>
         </div>
-        <a href="basarilar/index.html" class="star-vault-pill" title="Başarı Dolabına ve Rozetlerine Git">
-            <span>⭐ Toplam Yıldız:</span>
-            <span class="star-val" id="portal-stars">0</span>
-            <span>🏆 Dolabım</span>
-        </a>
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <div class="brand-badge nav-pill-points" style="border-color:#facc15;">
+                <span>🏆 Toplam Puan:</span>
+                <span style="font-family:'Fredoka One', cursive; font-size:1.3rem; color:#b45309;" id="portal-points">0</span>
+            </div>
+            <a href="basarilar/index.html" class="star-vault-pill" title="Başarı Dolabına ve Rozetlerine Git">
+                <span>⭐ Toplam Yıldız:</span>
+                <span class="star-val" id="portal-stars">0</span>
+                <span>🏆 Dolabım</span>
+            </a>
+        </div>
     </div>
 
     <header>
@@ -584,46 +592,61 @@
 
     <div class="games-hero-grid">
         <!-- 🎈 Balon Patlatma -->
-        <a href="balonlar/index.html" class="game-hero-card card-balon">
+        <a href="balonlar/index.html" class="game-hero-card card-balon" id="hero-card-balon" onclick="return handleHeroCardClick(event, 'balonlar')">
             <div class="hero-icon-box">🎈</div>
             <div class="hero-card-content">
-                <h3 class="hero-card-title">Balon Patlatma</h3>
+                <h3 class="hero-card-title">
+                    <span>Balon Patlatma</span>
+                    <span class="hub-card-status" id="badge-hero-balon">...</span>
+                </h3>
                 <p class="hero-card-desc">Sesi dinle, gökyüzüne uçan doğru harf balonunu patlatıp yıldız kazan!</p>
             </div>
         </a>
 
         <!-- 🃏 Hafıza & Kart Eşleştirme -->
-        <a href="hafiza/index.html" class="game-hero-card card-hafiza">
+        <a href="hafiza/index.html" class="game-hero-card card-hafiza" id="hero-card-hafiza" onclick="return handleHeroCardClick(event, 'hafiza')">
             <div class="hero-icon-box">🃏</div>
             <div class="hero-card-content">
-                <h3 class="hero-card-title">Hafıza & Eşleştirme</h3>
+                <h3 class="hero-card-title">
+                    <span>Hafıza & Eşleştirme</span>
+                    <span class="hub-card-status" id="badge-hero-hafiza">...</span>
+                </h3>
                 <p class="hero-card-desc">Kartları 3D çevir, harf ikizlerini eşleştir ve hafıza rekoru kır!</p>
             </div>
         </a>
 
         <!-- ✍️ Harf Çizme & Yazma -->
-        <a href="cizim/index.html" class="game-hero-card card-cizim">
+        <a href="cizim/index.html" class="game-hero-card card-cizim" id="hero-card-cizim" onclick="return handleHeroCardClick(event, 'cizim')">
             <div class="hero-icon-box">✍️</div>
             <div class="hero-card-content">
-                <h3 class="hero-card-title">Harf Çizme & Yazma</h3>
+                <h3 class="hero-card-title">
+                    <span>Harf Çizme & Yazma</span>
+                    <span class="hub-card-status" id="badge-hero-cizim">...</span>
+                </h3>
                 <p class="hero-card-desc">Renkli fırçalarla harf şablonlarının üzerinden çiz ve hattat ol!</p>
             </div>
         </a>
 
         <!-- 🚂 Harf Treni -->
-        <a href="tren/index.html" class="game-hero-card card-tren">
+        <a href="tren/index.html" class="game-hero-card card-tren" id="hero-card-tren" onclick="return handleHeroCardClick(event, 'tren')">
             <div class="hero-icon-box">🚂</div>
             <div class="hero-card-content">
-                <h3 class="hero-card-title">Harf Treni</h3>
+                <h3 class="hero-card-title">
+                    <span>Harf Treni</span>
+                    <span class="hub-card-status" id="badge-hero-tren">...</span>
+                </h3>
                 <p class="hero-card-desc">Vagonları doğru harflerle sıraya diz, treni düdük çalarak yola çıkar!</p>
             </div>
         </a>
 
         <!-- 🎡 Şans Çarkı -->
-        <a href="cark/index.html" class="game-hero-card card-cark">
+        <a href="cark/index.html" class="game-hero-card card-cark" id="hero-card-cark" onclick="return handleHeroCardClick(event, 'cark')">
             <div class="hero-icon-box">🎡</div>
             <div class="hero-card-content">
-                <h3 class="hero-card-title">Şans Çarkıfeleği</h3>
+                <h3 class="hero-card-title">
+                    <span>Şans Çarkıfeleği</span>
+                    <span class="hub-card-status" id="badge-hero-cark">...</span>
+                </h3>
                 <p class="hero-card-desc">Çarkı çevir, şansına gelen sürpriz harf veya bölümle çalış!</p>
             </div>
         </a>
@@ -632,7 +655,10 @@
         <a href="basarilar/index.html" class="game-hero-card card-basarilar">
             <div class="hero-icon-box">🏆</div>
             <div class="hero-card-content">
-                <h3 class="hero-card-title">Başarı & Yıldız Sandığı</h3>
+                <h3 class="hero-card-title">
+                    <span>Başarı & Yıldız Sandığı</span>
+                    <span class="hub-card-status" style="background:#fef08a; color:#854d0e;">✨ 8 Rozet</span>
+                </h3>
                 <p class="hero-card-desc">Yıldızlarını biriktir, sihirli sandıkları aç ve 8 özel rozeti topla!</p>
             </div>
         </a>
@@ -745,14 +771,54 @@
     </footer>
 
     <script>
-        // Yıldız Sayısını Güncelle
-        function updatePortalStars() {
-            const stars = parseInt(localStorage.getItem('elifbam_total_stars') || '0', 10);
-            const el = document.getElementById('portal-stars');
-            if (el) el.textContent = stars;
+        // Puan ve Kilit Durumlarını Güncelle
+        function updatePortalStatus() {
+            if (window.ElifbaGamesHub) {
+                ElifbaGamesHub.updateBadges();
+            }
+            const pts = (window.getGlobalPoints ? window.getGlobalPoints() : parseInt(localStorage.getItem('elifbam_total_points') || '0', 10));
+            
+            const gameConfigs = {
+                'balonlar': { req: 30, badgeId: 'badge-hero-balon', cardId: 'hero-card-balon' },
+                'hafiza':   { req: 60, badgeId: 'badge-hero-hafiza', cardId: 'hero-card-hafiza' },
+                'cizim':    { req: 100, badgeId: 'badge-hero-cizim', cardId: 'hero-card-cizim' },
+                'tren':     { req: 150, badgeId: 'badge-hero-tren', cardId: 'hero-card-tren' },
+                'cark':     { req: 200, badgeId: 'badge-hero-cark', cardId: 'hero-card-cark' }
+            };
+
+            for (const [gid, conf] of Object.entries(gameConfigs)) {
+                const bEl = document.getElementById(conf.badgeId);
+                const cEl = document.getElementById(conf.cardId);
+                if (pts >= conf.req) {
+                    if (bEl) {
+                        bEl.textContent = '✅ Açık';
+                        bEl.style.background = '#dcfce7';
+                        bEl.style.color = '#15803d';
+                    }
+                    if (cEl) cEl.classList.remove('is-locked');
+                } else {
+                    if (bEl) {
+                        bEl.textContent = `🔒 ${conf.req} Puan`;
+                        bEl.style.background = '#fef08a';
+                        bEl.style.color = '#854d0e';
+                    }
+                    if (cEl) cEl.classList.add('is-locked');
+                }
+            }
         }
 
-        window.addEventListener('DOMContentLoaded', updatePortalStars);
+        function handleHeroCardClick(event, gameId) {
+            const pts = (window.getGlobalPoints ? window.getGlobalPoints() : 0);
+            const game = window.ElifbaGamesHub ? window.ElifbaGamesHub.catalog.find(g => g.id === gameId) : null;
+            if (game && pts < game.reqPoints) {
+                event.preventDefault();
+                ElifbaGamesHub.showLockModal(game, pts);
+                return false;
+            }
+            return true;
+        }
+
+        window.addEventListener('DOMContentLoaded', updatePortalStatus);
 
         // Sevimli Maskot Hüdhüd
         const mascotSuggestions = [

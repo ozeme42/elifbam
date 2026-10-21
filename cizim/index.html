@@ -6,6 +6,8 @@
     <title>✍️ Harf Çizme & Yazma - Elifba</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
     <script src="confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="../games-hub.css">
+    <script src="../games-hub.js"></script>
     <style>
         :root {
             --bg-color: #fdfbf7;
@@ -340,7 +342,7 @@
     <div class="top-nav">
         <a href="../index.html" class="home-btn">🏠 Menü</a>
         <h1>✍️ Harf Çizme & Yazma</h1>
-        <div class="star-badge">⭐ <span id="val-stars">0</span> Yıldız</div>
+        <div class="star-badge">⭐ <span id="val-stars">0</span> Yıldız &nbsp;|&nbsp; 🏆 <span id="val-points">0</span> Puan</div>
     </div>
 
     <!-- Bölüm Seçimi -->
@@ -501,6 +503,7 @@
         const audioPlayer = document.getElementById('audio-player');
 
         window.addEventListener('DOMContentLoaded', () => {
+        if (window.checkGameLock && !checkGameLock('cizim', 100, 'Harf Çizme & Yazma')) return;
             buildSectionBar();
             updateStarsUI();
             loadCurrentLetter();
@@ -687,6 +690,7 @@
             }
 
             totalStars += 1;
+                if (window.addGlobalPoints) addGlobalPoints(15, "Harf Çizildi!");
             localStorage.setItem('elifbam_total_stars', totalStars);
             updateStarsUI();
 

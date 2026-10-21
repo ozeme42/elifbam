@@ -6,6 +6,8 @@
     <title>🎈 Balon Patlatma Oyunu - Elifba</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
     <script src="confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="../games-hub.css">
+    <script src="../games-hub.js"></script>
     <style>
         :root {
             --sky-top: #38bdf8;
@@ -418,6 +420,7 @@
             <div class="stat-chip score-chip">🎯 Skor: <span id="val-score">0</span></div>
             <div class="stat-chip streak-chip">🔥 Seri: <span id="val-streak">0</span>/<span id="val-target">5</span></div>
             <div class="stat-chip stars-chip">⭐ Yıldız: <span id="val-stars">0</span></div>
+            <div class="stat-chip points-chip" style="background:#fef3c7; color:#92400e; border:1px solid #facc15; font-weight:800;">🏆 Puan: <span id="val-points">0</span></div>
         </div>
     </div>
 
@@ -591,6 +594,7 @@
         const colors = ['b-red', 'b-blue', 'b-green', 'b-yellow', 'b-purple', 'b-pink'];
 
         window.addEventListener('DOMContentLoaded', () => {
+        if (window.checkGameLock && !checkGameLock('balonlar', 30, 'Balon Patlatma')) return;
             buildSectionBar();
             updateStatsUI();
             setNewTarget();

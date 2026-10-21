@@ -1,0 +1,625 @@
+/* ==========================================================================
+   ELİFBA EĞLENCELİ OYUNLAR DÜNYASI & PUAN SİSTEMİ (GAMES HUB)
+   ========================================================================== */
+
+/* --- Üst Gezinme Çubuğu ve Puan Rozeti --- */
+.top-nav-bar {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 1000;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.nav-pill-btn {
+    background: white;
+    border: 2px solid #cbd5e1;
+    color: #1e3a8a;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+}
+
+.nav-pill-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+    border-color: #94a3b8;
+}
+
+.nav-pill-points {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border-color: #facc15;
+    color: #92400e;
+}
+
+.nav-pill-points:hover {
+    background: #fef08a;
+}
+
+.nav-pill-games {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border-color: #93c5fd;
+    color: #1d4ed8;
+}
+
+.nav-pill-games:hover {
+    background: #bfdbfe;
+}
+
+/* --- OYUNLARI AÇILIR BUTON ALTINA ALMA (GAMES HUB TOGGLE) --- */
+.games-hub-wrapper {
+    width: 100%;
+    max-width: 820px;
+    margin: 18px auto 8px;
+}
+
+.btn-toggle-games-hub {
+    width: 100%;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    border: 3px solid #c7d2fe;
+    border-radius: 22px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(79, 70, 229, 0.25);
+    transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-toggle-games-hub::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    transform: skewX(-25deg);
+    animation: hubShine 4s infinite;
+}
+
+@keyframes hubShine {
+    0% { left: -100%; }
+    25% { left: 150%; }
+    100% { left: 150%; }
+}
+
+.btn-toggle-games-hub:hover {
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 12px 28px rgba(79, 70, 229, 0.35);
+    border-color: #ffffff;
+}
+
+.btn-toggle-games-hub:active {
+    transform: translateY(1px);
+}
+
+.hub-btn-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+}
+
+.hub-icon {
+    font-size: 2.2rem;
+    background: rgba(255, 255, 255, 0.2);
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    transition: transform 0.3s;
+}
+
+.btn-toggle-games-hub:hover .hub-icon {
+    transform: scale(1.1) rotate(6deg);
+}
+
+.hub-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.hub-main-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+}
+
+.hub-sub-title {
+    font-size: 0.88rem;
+    color: #e0e7ff;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.hub-btn-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.hub-points-badge {
+    background: rgba(254, 240, 138, 0.25);
+    border: 2px solid #fde047;
+    color: #fef08a;
+    padding: 6px 14px;
+    border-radius: 18px;
+    font-weight: 800;
+    font-size: 0.92rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hub-chevron {
+    font-size: 1.2rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    color: white;
+}
+
+.btn-toggle-games-hub.is-open .hub-chevron {
+    transform: rotate(180deg);
+}
+
+/* --- AÇILIR OYUN ÇEKMECESİ (DRAWER) --- */
+.games-hub-drawer {
+    background: #ffffff;
+    border: 3px solid #c7d2fe;
+    border-top: none;
+    border-radius: 0 0 24px 24px;
+    padding: 22px 20px 20px;
+    box-shadow: 0 16px 36px rgba(79, 70, 229, 0.15);
+    margin-top: -6px;
+    animation: drawerSlideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes drawerSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hub-drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px dashed #e2e8f0;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.hub-drawer-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #1e3a8a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hub-drawer-info {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 4px 12px;
+    border-radius: 12px;
+}
+
+/* --- OYUN BUTONLARI VE KARTLARI IZGARASI --- */
+.hub-games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
+}
+
+.hub-game-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 18px;
+    text-decoration: none;
+    color: white;
+    font-family: inherit;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+    transition: all 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    text-align: left;
+}
+
+.hub-game-card:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.14);
+}
+
+.hub-card-icon {
+    font-size: 1.9rem;
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.hub-card-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.hub-card-title {
+    font-size: 1rem;
+    font-weight: 800;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hub-card-status {
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-top: 3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.15);
+}
+
+/* Renk Temaları */
+.theme-balon    { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); }
+.theme-hafiza   { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); }
+.theme-cizim    { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+.theme-tren     { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); }
+.theme-cark     { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+.theme-macera   { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-color: #facc15; }
+.theme-basarilar{ background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-color: #fde047; }
+
+/* Kilitli Oyun Kartı Görünümü */
+.hub-game-card.is-locked {
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    border-color: #cbd5e1;
+    opacity: 0.88;
+}
+
+.hub-game-card.is-locked .hub-card-icon {
+    background: rgba(0, 0, 0, 0.2);
+    filter: grayscale(40%);
+}
+
+.hub-game-card.is-locked .hub-card-status {
+    background: #fef08a;
+    color: #854d0e;
+    font-weight: 800;
+}
+
+.hub-game-card.is-locked:hover {
+    opacity: 1;
+    border-color: #facc15;
+    transform: translateY(-2px);
+}
+
+/* --- KİLİTLİ OYUN BİLGİLENDİRME MODALI (POPUP) --- */
+.games-lock-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 16px;
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.games-lock-modal {
+    background: white;
+    border-radius: 28px;
+    max-width: 460px;
+    width: 100%;
+    padding: 28px 24px;
+    text-align: center;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
+    border: 4px solid #facc15;
+    position: relative;
+    animation: modalPopUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalPopUp {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.lock-modal-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.lock-modal-close-btn:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.lock-modal-mascot {
+    font-size: 3.2rem;
+    margin-bottom: 8px;
+    animation: gentleBounce 2s infinite ease-in-out alternate;
+}
+
+@keyframes gentleBounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-8px); }
+}
+
+.lock-modal-title {
+    font-family: inherit;
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #1e3a8a;
+    margin: 0 0 10px;
+}
+
+.lock-modal-desc {
+    font-size: 0.98rem;
+    color: #475569;
+    margin: 0 0 18px;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+.lock-modal-progress-box {
+    background: #eff6ff;
+    border: 2px solid #bfdbfe;
+    border-radius: 18px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+}
+
+.lock-progress-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #1e3a8a;
+    margin-bottom: 8px;
+}
+
+.lock-progress-bar-bg {
+    background: #e2e8f0;
+    height: 14px;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.lock-progress-bar-fill {
+    background: linear-gradient(90deg, #f59e0b 0%, #10b981 100%);
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.4s ease;
+}
+
+.lock-progress-remaining {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #047857;
+    margin-top: 6px;
+    text-align: right;
+}
+
+.lock-modal-tips {
+    background: #fffbeb;
+    border: 2px dashed #fcd34d;
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+    text-align: left;
+    font-size: 0.88rem;
+    color: #78350f;
+    line-height: 1.45;
+}
+
+.lock-modal-tips strong {
+    color: #92400e;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.lock-modal-tips ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.lock-modal-tips li {
+    margin-bottom: 3px;
+}
+
+.lock-modal-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-lock-action-continue {
+    flex: 1;
+    min-width: 160px;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 18px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    transition: all 0.2s;
+}
+
+.btn-lock-action-continue:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+.btn-lock-action-adventure {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: white;
+    border: 2px solid #facc15;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.btn-lock-action-adventure:hover {
+    transform: translateY(-2px);
+}
+
+/* --- CANLI PUAN TOAST BİLDİRİMİ --- */
+.point-toast-popup {
+    position: fixed;
+    top: 65px;
+    right: 20px;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    font-weight: 800;
+    font-size: 1.05rem;
+    padding: 10px 18px;
+    border-radius: 20px;
+    border: 2px solid #fef08a;
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+    animation: toastFloatUp 1.8s forwards cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes toastFloatUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.85);
+    }
+    18% {
+        opacity: 1;
+        transform: translateY(0) scale(1.05);
+    }
+    30% {
+        transform: translateY(0) scale(1);
+    }
+    75% {
+        opacity: 1;
+        transform: translateY(-5px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-25px);
+    }
+}
+
+/* Mobil Uyumluluk */
+@media (max-width: 600px) {
+    .btn-toggle-games-hub {
+        padding: 12px 14px;
+    }
+    .hub-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 1.8rem;
+    }
+    .hub-main-title {
+        font-size: 1.1rem;
+    }
+    .hub-sub-title {
+        font-size: 0.8rem;
+    }
+    .hub-points-badge {
+        display: none; /* Mobilde yer kazanmak için sağ üst nav barda durur */
+    }
+    .hub-games-grid {
+        grid-template-columns: 1fr;
+    }
+}

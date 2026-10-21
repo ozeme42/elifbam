@@ -6,6 +6,8 @@
     <title>🚂 Harf Treni - Kelime Birleştirme Oyunu</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
     <script src="confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="../games-hub.css">
+    <script src="../games-hub.js"></script>
     <style>
         :root {
             --rail-color: #64748b;
@@ -400,7 +402,7 @@
     <div class="top-nav">
         <a href="../index.html" class="home-btn">🏠 Menü</a>
         <h1>🚂 Harf Treni</h1>
-        <div class="star-chip">⭐ <span id="val-stars">0</span> Yıldız</div>
+        <div class="star-chip">⭐ <span id="val-stars">0</span> Yıldız &nbsp;|&nbsp; 🏆 <span id="val-points">0</span> Puan</div>
     </div>
 
     <!-- Hedef Kelime Kartı -->
@@ -528,6 +530,7 @@
         const audioPlayer = document.getElementById('audio-player');
 
         window.addEventListener('DOMContentLoaded', () => {
+        if (window.checkGameLock && !checkGameLock('tren', 150, 'Harf Treni')) return;
             updateStarsUI();
             loadWordPuzzle();
         });
@@ -651,6 +654,7 @@
                 }
 
                 totalStars += 2;
+                if (window.addGlobalPoints) addGlobalPoints(20, "Tren Tamamlandı!");
                 localStorage.setItem('elifbam_total_stars', totalStars);
                 updateStarsUI();
 

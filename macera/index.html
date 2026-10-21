@@ -6,6 +6,8 @@
     <title>🗺️ Büyük Elifba Macerası - Aşamalı Yolculuk</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700;800&family=Amiri:wght@700&display=swap" rel="stylesheet">
     <script src="confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="../games-hub.css">
+    <script src="../games-hub.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -1618,6 +1620,9 @@
             // Global yıldız havuzuna da ekle (Başarı Dolabı için)
             let globalStars = parseInt(localStorage.getItem('elifbam_total_stars') || '0', 10);
             localStorage.setItem('elifbam_total_stars', globalStars + stars);
+            if (window.addGlobalPoints) {
+                addGlobalPoints(stars * 10, 'Macera Aşaması Tamamlandı!');
+            }
 
             savePlayerData();
             updateTopBarUI();

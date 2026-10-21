@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🍩 Ötre (Harfler) - Bölüm Bölüm Öğren ve Çalış</title>
     <script src="confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="../games-hub.css">
+    <script src="../games-hub.js"></script>
+    <script></script>
     <style>
         :root {
             --primary: #db2777;
@@ -1035,7 +1038,16 @@
 </head>
 <body>
 
-    <button class="home-btn" onclick="goToHome()" title="Ana Ekrana / Menüye Dön">🏠 Menü</button>
+    <div class="top-nav-bar">
+        <button class="nav-pill-btn" onclick="goToHome()" title="Ana Ekrana / Menüye Dön">🏠 Menü</button>
+        <button class="nav-pill-btn nav-pill-games" onclick="toggleGamesHub()" title="Eğlenceli Oyunları Aç">🎮 Oyunlar</button>
+        <div class="nav-pill-btn nav-pill-points" title="Toplam Puanın">
+            <span>🏆</span> <span id="top-point-count">0</span> Puan
+        </div>
+        <a href="../basarilar/index.html" class="nav-pill-btn star-vault-btn" title="Başarı Dolabına Git">
+            <span>⭐</span> <span id="top-star-count">0</span>
+        </a>
+    </div>
 
     <div id="game-container">
         <h1 id="main-title">🍩 Ötre (Harfler)</h1>
@@ -1091,6 +1103,33 @@
                 <button class="btn-modern btn-two" onclick="selectMode(2)">
                     <span>👥</span> <span>İki Kişilik Yarışma</span>
                 </button>
+            </div>
+            <!-- BÖLÜMÜN EĞLENCELİ OYUNLARI AÇILIR BUTONU -->
+            <div class="games-hub-wrapper">
+                <button type="button" class="btn-toggle-games-hub" onclick="toggleGamesHub()" id="btn-games-hub">
+                    <span class="hub-btn-left">
+                        <span class="hub-icon">🎮</span>
+                        <span class="hub-text">
+                            <span class="hub-main-title">Eğlenceli Oyunlar & Aktiviteler</span>
+                            <span class="hub-sub-title">Bu konunun oyunlarını oyna, puan topla!</span>
+                        </span>
+                    </span>
+                    <span class="hub-btn-right">
+                        <span class="hub-points-badge" id="hub-points-pill">🏆 <span class="hub-pts-val">0</span> Puan</span>
+                        <span class="hub-chevron">▼</span>
+                    </span>
+                </button>
+                <div class="games-hub-drawer" id="games-hub-drawer" style="display: none;">
+                    <div class="hub-drawer-header">
+                        <div class="hub-drawer-title">
+                            <span>🎯 Bu Bölümün Oyunları</span>
+                        </div>
+                        <div class="hub-drawer-info">
+                            <span>Puan toplayarak yeni oyunların kilitlerini aç!</span>
+                        </div>
+                    </div>
+                    <div class="hub-games-grid" id="hub-games-grid"></div>
+                </div>
             </div>
         </div>
 
@@ -1502,6 +1541,7 @@
         }
 
         function playSingleLearnLetter(id, cardEl) {
+            if (window.addGlobalPoints) addGlobalPoints(5, "Örnek Dinlendi");
             audioPlayer.pause();
             document.querySelectorAll('#learn-grid .learn-card').forEach(c => c.classList.remove('reading'));
             
@@ -1733,6 +1773,7 @@
             if (isWaitingForNextRound) return;
 
             if (selectedId === currentCorrectLetter) {
+                if (window.addGlobalPoints) addGlobalPoints(15, "Doğru Bildin");
                 cardElement.classList.add('correct');
                 isWaitingForNextRound = true;
                 burstConfetti(35);
@@ -2042,6 +2083,7 @@
                     playStreakAudio(currentStreak);
 
                     if (currentStreak >= streakTarget) {
+                        if (window.addGlobalPoints) addGlobalPoints(50, "Seri Tamamlandı!");
                         const completedTarget = streakTarget;
                         const nextTarget = completedTarget + 5;
                         streakTarget = nextTarget;

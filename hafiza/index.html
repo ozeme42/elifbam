@@ -6,6 +6,8 @@
     <title>🃏 Hafıza & Kart Eşleştirme - Elifba</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
     <script src="confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="../games-hub.css">
+    <script src="../games-hub.js"></script>
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #fdf4ff 0%, #ede9fe 50%, #e0e7ff 100%);
@@ -324,6 +326,7 @@
     <!-- Skor ve Sayaç Barı -->
     <div class="stats-bar">
         <div class="stat-item">⭐ Toplam Yıldız: <strong id="val-stars">0</strong></div>
+        <div class="stat-item">🏆 Toplam Puan: <strong id="val-points">0</strong></div>
         <div class="stat-item">🔄 Hamle: <strong id="val-moves">0</strong></div>
         <div class="stat-item">⏱️ Süre: <strong id="val-timer">00:00</strong></div>
     </div>
@@ -482,6 +485,7 @@
         const cardAudio = document.getElementById('card-audio');
 
         window.addEventListener('DOMContentLoaded', () => {
+        if (window.checkGameLock && !checkGameLock('hafiza', 60, 'Hafıza & Eşleştirme')) return;
             buildSectionPills();
             updateStarsUI();
             restartGame();
@@ -625,6 +629,7 @@
                     playMatchSound();
                     matchedPairs++;
                     totalStars += 1;
+                    if (window.addGlobalPoints) addGlobalPoints(15, "Eşleşme!");
                     localStorage.setItem('elifbam_total_stars', totalStars);
                     updateStarsUI();
 
@@ -659,7 +664,8 @@
 
         function onGameWon() {
             clearInterval(timerInterval);
-            totalStars += 5; // Bonus galibiyet yıldızları
+            totalStars += 5;
+                if (window.addGlobalPoints) addGlobalPoints(30, "Zafer!"); // Bonus galibiyet yıldızları
             localStorage.setItem('elifbam_total_stars', totalStars);
             updateStarsUI();
 

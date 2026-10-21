@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resimlerle Harfleri Öğren - Bölüm Bölüm ve Seçmeli</title>
     <script src="confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="../games-hub.css">
+    <script src="../games-hub.js"></script>
     <style>
         :root {
             --primary-color: #e11d48;
@@ -1366,7 +1368,8 @@
         function showEndScreen() {
             showScreen('screen-result');
             if (typeof confetti === 'function') {
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                if (window.addGlobalPoints) addGlobalPoints(20, "Harika Başarı");
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
             }
 
             const endContainer = document.getElementById('end-actions');

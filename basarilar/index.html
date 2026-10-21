@@ -6,6 +6,8 @@
     <title>🏆 Başarı Dolabı & Yıldız Sandığı - Elifba</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
     <script src="confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="../games-hub.css">
+    <script src="../games-hub.js"></script>
     <style>
         :root {
             --gold-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
@@ -237,12 +239,21 @@
         <a href="../macera/index.html" class="home-btn" style="border-color:#38bdf8; background:#f0f9ff; color:#0284c7;">🗺️ Macera</a>
     </div>
 
-    <!-- Yıldız Kasası -->
-    <div class="stars-vault-card">
-        <div class="stars-icon">⭐</div>
-        <div>
-            <div class="stars-info-title">TOPLAM KAZANILAN YILDIZLAR</div>
-            <div class="stars-count" id="val-stars">0</div>
+    <!-- Yıldız ve Puan Kasası -->
+    <div style="display: flex; gap: 16px; width: 100%; max-width: 900px; margin-bottom: 20px; flex-wrap: wrap;">
+        <div class="stars-vault-card" style="flex: 1; min-width: 260px; margin-bottom: 0;">
+            <div class="stars-icon">⭐</div>
+            <div>
+                <div class="stars-info-title">TOPLAM KAZANILAN YILDIZLAR</div>
+                <div class="stars-count" id="val-stars">0</div>
+            </div>
+        </div>
+        <div class="stars-vault-card" style="flex: 1; min-width: 260px; margin-bottom: 0; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-color: #93c5fd;">
+            <div class="stars-icon">🏆</div>
+            <div>
+                <div class="stars-info-title" style="color: #1e40af;">TOPLAM KAZANILAN PUANLAR</div>
+                <div class="stars-count" style="color: #1d4ed8;" id="val-points">0</div>
+            </div>
         </div>
     </div>
 
@@ -296,6 +307,10 @@
 
         function updateUI() {
             document.getElementById('val-stars').textContent = totalStars;
+            const ptsEl = document.getElementById('val-points');
+            if (ptsEl && window.getGlobalPoints) {
+                ptsEl.textContent = getGlobalPoints();
+            }
 
             // Sandık Hedefi Hesapla (25 -> 50 -> 100 -> 200)
             if (totalStars < 25) chestGoal = 25;

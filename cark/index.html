@@ -6,6 +6,8 @@
     <title>🎡 Şans Çarkı - Elifba Çarkıfelek</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
     <script src="confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="../games-hub.css">
+    <script src="../games-hub.js"></script>
     <style>
         :root {
             --primary: #f59e0b;
@@ -249,7 +251,7 @@
     <div class="top-nav">
         <a href="../index.html" class="home-btn">🏠 Menü</a>
         <h1>🎡 Şans Çarkı</h1>
-        <div></div>
+        <div class="star-chip" style="background:#fef3c7; color:#92400e; padding:6px 14px; border-radius:20px; font-weight:800; font-size:0.95rem;">⭐ <span id="val-stars">0</span> &nbsp;|&nbsp; 🏆 <span id="val-points">0</span> Puan</div>
     </div>
 
     <!-- Mod Seçimi -->
@@ -341,6 +343,7 @@
         ];
 
         window.addEventListener('DOMContentLoaded', () => {
+        if (window.checkGameLock && !checkGameLock('cark', 200, 'Şans Çarkıfeleği')) return;
             setWheelMode('sections');
         });
 
@@ -472,6 +475,7 @@
             playFanfareSound();
             if (typeof confetti === 'function') {
                 confetti({ particleCount: 70, spread: 75, origin: { y: 0.5 } });
+            if (window.addGlobalPoints) addGlobalPoints(10, "Şans Çarkı!");
             }
 
             document.getElementById('win-name').textContent = winner.name;

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elifba Boyama & Test Oyunu - Bölüm Bölüm ve Seçmeli</title>
     <script src="confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="../games-hub.css">
+    <script src="../games-hub.js"></script>
     <style>
         body {
             font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
@@ -728,7 +730,8 @@
             if(selectedIdx === targetIndex) {
                 document.getElementById('feedback').textContent = "Tebrikler! Doğru 🎉";
                 document.getElementById('feedback').style.color = "green";
-                if(typeof confetti === 'function') confetti({ particleCount: 40, spread: 60 });
+                if(typeof confetti === 'function') if (window.addGlobalPoints) addGlobalPoints(10, "Boyama Tamamlandı");
+                confetti({ particleCount: 40, spread: 60 });
                 playLetterSound(selectedIdx);
                 onAnswerStreakResult(true);
                 setTimeout(() => {
