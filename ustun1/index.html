@@ -2075,6 +2075,8 @@
 
         function onAnswerStreakResult(isCorrect, playerNum = 0) {
             const isSingle = (typeof gameMode === 'undefined' || gameMode === 1);
+            const FINAL_TARGET = 20;
+
             if (isCorrect) {
                 if (isSingle) {
                     currentStreak++;
@@ -2084,51 +2086,29 @@
                     }
                     playStreakAudio(currentStreak);
 
-                    if (currentStreak >= streakTarget) {
-                        if (window.addGlobalPoints) addGlobalPoints(50, "Seri Tamamlandı!");
-                        if (window.addGlobalStars) addGlobalStars(streakTarget);
-                        const cheer = `👑 ${streakTarget}'te ${streakTarget} Başarıldı! Seri Tamamlandı! 🎉`;
+                    // 1. 20'Lİ SERİ DOLDUĞUNDA: ZAFER PENCERESİ ÇIKAR
+                    if (currentStreak >= FINAL_TARGET) {
+                        streakTarget = FINAL_TARGET;
+                        document.querySelectorAll('.target-chip').forEach(c => {
+                            c.classList.toggle('active', parseInt(c.textContent, 10) === FINAL_TARGET);
+                        });
+
+                        if (window.addGlobalPoints) addGlobalPoints(100, "20'li Efsanevi Seri!");
+                        if (window.addGlobalStars) addGlobalStars(FINAL_TARGET);
+                        const cheer = "👑 20'de 20 Efsanevi Seri Tamamlandı! Şampiyonsun! 🏆";
                         updateStreakUI(cheer, true);
 
-                        const currentTargetSnapshot = streakTarget;
                         if (typeof showStreakVictoryModal === 'function') {
                             showStreakVictoryModal({
-                                target: currentTargetSnapshot,
+                                target: FINAL_TARGET,
                                 isDuel: false,
                                 onRestart: () => {
                                     currentStreak = 0;
-                                    updateStreakUI(`🎯 Yeni Seri: Hedef ${streakTarget}!`, true);
-                                    if (typeof isWaitingForNextRound !== 'undefined') isWaitingForNextRound = false;
-                                    if (typeof remainingLetters !== 'undefined') {
-                                        if (remainingLetters.length > 0) remainingLetters.shift();
-                                        if (remainingLetters.length === 0 && typeof activeLetters !== 'undefined' && activeLetters.length > 0) {
-                                            remainingLetters = (typeof shuffleArray === 'function') ? shuffleArray([...activeLetters]) : [...activeLetters];
-                                        }
-                                    } else if (typeof remainingQuestions !== 'undefined') {
-                                        if (remainingQuestions.length > 0) remainingQuestions.shift();
-                                        if (remainingQuestions.length === 0 && typeof activeQuizQuestions !== 'undefined' && activeQuizQuestions.length > 0) {
-                                            remainingQuestions = (typeof shuffleArray === 'function') ? shuffleArray([...activeQuizQuestions]) : [...activeQuizQuestions];
-                                        }
-                                    } else if (typeof quizPool !== 'undefined') {
-                                        if (quizPool.length > 0) quizPool.shift();
-                                        if (quizPool.length === 0 && typeof selectedItems !== 'undefined' && selectedItems.size > 0) {
-                                            quizPool = Array.from(selectedItems);
-                                            if (typeof shuffleArray === 'function') shuffleArray(quizPool);
-                                        }
-                                    }
-                                    
-                                    if (typeof nextRound === 'function') nextRound();
-                                    else if (typeof nextQuizQuestion === 'function') nextQuizQuestion();
-                                    else if (typeof startNewTest === 'function') startNewTest();
-                                },
-                                onNextLevel: () => {
-                                    streakTarget = currentTargetSnapshot + 5;
-                                    baseTarget = streakTarget;
-                                    currentStreak = 0;
+                                    streakTarget = baseTarget;
                                     document.querySelectorAll('.target-chip').forEach(c => {
                                         c.classList.toggle('active', parseInt(c.textContent, 10) === streakTarget);
                                     });
-                                    updateStreakUI(`🚀 Yeni Hedef: ${streakTarget}'li Seri!`, true);
+                                    updateStreakUI(`🎯 Yeni Seri: Hedef ${streakTarget}!`, true);
                                     if (typeof isWaitingForNextRound !== 'undefined') isWaitingForNextRound = false;
                                     if (typeof remainingLetters !== 'undefined') {
                                         if (remainingLetters.length > 0) remainingLetters.shift();
@@ -2162,49 +2142,82 @@
                             });
                         }
                         return true;
+                    }
+
+                    // 2. 20'DEN KÜÇÜK SERİLERDE: PENCERE ÇIKMAZ, HEDEF OTOMATİK BÜYÜR VE SORULAR DEVAM EDER
+                    if (currentStreak >= streakTarget) {
+                        const completedMilestone = streakTarget;
+                        const nextMilestone = Math.min(FINAL_TARGET, completedMilestone + 5);
+                        streakTarget = nextMilestone;
+
+                        document.querySelectorAll('.target-chip').forEach(c => {
+                            c.classList.toggle('active', parseInt(c.textContent, 10) === streakTarget);
+                        });
+
+                        if (window.addGlobalPoints) addGlobalPoints(20, `${completedMilestone}'li Seri`);
+                        if (window.addGlobalStars) addGlobalStars(completedMilestone);
+                        if (typeof showAutoLevelUpToast === 'function') {
+                            showAutoLevelUpToast(completedMilestone, nextMilestone, 0);
+                        }
+
+                        let cheer = `🔥 ${completedMilestone}'te ${completedMilestone} Harika! Hedef ${nextMilestone}'e yükseldi, 20'ye devam! 🚀`;
+                        if (completedMilestone === 10) cheer = `⚡ 10'da 10 Muhteşem! Yolun yarısı bitti, yeni hedef: ${nextMilestone}! 🚀`;
+                        if (completedMilestone === 15) cheer = `🌟 15'te 15 Efsane! Son 5 kaldı, büyük hedef 20! 🏆`;
+                        
+                        updateStreakUI(cheer, true);
+                        return false;
                     } else {
                         let cheer = "👍 Harika!";
                         if (currentStreak === 2) cheer = "🔥 2x Çift Doğru! Isınıyorsun!";
                         else if (currentStreak === 3) cheer = "⚡ 3x Süper Seri! Alev alevsin!";
                         else if (currentStreak === 4) cheer = "🌟 4x Muhteşem! Hedefe 1 Kaldı!";
-                        else cheer = `🔥 ${currentStreak}x Seri! Devam!`;
+                        else cheer = `🔥 ${currentStreak}x Seri! Devam! (Hedef: ${streakTarget})`;
                         updateStreakUI(cheer, true);
                         return false;
                     }
                 } else {
+                    // 2 Kişilik Düello modu
                     let duelWon = false;
                     let winner = 0;
                     if (playerNum === 1) {
                         p1Streak++;
                         p2Streak = 0;
                         playStreakAudio(p1Streak);
-                        if (p1Streak >= streakTarget) {
+                        if (p1Streak >= FINAL_TARGET) {
                             duelWon = true;
                             winner = 1;
+                        } else if (p1Streak >= streakTarget) {
+                            const comp = streakTarget;
+                            streakTarget = Math.min(FINAL_TARGET, streakTarget + 5);
+                            if (typeof showAutoLevelUpToast === 'function') showAutoLevelUpToast(comp, streakTarget, 1);
                         }
                     } else if (playerNum === 2) {
                         p2Streak++;
                         p1Streak = 0;
                         playStreakAudio(p2Streak);
-                        if (p2Streak >= streakTarget) {
+                        if (p2Streak >= FINAL_TARGET) {
                             duelWon = true;
                             winner = 2;
+                        } else if (p2Streak >= streakTarget) {
+                            const comp = streakTarget;
+                            streakTarget = Math.min(FINAL_TARGET, streakTarget + 5);
+                            if (typeof showAutoLevelUpToast === 'function') showAutoLevelUpToast(comp, streakTarget, 2);
                         }
                     }
                     updateStreakUI();
 
                     if (duelWon) {
-                        if (window.addGlobalPoints) addGlobalPoints(50, "Düello Zaferi!");
-                        if (window.addGlobalStars) addGlobalStars(streakTarget);
-                        const currentTargetSnapshot = streakTarget;
+                        if (window.addGlobalPoints) addGlobalPoints(100, "20'li Düello Zaferi!");
+                        if (window.addGlobalStars) addGlobalStars(FINAL_TARGET);
                         if (typeof showStreakVictoryModal === 'function') {
                             showStreakVictoryModal({
-                                target: currentTargetSnapshot,
+                                target: FINAL_TARGET,
                                 isDuel: true,
                                 winnerPlayer: winner,
                                 onRestart: () => {
                                     p1Streak = 0;
                                     p2Streak = 0;
+                                    streakTarget = baseTarget;
                                     updateStreakUI();
                                     if (typeof isWaitingForNextRound !== 'undefined') isWaitingForNextRound = false;
                                     if (typeof remainingLetters !== 'undefined') {
@@ -2239,9 +2252,12 @@
                 hideAutoLevelUpToast();
                 if (isSingle) {
                     if (currentStreak > 0) {
-                        const cheer = `😅 Seri bozuldu (${currentStreak}), pes etmek yok! ${baseTarget}'lik hedefe yeniden başla 💪`;
+                        const cheer = `😅 Seri bozuldu (${currentStreak}), pes etmek yok! 20'li hedef için yeniden başla 💪`;
                         currentStreak = 0;
                         streakTarget = baseTarget;
+                        document.querySelectorAll('.target-chip').forEach(c => {
+                            c.classList.toggle('active', parseInt(c.textContent, 10) === streakTarget);
+                        });
                         updateStreakUI(cheer, false);
                     } else {
                         updateStreakUI("❌ Tekrar dene, seriyi başlat!", false);

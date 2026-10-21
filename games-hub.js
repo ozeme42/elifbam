@@ -502,13 +502,18 @@
         let starsText = '';
         for (let i = 0; i < target; i++) starsText += '⭐ ';
 
-        let title = `🎉 TEBRİKLER! SERİ TAMAMLANDI! 🏆`;
-        let desc = `Üst üste <strong>${target} sorunun tamamını</strong> doğru bilerek seriyi kazandın!`;
+        let title = target >= 20 ? `🎉 BÜYÜK ZAFER! 20'Lİ SERİ TAMAMLANDI! 🏆` : `🎉 TEBRİKLER! SERİ TAMAMLANDI! 🏆`;
+        let desc = target >= 20 
+            ? `Üst üste <strong>${target} sorunun tamamını</strong> doğru bilerek büyük seriyi şampiyon olarak tamamladın!` 
+            : `Üst üste <strong>${target} sorunun tamamını</strong> doğru bilerek seriyi kazandın!`;
 
         if (isDuel) {
             title = `🏆 ${winner}. OYUNCU KAZANDI! 🎉`;
             desc = `Üst üste <strong>${target} doğruya</strong> ilk ulaşan ${winner}. oyuncu yarışı şampiyon olarak tamamladı!`;
         }
+
+        const showNextBtn = !isDuel && target < 20;
+        const rewardPoints = target >= 20 ? 100 : 50;
 
         backdrop.innerHTML = `
             <div class="streak-victory-card">
@@ -522,14 +527,14 @@
                 </div>
 
                 <div class="victory-reward-pill">
-                    <span>🏆 +50 Puan ve ⭐ Yıldızlar Kazandın!</span>
+                    <span>🏆 +${rewardPoints} Puan ve ⭐ ${target} Yıldız Kazandın!</span>
                 </div>
 
                 <div class="victory-btns-grid">
                     <button type="button" class="btn-victory-action btn-vic-replay" id="btn-vic-replay">
-                        <span>🔄</span> <span>Aynı Hedefle Tekrar Oyna (${target} Seri)</span>
+                        <span>🔄</span> <span>${target}'lik Seriyi Tekrar Oyna</span>
                     </button>
-                    ${!isDuel ? `
+                    ${showNextBtn ? `
                     <button type="button" class="btn-victory-action btn-vic-next" id="btn-vic-next">
                         <span>🚀</span> <span>Yeni Hedef: ${target + 5}'li Seri ile Oyna</span>
                     </button>` : ''}

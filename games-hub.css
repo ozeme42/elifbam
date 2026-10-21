@@ -749,3 +749,18 @@
     color: #475569;
     border: 2px solid #cbd5e1;
 }
+
+
+/* 20 Yıldıza kadar düzgün wrap ve hizalama */
+.streak-stars {
+    font-size: 1.15rem;
+    letter-spacing: 2px;
+    line-height: 1.45;
+    word-break: break-all;
+    text-align: center;
+}
+.victory-stars-box {
+    font-size: 1.35rem !important;
+    letter-spacing: 3px !important;
+    line-height: 1.5 !important;
+}
