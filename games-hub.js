@@ -464,6 +464,110 @@
         } catch (e) {}
     }
 
+    function playFanfareSound() {
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            const ctx = new AudioCtx();
+            if (ctx.state === 'suspended') ctx.resume();
+            [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.1);
+                gain.gain.setValueAtTime(0.25, ctx.currentTime + idx * 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.1 + 0.35);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(ctx.currentTime + idx * 0.1);
+                osc.stop(ctx.currentTime + idx * 0.1 + 0.36);
+            });
+        } catch(e) {}
+    }
+
+    // 12. SERİ TAMAMLANMA ZAFERİ MODALI
+    function showStreakVictoryModal(opts) {
+        // opts: { target, isDuel, winnerPlayer, onRestart, onNextLevel, onHome }
+        const old = document.getElementById('streak-victory-backdrop');
+        if (old) old.remove();
+
+        const target = opts.target || 5;
+        const isDuel = !!opts.isDuel;
+        const winner = opts.winnerPlayer || 0;
+
+        const backdrop = document.createElement('div');
+        backdrop.id = 'streak-victory-backdrop';
+        backdrop.className = 'streak-victory-backdrop';
+
+        let starsText = '';
+        for (let i = 0; i < target; i++) starsText += '⭐ ';
+
+        let title = `🎉 TEBRİKLER! SERİ TAMAMLANDI! 🏆`;
+        let desc = `Üst üste <strong>${target} sorunun tamamını</strong> doğru bilerek seriyi kazandın!`;
+
+        if (isDuel) {
+            title = `🏆 ${winner}. OYUNCU KAZANDI! 🎉`;
+            desc = `Üst üste <strong>${target} doğruya</strong> ilk ulaşan ${winner}. oyuncu yarışı şampiyon olarak tamamladı!`;
+        }
+
+        backdrop.innerHTML = `
+            <div class="streak-victory-card">
+                <div class="victory-trophy-icon">🏆</div>
+                <h2 class="victory-card-title">${title}</h2>
+                <p class="victory-card-desc">${desc}</p>
+                
+                <div class="victory-stars-box">
+                    <div>${starsText}</div>
+                    <div style="font-size:0.92rem; font-weight:800; color:#b45309; margin-top:6px;">${target} / ${target} Yıldız Doldu!</div>
+                </div>
+
+                <div class="victory-reward-pill">
+                    <span>🏆 +50 Puan ve ⭐ Yıldızlar Kazandın!</span>
+                </div>
+
+                <div class="victory-btns-grid">
+                    <button type="button" class="btn-victory-action btn-vic-replay" id="btn-vic-replay">
+                        <span>🔄</span> <span>Aynı Hedefle Tekrar Oyna (${target} Seri)</span>
+                    </button>
+                    ${!isDuel ? `
+                    <button type="button" class="btn-victory-action btn-vic-next" id="btn-vic-next">
+                        <span>🚀</span> <span>Yeni Hedef: ${target + 5}'li Seri ile Oyna</span>
+                    </button>` : ''}
+                    <button type="button" class="btn-victory-action btn-vic-home" id="btn-vic-home">
+                        <span>🏠</span> <span>Menüye / Bölüm Seçimine Dön</span>
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(backdrop);
+
+        playFanfareSound();
+        if (typeof burstConfetti === 'function') {
+            burstConfetti(80);
+        } else if (typeof confetti === 'function') {
+            confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
+        }
+
+        document.getElementById('btn-vic-replay').onclick = () => {
+            backdrop.remove();
+            if (opts.onRestart) opts.onRestart();
+        };
+
+        const nextBtn = document.getElementById('btn-vic-next');
+        if (nextBtn) {
+            nextBtn.onclick = () => {
+                backdrop.remove();
+                if (opts.onNextLevel) opts.onNextLevel();
+            };
+        }
+
+        document.getElementById('btn-vic-home').onclick = () => {
+            backdrop.remove();
+            if (opts.onHome) opts.onHome();
+        };
+    }
+
     // 11. BAŞLANGIÇ ÇALIŞMASI
     window.addEventListener('DOMContentLoaded', () => {
         updateAllNavBadges();
@@ -484,7 +588,8 @@
         render: renderGamesHub,
         showLockModal: showLockModal,
         checkGameLock: checkGameLock,
-        updateBadges: updateAllNavBadges
+        updateBadges: updateAllNavBadges,
+        showStreakVictory: showStreakVictoryModal
     };
 
     // Kolay erişim fonksiyonları
@@ -494,5 +599,6 @@
     window.addGlobalStars = addGlobalStars;
     window.toggleGamesHub = toggleGamesHub;
     window.checkGameLock = checkGameLock;
+    window.showStreakVictoryModal = showStreakVictoryModal;
 
 })(window, document);

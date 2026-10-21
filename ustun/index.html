@@ -1777,7 +1777,7 @@
                 cardElement.classList.add('correct');
                 isWaitingForNextRound = true;
                 burstConfetti(35);
-                onAnswerStreakResult(true, playerNum);
+                const isStreakOver = onAnswerStreakResult(true, playerNum);
 
                 const correctInfo = itemsData.find(l => l.id === currentCorrectLetter);
                 const itemName = correctInfo ? correctInfo.name : "";
@@ -1798,6 +1798,8 @@
                         messageDiv.style.color = "#3b82f6";
                     }
                 }
+
+                if (isStreakOver) return;
 
                 remainingLetters.shift(); 
                 setTimeout(nextRound, 1400);
@@ -2032,10 +2034,10 @@
 
             if (starsRow) {
                 let starsHtml = '';
-                const maxStars = Math.min(streakTarget, 10);
-                const filledStars = Math.min(currentStreak, maxStars);
-                for (let i = 0; i < maxStars; i++) {
-                    starsHtml += i < filledStars ? '⭐' : '☆';
+                const totalTargetStars = streakTarget;
+                const filledStars = Math.min(currentStreak, totalTargetStars);
+                for (let i = 0; i < totalTargetStars; i++) {
+                    starsHtml += (i < filledStars) ? '⭐' : '☆';
                 }
                 starsRow.innerHTML = starsHtml;
             }
@@ -2084,12 +2086,82 @@
 
                     if (currentStreak >= streakTarget) {
                         if (window.addGlobalPoints) addGlobalPoints(50, "Seri Tamamlandı!");
-                        const completedTarget = streakTarget;
-                        const nextTarget = completedTarget + 5;
-                        streakTarget = nextTarget;
-                        showAutoLevelUpToast(completedTarget, nextTarget, 0);
-                        const cheer = `👑 ${completedTarget}'te ${completedTarget} Başarıldı! Yeni Hedef: ${nextTarget}!`;
+                        if (window.addGlobalStars) addGlobalStars(streakTarget);
+                        const cheer = `👑 ${streakTarget}'te ${streakTarget} Başarıldı! Seri Tamamlandı! 🎉`;
                         updateStreakUI(cheer, true);
+
+                        const currentTargetSnapshot = streakTarget;
+                        if (typeof showStreakVictoryModal === 'function') {
+                            showStreakVictoryModal({
+                                target: currentTargetSnapshot,
+                                isDuel: false,
+                                onRestart: () => {
+                                    currentStreak = 0;
+                                    updateStreakUI(`🎯 Yeni Seri: Hedef ${streakTarget}!`, true);
+                                    if (typeof isWaitingForNextRound !== 'undefined') isWaitingForNextRound = false;
+                                    if (typeof remainingLetters !== 'undefined') {
+                                        if (remainingLetters.length > 0) remainingLetters.shift();
+                                        if (remainingLetters.length === 0 && typeof activeLetters !== 'undefined' && activeLetters.length > 0) {
+                                            remainingLetters = (typeof shuffleArray === 'function') ? shuffleArray([...activeLetters]) : [...activeLetters];
+                                        }
+                                    } else if (typeof remainingQuestions !== 'undefined') {
+                                        if (remainingQuestions.length > 0) remainingQuestions.shift();
+                                        if (remainingQuestions.length === 0 && typeof activeQuizQuestions !== 'undefined' && activeQuizQuestions.length > 0) {
+                                            remainingQuestions = (typeof shuffleArray === 'function') ? shuffleArray([...activeQuizQuestions]) : [...activeQuizQuestions];
+                                        }
+                                    } else if (typeof quizPool !== 'undefined') {
+                                        if (quizPool.length > 0) quizPool.shift();
+                                        if (quizPool.length === 0 && typeof selectedItems !== 'undefined' && selectedItems.size > 0) {
+                                            quizPool = Array.from(selectedItems);
+                                            if (typeof shuffleArray === 'function') shuffleArray(quizPool);
+                                        }
+                                    }
+                                    
+                                    if (typeof nextRound === 'function') nextRound();
+                                    else if (typeof nextQuizQuestion === 'function') nextQuizQuestion();
+                                    else if (typeof startNewTest === 'function') startNewTest();
+                                },
+                                onNextLevel: () => {
+                                    streakTarget = currentTargetSnapshot + 5;
+                                    baseTarget = streakTarget;
+                                    currentStreak = 0;
+                                    document.querySelectorAll('.target-chip').forEach(c => {
+                                        c.classList.toggle('active', parseInt(c.textContent, 10) === streakTarget);
+                                    });
+                                    updateStreakUI(`🚀 Yeni Hedef: ${streakTarget}'li Seri!`, true);
+                                    if (typeof isWaitingForNextRound !== 'undefined') isWaitingForNextRound = false;
+                                    if (typeof remainingLetters !== 'undefined') {
+                                        if (remainingLetters.length > 0) remainingLetters.shift();
+                                        if (remainingLetters.length === 0 && typeof activeLetters !== 'undefined' && activeLetters.length > 0) {
+                                            remainingLetters = (typeof shuffleArray === 'function') ? shuffleArray([...activeLetters]) : [...activeLetters];
+                                        }
+                                    } else if (typeof remainingQuestions !== 'undefined') {
+                                        if (remainingQuestions.length > 0) remainingQuestions.shift();
+                                        if (remainingQuestions.length === 0 && typeof activeQuizQuestions !== 'undefined' && activeQuizQuestions.length > 0) {
+                                            remainingQuestions = (typeof shuffleArray === 'function') ? shuffleArray([...activeQuizQuestions]) : [...activeQuizQuestions];
+                                        }
+                                    } else if (typeof quizPool !== 'undefined') {
+                                        if (quizPool.length > 0) quizPool.shift();
+                                        if (quizPool.length === 0 && typeof selectedItems !== 'undefined' && selectedItems.size > 0) {
+                                            quizPool = Array.from(selectedItems);
+                                            if (typeof shuffleArray === 'function') shuffleArray(quizPool);
+                                        }
+                                    }
+                                    
+                                    if (typeof nextRound === 'function') nextRound();
+                                    else if (typeof nextQuizQuestion === 'function') nextQuizQuestion();
+                                    else if (typeof startNewTest === 'function') startNewTest();
+                                },
+                                onHome: () => {
+                                    currentStreak = 0;
+                                    updateStreakUI();
+                                    if (typeof goToHome === 'function') goToHome();
+                                    else if (typeof goHome === 'function') goHome();
+                                    else window.location.href = '../index.html';
+                                }
+                            });
+                        }
+                        return true;
                     } else {
                         let cheer = "👍 Harika!";
                         if (currentStreak === 2) cheer = "🔥 2x Çift Doğru! Isınıyorsun!";
@@ -2097,30 +2169,70 @@
                         else if (currentStreak === 4) cheer = "🌟 4x Muhteşem! Hedefe 1 Kaldı!";
                         else cheer = `🔥 ${currentStreak}x Seri! Devam!`;
                         updateStreakUI(cheer, true);
+                        return false;
                     }
                 } else {
+                    let duelWon = false;
+                    let winner = 0;
                     if (playerNum === 1) {
                         p1Streak++;
                         p2Streak = 0;
                         playStreakAudio(p1Streak);
                         if (p1Streak >= streakTarget) {
-                            const completedTarget = streakTarget;
-                            const nextTarget = completedTarget + 5;
-                            streakTarget = nextTarget;
-                            showAutoLevelUpToast(completedTarget, nextTarget, 1);
+                            duelWon = true;
+                            winner = 1;
                         }
                     } else if (playerNum === 2) {
                         p2Streak++;
                         p1Streak = 0;
                         playStreakAudio(p2Streak);
                         if (p2Streak >= streakTarget) {
-                            const completedTarget = streakTarget;
-                            const nextTarget = completedTarget + 5;
-                            streakTarget = nextTarget;
-                            showAutoLevelUpToast(completedTarget, nextTarget, 2);
+                            duelWon = true;
+                            winner = 2;
                         }
                     }
                     updateStreakUI();
+
+                    if (duelWon) {
+                        if (window.addGlobalPoints) addGlobalPoints(50, "Düello Zaferi!");
+                        if (window.addGlobalStars) addGlobalStars(streakTarget);
+                        const currentTargetSnapshot = streakTarget;
+                        if (typeof showStreakVictoryModal === 'function') {
+                            showStreakVictoryModal({
+                                target: currentTargetSnapshot,
+                                isDuel: true,
+                                winnerPlayer: winner,
+                                onRestart: () => {
+                                    p1Streak = 0;
+                                    p2Streak = 0;
+                                    updateStreakUI();
+                                    if (typeof isWaitingForNextRound !== 'undefined') isWaitingForNextRound = false;
+                                    if (typeof remainingLetters !== 'undefined') {
+                                        if (remainingLetters.length > 0) remainingLetters.shift();
+                                        if (remainingLetters.length === 0 && typeof activeLetters !== 'undefined' && activeLetters.length > 0) {
+                                            remainingLetters = (typeof shuffleArray === 'function') ? shuffleArray([...activeLetters]) : [...activeLetters];
+                                        }
+                                    } else if (typeof remainingQuestions !== 'undefined') {
+                                        if (remainingQuestions.length > 0) remainingQuestions.shift();
+                                        if (remainingQuestions.length === 0 && typeof activeQuizQuestions !== 'undefined' && activeQuizQuestions.length > 0) {
+                                            remainingQuestions = (typeof shuffleArray === 'function') ? shuffleArray([...activeQuizQuestions]) : [...activeQuizQuestions];
+                                        }
+                                    }
+                                    if (typeof nextRound === 'function') nextRound();
+                                },
+                                onHome: () => {
+                                    p1Streak = 0;
+                                    p2Streak = 0;
+                                    updateStreakUI();
+                                    if (typeof goToHome === 'function') goToHome();
+                                    else if (typeof goHome === 'function') goHome();
+                                    else window.location.href = '../index.html';
+                                }
+                            });
+                        }
+                        return true;
+                    }
+                    return false;
                 }
             } else {
                 playWrongBoop();
@@ -2140,6 +2252,7 @@
                     streakTarget = baseTarget;
                     updateStreakUI();
                 }
+                return false;
             }
         }
 
