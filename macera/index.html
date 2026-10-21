@@ -452,7 +452,7 @@
             border: 3px solid #e2e8f0;
             border-radius: 24px;
             padding: 18px 10px;
-            min-height: 120px;
+            min-height: 130px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -470,16 +470,17 @@
         }
 
         .option-choice-card img {
-            max-width: 80px;
-            max-height: 80px;
+            max-width: 90px;
+            max-height: 90px;
             object-fit: contain;
             pointer-events: none;
+            display: block;
         }
 
         .option-choice-card .opt-name {
-            margin-top: 6px;
+            margin-top: 8px;
             font-weight: 800;
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: #1e3a8a;
         }
 
@@ -1014,9 +1015,28 @@
         </div>
     </div>
 
-    <audio id="adventure-audio-player"></audio>
+    <!-- SES OYNATICI -->
+    <audio id="adventure-audio-player" preload="auto"></audio>
 
     <script>
+        // Harf İsimleri Sözlüğü (29 Harf)
+        const allLetterDict = {
+            '1': 'Elif', '2': 'Be', '3': 'Te', '4': 'Peltek Se',
+            '5': 'Cim', '6': 'Ha', '7': 'Hı', '8': 'Dal',
+            '9': 'Peltek Zel', '10': 'Ra', '11': 'Ze', '12': 'Sin',
+            '13': 'Şın', '14': 'Sad', '15': 'Dad', '16': 'Tı',
+            '17': 'Peltek Zı', '18': 'Ayn', '19': 'Gayn', '20': 'Fe',
+            '21': 'Kaf', '22': 'Kef', '23': 'Lam', '24': 'Mim',
+            '25': 'Nun', '26': 'Vav', '27': 'He', '28': 'Lâmelif', '29': 'Ye'
+        };
+
+        const ustunDict = {
+            1: 'E', 2: 'Be', 3: 'Te', 4: 'Se', 5: 'Ce', 6: 'Ha', 7: 'Ha', 8: 'De',
+            9: 'Ze', 10: 'Ra', 11: 'Ze', 12: 'Se', 13: 'Şe', 14: 'Sa', 15: 'Da', 16: 'Ta',
+            17: 'Za', 18: 'A', 19: 'Ga', 20: 'Fe', 21: 'Ka', 22: 'Ke', 23: 'Le', 24: 'Me',
+            25: 'Ne', 26: 'Ve', 27: 'He', 28: 'Ye'
+        };
+
         // --- 10 AŞAMALI BÜYÜK YOLCULUK VERİLERİ ---
         const adventureStages = [
             {
@@ -1144,12 +1164,14 @@
                 badgeId: "badge_9",
                 badgeName: "💧 Hareke Bilgini",
                 items: [
-                    { id: 1, name: 'İ / Ü', folder: 'esre1', soundFolder: 'esre1' },
+                    { id: 1, name: 'İ (Esre)', folder: 'esre1', soundFolder: 'esre1' },
+                    { id: 1, name: 'Ü (Ötre)', folder: 'otre1', soundFolder: 'otre1' },
                     { id: 2, name: 'Bî (Esre)', folder: 'esre1', soundFolder: 'esre1' },
                     { id: 2, name: 'Bû (Ötre)', folder: 'otre1', soundFolder: 'otre1' },
                     { id: 3, name: 'Tî (Esre)', folder: 'esre1', soundFolder: 'esre1' },
                     { id: 3, name: 'Tû (Ötre)', folder: 'otre1', soundFolder: 'otre1' },
-                    { id: 5, name: 'Cî (Esre)', folder: 'esre1', soundFolder: 'esre1' }
+                    { id: 5, name: 'Cî (Esre)', folder: 'esre1', soundFolder: 'esre1' },
+                    { id: 5, name: 'Cû (Ötre)', folder: 'otre1', soundFolder: 'otre1' }
                 ]
             },
             {
@@ -1198,6 +1220,16 @@
                 openNameModal();
             }
         });
+
+        // Tarayıcı Ses Kilit Açıcı (User Interaction)
+        function unlockAudio() {
+            if (!audioPlayer) audioPlayer = document.getElementById('adventure-audio-player');
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) {
+                const ctx = new AudioCtx();
+                if (ctx.state === 'suspended') ctx.resume();
+            }
+        }
 
         function loadPlayerData() {
             const savedName = localStorage.getItem('elifbam_adventure_player_name');
@@ -1264,7 +1296,10 @@
                 `;
 
                 if (isUnlocked) {
-                    card.onclick = () => startStage(stage.id);
+                    card.onclick = () => {
+                        unlockAudio();
+                        startStage(stage.id);
+                    };
                 } else {
                     card.onclick = () => {
                         playBoopSound();
@@ -1302,30 +1337,38 @@
             const items = [...stage.items];
 
             for (let i = 0; i < 5; i++) {
-                // Rastgele bir hedef seç
+                // Rastgele hedef harf/kelime seç
                 const target = items[Math.floor(Math.random() * items.length)];
 
                 // 3 Adet Çeldirici Seç
-                let options = [target];
+                let options = [{ ...target }];
                 let distractorPool = [];
 
                 if (stage.type === 'letters') {
-                    // Diğer harflerden çeldirici
-                    for (let n = 1; n <= 28; n++) {
+                    // 1..29 harfler havuzundan farklı çeldiriciler
+                    for (let n = 1; n <= 29; n++) {
                         const sid = String(n);
-                        if (sid !== target.id) distractorPool.push({ id: sid, name: 'Harf ' + sid });
+                        if (sid !== String(target.id)) {
+                            distractorPool.push({ id: sid, name: allLetterDict[sid] || ('Harf ' + sid) });
+                        }
                     }
                 } else if (stage.type === 'ustun') {
                     for (let n = 1; n <= 28; n++) {
-                        if (n !== target.id) distractorPool.push({ id: n, name: 'Üstün ' + n });
+                        if (n !== target.id) {
+                            distractorPool.push({ id: n, name: ustunDict[n] || ('Üstün ' + n) });
+                        }
                     }
                 } else if (stage.type === 'esre_otre') {
                     stage.items.forEach(it => {
-                        if (it !== target) distractorPool.push(it);
+                        if (it.id !== target.id || it.folder !== target.folder) {
+                            distractorPool.push({ ...it });
+                        }
                     });
                 } else if (stage.type === 'words') {
                     stage.items.forEach(it => {
-                        if (it.id !== target.id) distractorPool.push(it);
+                        if (it.id !== target.id) {
+                            distractorPool.push({ ...it });
+                        }
                     });
                 }
 
@@ -1369,12 +1412,13 @@
                 const nameLabel = document.createElement('div');
                 nameLabel.className = 'opt-name';
 
+                // DOĞRU VE EKSİKSİZ GÖRSEL YOLLARI
                 if (q.stageType === 'letters') {
-                    img.src = `../harfler/${opt.id}.png`;
-                    nameLabel.textContent = opt.name;
+                    img.src = `../harfler/harfler/${opt.id}.png`;
+                    nameLabel.textContent = opt.name || allLetterDict[opt.id] || opt.id;
                 } else if (q.stageType === 'ustun') {
                     img.src = `../ustun1/ustun1/${opt.id}.jpg`;
-                    nameLabel.textContent = opt.name || `Harf ${opt.id}`;
+                    nameLabel.textContent = opt.name || ustunDict[opt.id] || `Harf ${opt.id}`;
                 } else if (q.stageType === 'esre_otre') {
                     const folder = opt.folder || 'esre1';
                     img.src = `../${folder}/${folder}/${opt.id}.jpg`;
@@ -1383,6 +1427,10 @@
                     img.src = `../ustun/ustun/${opt.id}.png`;
                     nameLabel.textContent = opt.name;
                 }
+
+                img.onerror = function() {
+                    console.warn("Görsel yüklenemedi:", this.src);
+                };
 
                 card.appendChild(img);
                 card.appendChild(nameLabel);
@@ -1398,30 +1446,46 @@
             }
         }
 
+        // DOĞRU VE EKSİKSİZ SES OYNATICI
         function playQuestionAudio(q) {
-            audioPlayer.pause();
-            let audioSrc = '';
+            if (!audioPlayer) audioPlayer = document.getElementById('adventure-audio-player');
+            if (!audioPlayer) return;
 
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+
+            let audioSrc = '';
             if (q.stageType === 'letters') {
-                audioSrc = `../harfler/${q.target.id}.mp3`;
+                audioSrc = `../harfler/harfler/${q.target.id}.mp3`;
             } else if (q.stageType === 'ustun') {
                 audioSrc = `../ustun1/ustun1/${q.target.id}.m4a`;
             } else if (q.stageType === 'esre_otre') {
-                const soundFolder = q.target.soundFolder || 'esre1';
+                const soundFolder = q.target.soundFolder || q.target.folder || 'esre1';
                 audioSrc = `../${soundFolder}/${soundFolder}/${q.target.id}.m4a`;
             } else if (q.stageType === 'words') {
                 audioSrc = `../ustun/ustun/${q.target.id}.mp3`;
             }
 
             audioPlayer.src = audioSrc;
-            audioPlayer.play().catch(e => console.log('Ses hatası:', e));
+            audioPlayer.load();
+
+            const p = audioPlayer.play();
+            if (p !== undefined) {
+                p.catch(err => {
+                    console.log('Otomatik ses çalma tarayıcı tarafından kısıtlandı (butona basarak dinleyin):', err);
+                });
+            }
         }
 
-        // Seçeneğe Tıklandığında
+        // Seçeneğe Tıklandığında Kontrol
         function onSelectOption(cardEl, selectedOpt, q) {
-            const isCorrect = (q.stageType === 'words') 
-                ? (selectedOpt.id === q.target.id)
-                : (selectedOpt.id === q.target.id && (selectedOpt.name === q.target.name || !selectedOpt.folder));
+            let isCorrect = false;
+
+            if (q.stageType === 'esre_otre') {
+                isCorrect = (String(selectedOpt.id) === String(q.target.id)) && (selectedOpt.folder === q.target.folder);
+            } else {
+                isCorrect = (String(selectedOpt.id) === String(q.target.id));
+            }
 
             if (isCorrect) {
                 cardEl.classList.add('correct');
@@ -1443,7 +1507,7 @@
                 cardEl.classList.add('wrong');
                 playBoopSound();
                 currentStageMistakes++;
-                mascotSpeak('Küçük bir hata oldu, hadi bir daha dene! 🐥');
+                mascotSpeak('Küçük bir hata oldu, sesi tekrar dinleyip dene! 🐥');
                 setTimeout(() => {
                     cardEl.classList.remove('wrong');
                 }, 800);
@@ -1555,6 +1619,7 @@
         }
 
         function savePlayerNameAndStart() {
+            unlockAudio();
             const val = document.getElementById('input-player-name').value.trim();
             if (val.length > 0) {
                 playerData.name = val;
